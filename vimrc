@@ -42,7 +42,6 @@
 	set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
 	set virtualedit=onemore             " Allow for cursor beyond last character
 	set history=1000                    " Store a ton of history (default is 20)
-	set spell                           " Spell checking on
 	set hidden                          " Allow buffer switching without saving
 
 	" The 'iskeyword' option specifies which characters can appear in a word
@@ -91,6 +90,8 @@
 	set tabpagemax=15               " Only show 15 tabs
 	set showmode                    " Display the current mode
 
+	" Highligh the column 80
+	set colorcolumn=80
 
 	" Highlight current line and column
 	set cursorline
