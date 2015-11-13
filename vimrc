@@ -15,6 +15,8 @@
 	" Plugin tables
 	Plugin 'Valloric/YouCompleteMe'
 	Plugin 'bling/vim-airline'
+	Plugin 'scrooloose/nerdcommenter'
+	Plugin 'airblade/vim-gitgutter'
 
 	call vundle#end()            " required
 	filetype plugin indent on    " required
@@ -219,4 +221,15 @@
 	let g:airline#extensions#tabline#enabled = 1
 	let g:airline#extensions#tabline#left_sep = ' '
 	let g:airline#extensions#tabline#left_alt_sep = '|'
+" }
+
+" nerdcommenter {
+	
+" }
+
+" vim-gitgutter {
+	" Disable all the git-gutter key bindings
+	let g:gitgutter_map_keys = 0
+	" Show the gutter always
+	let g:gitgutter_sign_column_always = 1
 " }
