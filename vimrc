@@ -17,6 +17,7 @@
 	Plugin 'bling/vim-airline'
 	Plugin 'scrooloose/nerdcommenter'
 	Plugin 'airblade/vim-gitgutter'
+	Plugin 'majutsushi/tagbar'
 
 	call vundle#end()            " required
 	filetype plugin indent on    " required
@@ -232,4 +233,8 @@
 	let g:gitgutter_map_keys = 0
 	" Show the gutter always
 	let g:gitgutter_sign_column_always = 1
+" }
+
+" tagbar {
+	nmap <C-t> :TagbarToggle<CR>
 " }
