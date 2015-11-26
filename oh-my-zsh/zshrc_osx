@@ -80,6 +80,7 @@ export LANG=en_US.UTF-8
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls="gls --color=always"
+alias du="gdu"
 alias em="emacs"
 
 alias a='fasd -a'        # any
