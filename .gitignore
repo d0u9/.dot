@@ -1,3 +1,4 @@
 # My global configuration file
 tri_config.json
 shadowsocks*.json
+nvim/bundle
