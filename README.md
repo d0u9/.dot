@@ -35,6 +35,12 @@ curl -fLo $XDG_CONFIG_HOME/nvim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
 
+- Install python support for neovim:
+
+```
+pip install neovim
+```
+
 - Open your nvim and execute `:PlugInstall`
 - Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation)
 

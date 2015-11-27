@@ -3,7 +3,7 @@
 call plug#begin('~/.dot/nvim/plugged')
 
 " Plugin tables
-Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp', 'py'] }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'py'] }
 Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdcommenter'
 Plug 'airblade/vim-gitgutter'
