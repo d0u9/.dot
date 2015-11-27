@@ -1,6 +1,10 @@
 # My global configuration file
 tri_config.json
 shadowsocks*.json
+
+# nvim tmp files
 nvim/bundle
 nvim/autoload
 nvim/plugged
+nvim/undodir
+nvim/.netrwhist

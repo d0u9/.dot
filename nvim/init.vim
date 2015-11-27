@@ -48,7 +48,7 @@ call plug#end()
 
 	set backup                  " Backups are nice ...
 	if has('persistent_undo')
-		set undodir=~/.vim/undodir
+		set undodir=~/.config/nvim/undodir
 		set undofile                " So is persistent undo ...
 		set undolevels=1000         " Maximum number of changes that can be undone
 		set undoreload=10000        " Maximum number lines to save for undo on a buffer reload
