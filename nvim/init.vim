@@ -11,6 +11,7 @@ Plug 'majutsushi/tagbar'
 Plug 'kien/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'bling/vim-bufferline'
+Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 
 " Add plugins to &runtimepath
 call plug#end()
@@ -269,4 +270,9 @@ call plug#end()
 	" Shared bindings from Solution #1 from earlier
 	nmap <leader>T :enew<cr>
 	nmap <leader>bq :bp <BAR> bd #<cr>
+" }
+
+
+" { nvim-ipy
+	
 " }
