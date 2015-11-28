@@ -16,6 +16,18 @@ Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 " Add plugins to &runtimepath
 call plug#end()
 
+" Identify platform {
+	silent function! OSX()
+		return has('macunix')
+	endfunction
+	silent function! LINUX()
+		return has('unix') && !has('macunix') && !has('win32unix')
+	endfunction
+	silent function! WINDOWS()
+		return  (has('win32') || has('win64'))
+	endfunction
+" }
+
 " General settings {
 	set background=dark	
 
@@ -25,12 +37,17 @@ call plug#end()
 
 
 	" Share content with the system's clipborad
-	if has('clipboard')
-		if has('unnamedplus')	" When possible use + register for copy-paste
-			set clipboard=unnamed,unnamedplus
-		else			" On mac and Windows, use * register for copy-paste
-			set clipboard=unnamed
-		endif
+	if OSX()
+		function! ClipboardYank()
+			call system('pbcopy', @@)
+		endfunction
+		function! ClipboardPaste()
+			let @@ = system('pbpaste')
+		endfunction
+
+		vnoremap <silent> y y:call ClipboardYank()<cr>
+		vnoremap <silent> d d:call ClipboardYank()<cr>
+		nnoremap <silent> p :call ClipboardPaste()<cr>p
 	endif
 
 	set shortmess+=filmnrxoOtT	" Avoiding the 'Hit ENTER to continue' prompts
