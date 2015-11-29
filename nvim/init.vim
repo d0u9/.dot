@@ -3,7 +3,6 @@
 call plug#begin('~/.dot/nvim/plugged')
 
 " Plugin tables
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
 Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdcommenter'
 Plug 'airblade/vim-gitgutter'
@@ -11,7 +10,10 @@ Plug 'majutsushi/tagbar'
 Plug 'kien/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'bling/vim-bufferline'
+Plug 'rking/ag.vim'
+
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
 
 " Add plugins to &runtimepath
 call plug#end()
@@ -298,6 +300,11 @@ call plug#end()
 " }
 
 
-" { nvim-ipy
-	
+" nvim-ipy {
+	let g:nvim_ipy_perform_mappings = 0
+	map <silent> <c-s>   <Plug>(IPy-Run)
+" }
+
+" Ag {
+
 " }
