@@ -3,8 +3,11 @@ tri_config.json
 shadowsocks*.json
 
 # nvim tmp files
-nvim/bundle
 nvim/autoload
 nvim/plugged
-nvim/undodir
 nvim/.netrwhist
+nvim/cache_dir/ctrlp_cache
+nvim/cache_dir/undo_cache
+
+# Other tmp files
+*.swp
