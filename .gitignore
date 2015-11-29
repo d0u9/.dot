@@ -6,5 +6,9 @@ shadowsocks*.json
 nvim/bundle
 nvim/autoload
 nvim/plugged
-nvim/undodir
 nvim/.netrwhist
+nvim/cache_dir/ctrlp_cache
+nvim/cache_dir/undo_cache
+
+# Others
+*.swp
