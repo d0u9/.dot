@@ -71,7 +71,7 @@ call plug#end()
 
 	set backup                  " Backups are nice ...
 	if has('persistent_undo')
-		set undodir=~/.config/nvim/undodir
+		set undodir=~/.config/nvim/cache_dir/undo_cache
 		set undofile                " So is persistent undo ...
 		set undolevels=1000         " Maximum number of changes that can be undone
 		set undoreload=10000        " Maximum number lines to save for undo on a buffer reload
@@ -266,6 +266,12 @@ call plug#end()
 	nmap <leader>bs :CtrlPMRU<cr>
 " }
 
+" Speed Up CtrlP {
+	let g:ctrlp_cache_dir = $HOME . '/.config/nvim/cache_dir/ctrlp_cache'
+	if executable('ag')
+	  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+	endif
+" }
 
 " vim-buffergator {
 	" Use the right side of the screen
