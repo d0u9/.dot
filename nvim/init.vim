@@ -258,7 +258,7 @@ call plug#end()
 	" Setup some default ignores
 	let g:ctrlp_custom_ignore = {
 				\ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
-				\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|doc|docx)$',
+				\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf)$',
 				\}
 
 	" Use the nearest .git directory as the cwd
@@ -276,10 +276,15 @@ call plug#end()
 " }
 
 " Speed Up CtrlP {
+"
 	let g:ctrlp_cache_dir = $HOME . '/.config/nvim/cache_dir/ctrlp_cache'
 	if executable('ag')
-	  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+	  let g:ctrlp_user_command = 'ag %s -l --nocolor --depth 5 -g "" -G "^(.(?!('
+			\ . 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|'
+			\ . 'EXE|SO|DLL|CLASS|PNG|JPG|JPEG|DOC|DOCX|PDF'
+			\ . ')))*$"'
 	endif
+	let g:ctrlp_clear_cache_on_exit = 1
 " }
 
 " vim-buffergator {
