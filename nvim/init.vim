@@ -13,6 +13,7 @@ Plug 'bling/vim-bufferline'
 Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 
+Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
 
