@@ -11,6 +11,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'bling/vim-bufferline'
 Plug 'rking/ag.vim'
+Plug 'mbbill/undotree'
 
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
@@ -319,4 +320,8 @@ call plug#end()
 
 " Ag {
 
+" }
+
+" undotree {
+	nmap <leader>tr :UndotreeToggle<cr>
 " }
