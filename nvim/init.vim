@@ -281,9 +281,8 @@ call plug#end()
 "
 	let g:ctrlp_cache_dir = $HOME . '/.config/nvim/cache_dir/ctrlp_cache'
 	if executable('ag')
-	  let g:ctrlp_user_command = 'ag %s -l --nocolor --depth 5 -g "" -G "^(.(?!('
-			\ . 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|'
-			\ . 'EXE|SO|DLL|CLASS|PNG|JPG|JPEG|DOC|DOCX|PDF'
+	  let g:ctrlp_user_command = 'ag %s -i -l --nocolor --depth 5 -g "" -G "^(.(?!('
+			\ . 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf'
 			\ . ')))*$"'
 	endif
 	let g:ctrlp_clear_cache_on_exit = 1
