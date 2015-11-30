@@ -12,6 +12,7 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'bling/vim-bufferline'
 Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
+Plug 'tpope/vim-fugitive'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
