@@ -195,8 +195,6 @@ call plug#end()
 	map <leader>ev :vsp %%
 	map <leader>et :tabe %%
 
-	" Adjust viewports to the same size
-	map <Leader>= <C-w>=
 
 	" Map <Leader>ff to display all lines with keyword under cursor
 	" and ask which one to jump to
@@ -207,11 +205,17 @@ call plug#end()
 	map zh zH
 
 	" Windows resizeing
-	nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
-	nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
+	nnoremap <silent> <Leader>w' :exe "resize " . (winheight(0) * 3/2)<CR>
+	nnoremap <silent> <Leader>w; :exe "resize " . (winheight(0) * 2/3)<CR>
 
-	nnoremap <silent> <Leader>} :exe "vertical resize -" . (winheight(0) * 1/2)<CR>
-	nnoremap <silent> <Leader>{ :exe "vertical resize +" . (winheight(0) * 1/2)<CR>
+	nnoremap <silent> <Leader>w] :exe "vertical resize -" . (winheight(0) * 1/2)<CR>
+	nnoremap <silent> <Leader>w[ :exe "vertical resize +" . (winheight(0) * 1/2)<CR>
+
+	" Adjust viewports to the same size
+	map <Leader>w= <C-w>=
+
+	" Go back to previous window
+	map <Leader>wp <C-w>p
 " }
 
 
