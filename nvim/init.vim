@@ -339,3 +339,7 @@ call plug#end()
 " undotree {
 	nmap <leader>tr :UndotreeToggle<cr>
 " }
+
+" fugitive {
+	set diffopt+=vertical
+" }
