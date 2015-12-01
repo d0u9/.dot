@@ -13,6 +13,7 @@ Plug 'bling/vim-bufferline'
 Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
+Plug 'Valloric/ListToggle'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -342,4 +343,8 @@ call plug#end()
 
 " fugitive {
 	set diffopt+=vertical
+" }
+
+" ListToggle {
+	let g:lt_height = 18
 " }
