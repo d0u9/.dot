@@ -236,6 +236,19 @@ call plug#end()
 	let g:ycm_global_ycm_extra_conf = '~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 	let g:ycm_extra_conf_globlist = ['~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py']
 
+	let g:ycm_filetype_blacklist = {
+	      \ 'tagbar' : 1,
+	      \ 'qf' : 1,
+	      \ 'notes' : 1,
+	      \ 'markdown' : 1,
+	      \ 'unite' : 1,
+	      \ 'text' : 1,
+	      \ 'vimwiki' : 1,
+	      \ 'pandoc' : 1,
+	      \ 'infolog' : 1,
+	      \ 'mail' : 1,
+	      \ 'gitcommit' : 1
+	      \}
 " }
 
 
@@ -282,9 +295,9 @@ call plug#end()
 "
 	let g:ctrlp_cache_dir = $HOME . '/.config/nvim/cache_dir/ctrlp_cache'
 	if executable('ag')
-	  let g:ctrlp_user_command = 'ag %s -i -l --nocolor --depth 5 -g "" -G "^(.(?!('
-			\ . 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf'
-			\ . ')))*$"'
+	let file_type_to_be_ignored = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif'
+	let g:ctrlp_user_command = 'ag %s -i -l --nocolor --depth 5 -g "" '
+			\ . '-G "^(.(?!(\.(' . file_type_to_be_ignored . ')$)))*$"'
 	endif
 	let g:ctrlp_clear_cache_on_exit = 1
 " }
