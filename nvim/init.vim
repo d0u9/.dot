@@ -15,12 +15,20 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 
+Plug 'critiqjo/lldb.nvim', { 'for': ['c', 'cpp'] }
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
 
 " Add plugins to &runtimepath
 call plug#end()
+
+if filereadable(expand("~/.config/nvim/config.vim"))
+	source ~/.config/nvim/config.vim
+	let g:python_host_prog = nvim_python_path
+endif
+
+
 
 " Identify platform {
 	silent function! OSX()
@@ -241,6 +249,10 @@ call plug#end()
 	let g:ycm_global_ycm_extra_conf = '~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 	let g:ycm_extra_conf_globlist = ['~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py']
 
+	if filereadable(expand("~/.config/nvim/config.vim"))
+		let g:ycm_path_to_python_interpreter = ycm_python_path
+	endif
+
 	let g:ycm_filetype_blacklist = {
 	      \ 'tagbar' : 1,
 	      \ 'qf' : 1,
@@ -352,3 +364,4 @@ call plug#end()
 " ListToggle {
 	let g:lt_height = 18
 " }
+
