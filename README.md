@@ -1,6 +1,16 @@
 # .dot
 The bucket of dot files.
 
+
+# Description
+
+This repo includes configuration files come from various most common used softewares, such as neovim, oh-my-zsh, tmux or chunks of my private applications. Each application's specific configuration files are contained in one directory which named as the application's name.
+
+
+# Content
+- [Vim](#vim)
+- [NeoVim](#neovim)
+
 # Vim
 
 - Install `vundle` according to [https://github.com/VundleVim/Vundle.vim#quick-start](https://github.com/VundleVim/Vundle.vim#quick-start)
@@ -15,6 +25,8 @@ The bucket of dot files.
 - Vim theme, Copy the theme to `~/.vim/colors/`.
 
 # NeoVim
+
+> If you are a man occasionally understand Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
 
 - Create `XDG_CONFIG_HOME`:
 
