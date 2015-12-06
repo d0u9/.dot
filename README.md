@@ -26,35 +26,51 @@ This repo includes configuration files come from various most common used softew
 
 # NeoVim
 
-> If you are a man occasionally understand Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
+> If you are a man occasionally understands Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
 
-- Create `XDG_CONFIG_HOME`:
+## Install NeoVim
+
+You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+
+## Create configuration director
+
+Instead of `.vimr` and `.vim/` dir, neovim uses the XDG specification to manage its configuration files.
+
+To use my configurations, all you need is to link the `nvim` dir in my `.dot` to where the XDG specification designates.
 
 ```
 mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
-```
-
-- Make a symbol link of nvim configuration:
-
-```
 ln -s .dot/nvim $XDG_CONFIG_HOME/
 ```
 
-- Execute the following command to install [vim-plug](https://github.com/junegunn/vim-plug)
+[Here](https://neovim.io/doc/user/nvim_from_vim.html) gives more information about the differences between vim and neovim.
 
-```
-curl -fLo $XDG_CONFIG_HOME/nvim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
-
-- Install python support for neovim:
+## Install python support of Neovim
 
 ```
 pip install neovim
 ```
 
-- Open your nvim and execute `:PlugInstall`
-- Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation)
+If you are using OSX El capitan, like me, and have failed installing pip, you have to understand the new protect mechanism, i.e. [SIP](https://en.wikipedia.org/wiki/System_Integrity_Protection).
+
+## Install [vim-plug](https://github.com/junegunn/vim-plug).
+
+If you have `curl` installed, you can execute the following command to install `vim-plug`:
+
+```
+curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+
+Otherwise, you may check [this](https://github.com/junegunn/vim-plug#installation).
+
+## Install all the plugings
+
+- Open your nvim and execute `:PlugInstall`.
+- Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation).
+- Update remote plugins by running `:UpdateRemotePlugins` in nvim.
+
+## Enjoy it!
 
 # License
 ![CC License](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
