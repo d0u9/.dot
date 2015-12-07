@@ -1,15 +1,18 @@
 # .dot
 The bucket of dot files.
 
-
 # Description
 
 This repo includes configuration files come from various most common used softewares, such as neovim, oh-my-zsh, tmux or chunks of my private applications. Each application's specific configuration files are contained in one directory which named as the application's name.
 
+---
 
 # Content
 - [Vim](#vim)
 - [NeoVim](#neovim)
+- [oh-my-zsh](#oh-my-zsh)
+
+---
 
 # Vim
 
@@ -23,6 +26,8 @@ This repo includes configuration files come from various most common used softew
 - Open your Vim and execute `:PluginInstall`.
 - Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation)
 - Vim theme, Copy the theme to `~/.vim/colors/`.
+
+---
 
 # NeoVim
 
@@ -70,7 +75,13 @@ Otherwise, you may check [this](https://github.com/junegunn/vim-plug#installatio
 - Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation).
 - Update remote plugins by running `:UpdateRemotePlugins` in nvim.
 
-## Enjoy it!
+---
+
+# oh-my-zs
+
+1. Copy theme to your oh-my-zsh configuration directory.
+2. Make a symbol of zshrc to your ~ directory.
+
 
 # License
 ![CC License](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
