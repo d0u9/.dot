@@ -14,6 +14,7 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
 Plug 'critiqjo/lldb.nvim', { 'for': ['c', 'cpp'] }
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
@@ -365,3 +366,6 @@ endif
 	let g:lt_height = 18
 " }
 
+" vim-numbertoggle {
+	let g:NumberToggleTrigger="<leader>cn"
+" }
