@@ -19,7 +19,7 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'critiqjo/lldb.nvim', { 'for': ['c', 'cpp'] }
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
+Plug 'Valloric/YouCompleteMe', { 'do': 'brew unlink python && ./install.py --clang-completer && brew link python', 'for': ['c', 'cpp', 'python'] }
 
 " Add plugins to &runtimepath
 call plug#end()
