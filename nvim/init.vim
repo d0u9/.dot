@@ -14,7 +14,6 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
-Plug 'edkolev/promptline.vim'
 
 Plug 'critiqjo/lldb.nvim', { 'for': ['c', 'cpp'] }
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
