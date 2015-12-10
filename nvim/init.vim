@@ -169,9 +169,9 @@ call plug#end()
 	" Easier moving in tabs and windows
 	" The lines conflict with the default digraph mapping of <C-K>
 	map <C-J> <C-W>j
-        map <C-K> <C-W>k
-        map <C-L> <C-W>l
-        map <C-H> <C-W>h
+	map <C-K> <C-W>k
+	map <C-L> <C-W>l
+	map <C-H> <C-W>h
 
 	" Most prefer to toggle search highlighting rather than clear the current
 	" search results.
