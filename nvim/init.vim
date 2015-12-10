@@ -16,20 +16,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
-Plug 'critiqjo/lldb.nvim', { 'for': ['c', 'cpp'] }
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': 'brew unlink python && ./install.py --clang-completer && brew link python', 'for': ['c', 'cpp', 'python'] }
 
 " Add plugins to &runtimepath
 call plug#end()
-
-if filereadable(expand("~/.config/nvim/config.vim"))
-	source ~/.config/nvim/config.vim
-	let g:python_host_prog = nvim_python_path
-endif
-
-
 
 " Identify platform {
 	silent function! OSX()
@@ -249,10 +241,6 @@ endif
 	let g:ycm_autoclose_preview_window_after_insertion = 1
 	let g:ycm_global_ycm_extra_conf = '~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 	let g:ycm_extra_conf_globlist = ['~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py']
-
-	if filereadable(expand("~/.config/nvim/config.vim"))
-		let g:ycm_path_to_python_interpreter = ycm_python_path
-	endif
 
 	let g:ycm_filetype_blacklist = {
 	      \ 'tagbar' : 1,
