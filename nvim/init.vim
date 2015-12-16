@@ -14,7 +14,7 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
-Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'd0u9/vim-numbertoggle'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -357,4 +357,5 @@ call plug#end()
 
 " vim-numbertoggle {
 	let g:NumberToggleTrigger="<leader>cn"
+	let g:AbsoluteNumberWhenOpening = 1
 " }
