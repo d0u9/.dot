@@ -14,7 +14,6 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
-Plug 'd0u9/vim-numbertoggle'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -217,6 +216,35 @@ call plug#end()
 
 	" Go back to previous window
 	map <Leader>wp <C-w>p
+
+
+	" Line number toggle {
+		let g:relativemode = 0
+		" Enables relative numbers.
+		function! EnableRelativeNumbers()
+			set number
+			set relativenumber
+		endfunc
+
+		" Disables relative numbers.
+		function! DisableRelativeNumbers()
+			set number
+			set norelativenumber
+		endfunc
+
+		" NumberToggle toggles between relative and absolute line numbers
+		function! NumberToggle()
+			if(&relativenumber == 1)
+				call DisableRelativeNumbers()
+				let g:relativemode = 0
+			else
+				call EnableRelativeNumbers()
+				let g:relativemode = 1
+			endif
+		endfunc
+
+		map <silent> <leader>ln :call NumberToggle()<CR>
+	" }
 " }
 
 
@@ -344,7 +372,7 @@ call plug#end()
 " }
 
 " undotree {
-	nmap <leader>tr :UndotreeToggle<cr>
+	nmap <leader>ut :UndotreeToggle<cr>
 	let g:undotree_SplitWidth = 50
 	let g:undotree_WindowLayout = 2
 " }
@@ -357,7 +385,3 @@ call plug#end()
 	let g:lt_height = 18
 " }
 
-" vim-numbertoggle {
-	let g:NumberToggleTrigger="<leader>cn"
-	let g:AbsoluteNumberWhenOpening = 1
-" }
