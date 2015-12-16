@@ -345,6 +345,8 @@ call plug#end()
 
 " undotree {
 	nmap <leader>tr :UndotreeToggle<cr>
+	let g:undotree_SplitWidth = 50
+	let g:undotree_WindowLayout = 2
 " }
 
 " fugitive {
