@@ -8,7 +8,6 @@ This repo includes configuration files come from various most common used softew
 ---
 
 # Content
-- [Vim](#vim)
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
 
