@@ -190,10 +190,11 @@ call plug#end()
 	" Some helpers to edit mode
 	" http://vimcasts.org/e/14
 	cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
-	map <leader>ew :e %%
-	map <leader>es :sp %%
-	map <leader>ev :vsp %%
-	map <leader>et :tabe %%
+	nmap <leader>ew :e %%
+	nmap <leader>es :sp %%
+	nmap <leader>ev :vsp %%
+	nmap <leader>et :tabe %%
+	nmap <leader>eb : %%
 
 
 	" Map <Leader>ff to display all lines with keyword under cursor
@@ -243,7 +244,7 @@ call plug#end()
 			endif
 		endfunc
 
-		map <silent> <leader>ln :call NumberToggle()<CR>
+		map <silent> <leader>tl :call NumberToggle()<CR>
 	" }
 " }
 
@@ -347,16 +348,16 @@ call plug#end()
 	"let g:buffergator_mru_cycle_loop = 1
 
 	" Go to the previous buffer open
-	nmap <leader>jj :BuffergatorMruCyclePrev<cr>
+	nmap <leader>bj :BuffergatorMruCyclePrev<cr>
 
 	" Go to the next buffer open
-	nmap <leader>kk :BuffergatorMruCycleNext<cr>
+	nmap <leader>bk :BuffergatorMruCycleNext<cr>
 
 	" View the entire list of buffers open
 	nmap <leader>bl :BuffergatorOpen<cr>
 
 	" Shared bindings from Solution #1 from earlier
-	nmap <leader>T :enew<cr>
+	nmap <leader>bt :enew<cr>
 	nmap <leader>bq :bp <BAR> bd #<cr>
 " }
 
@@ -368,7 +369,6 @@ call plug#end()
 " }
 
 " Ag {
-
 " }
 
 " undotree {
