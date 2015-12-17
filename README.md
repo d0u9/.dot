@@ -21,6 +21,10 @@ This repo includes configuration files come from various most common used softew
 
 You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
+## Install ag command
+
+Here, we use `ag` as the search command of `CtrlP` command. So you need to install it accoradingly. If there is no any `ag` in your system, the default search mechanism of CtrlP is used.
+
 ## Create configuration director
 
 Instead of `.vimr` and `.vim/` dir, neovim uses the XDG specification to manage its configuration files.
