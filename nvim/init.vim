@@ -14,7 +14,6 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
-Plug 'terryma/vim-multiple-cursors'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -386,6 +385,3 @@ call plug#end()
 	let g:lt_height = 18
 " }
 
-" vim-multiple-cursors {
-	
-" }
