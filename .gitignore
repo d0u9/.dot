@@ -12,3 +12,4 @@ nvim/cache_dir/undo_cache
 # Other tmp files
 *.swp
 *~
+*.pyc
