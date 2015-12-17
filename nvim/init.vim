@@ -267,8 +267,8 @@ call plug#end()
 
 	let g:ycm_enable_diagnostic_signs = 0
 	let g:ycm_autoclose_preview_window_after_insertion = 1
-	let g:ycm_global_ycm_extra_conf = '~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-	let g:ycm_extra_conf_globlist = ['~/.dot/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py']
+	let g:ycm_global_ycm_extra_conf = '~/.config/nvim/ycm_extra_conf.py'
+	let g:ycm_extra_conf_globlist = ['~/.config/nvim/ycm_extra_conf.py']
 
 	let g:ycm_filetype_blacklist = {
 	      \ 'tagbar' : 1,
