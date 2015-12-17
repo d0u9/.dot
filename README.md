@@ -14,21 +14,6 @@ This repo includes configuration files come from various most common used softew
 
 ---
 
-# Vim
-
-- Install `vundle` according to [https://github.com/VundleVim/Vundle.vim#quick-start](https://github.com/VundleVim/Vundle.vim#quick-start)
-- Make symbol link to `~/.vimrc`:
-
-```
-`ln -s .dot/vimrc ~/.vimrc`.
-```
-
-- Open your Vim and execute `:PluginInstall`.
-- Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation)
-- Vim theme, Copy the theme to `~/.vim/colors/`.
-
----
-
 # NeoVim
 
 > If you are a man occasionally understands Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
@@ -74,6 +59,10 @@ Otherwise, you may check [this](https://github.com/junegunn/vim-plug#installatio
 - Open your nvim and execute `:PlugInstall`.
 - Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation).
 - Update remote plugins by running `:UpdateRemotePlugins` in nvim.
+
+## Note about ycm confugration in Linux
+
+Due to the fact that YCM's default configuration file is set up for OSX, you should change this file(`.dot/nvim/ycm_extra_config.py`) for Linux accoradingly. For more details about this configuration, you need to check the official document of YCM.
 
 ---
 
