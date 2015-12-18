@@ -17,6 +17,8 @@ Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ivalkeen/nerdtree-execute'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
