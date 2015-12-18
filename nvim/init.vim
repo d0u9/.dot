@@ -16,6 +16,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
+Plug 'scrooloose/nerdtree'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -376,4 +377,15 @@ call plug#end()
 
 " vinarise {
 
+" }
+
+" NERDtree {
+	map <F3> :NERDTreeToggle<cr>
+	let NERDTreeWinSize = 33
+	let NERDTreeShowBookmarks = 1
+	let NERDTreeIgnore = ['\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
+	let NERDTreeChDirMode = 0
+	let NERDTreeMouseMode = 2
+	let NERDTreeShowHidden = 1
+	let NERDTreeBookmarksFile = expand('$HOME') . '/.config/nvim/NERDTreeBookmarks'
 " }
