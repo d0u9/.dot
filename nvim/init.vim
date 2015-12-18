@@ -15,6 +15,7 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
+Plug 'Shougo/vinarise.vim'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -373,3 +374,6 @@ call plug#end()
 	let g:lt_height = 18
 " }
 
+" vinarise {
+
+" }
