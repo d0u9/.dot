@@ -14,6 +14,7 @@ Plug 'rking/ag.vim'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
+Plug 'd0u9/cscope.vim'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
@@ -203,7 +204,7 @@ call plug#end()
 	map <Leader>w= <C-w>=
 
 	" Go back to previous window
-	map <Leader>wp <C-w>p
+	"map <Leader>wp <C-w>p
 
 
 	" Line number toggle {
