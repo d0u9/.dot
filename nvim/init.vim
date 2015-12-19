@@ -267,6 +267,16 @@ call plug#end()
 	let g:ycm_global_ycm_extra_conf = '~/.config/nvim/ycm_extra_conf.py'
 	let g:ycm_extra_conf_globlist = ['~/.config/nvim/ycm_extra_conf.py']
 
+	nnoremap <leader>jr :YcmDiags<CR>
+	nnoremap <leader>jh :YcmCompleter GoToInclude<cr>
+	nnoremap <leader>jd :YcmCompleter GoTo<cr>
+	nnoremap <leader>jl :YcmCompleter GoToDeclaration<cr>
+	nnoremap <leader>jf :YcmCompleter GoToDefinition<cr>
+	nnoremap <leader>jx :YcmCompleter FixIt<cr>
+	nnoremap <leader>jp :YcmCompleter GetParent<cr>
+	nnoremap <leader>jt :YcmCompleter GetType<cr>
+	nnoremap <leader>jo :YcmCompleter GetDoc<cr>
+
 	let g:ycm_filetype_blacklist = {
 	      \ 'tagbar' : 1,
 	      \ 'qf' : 1,
