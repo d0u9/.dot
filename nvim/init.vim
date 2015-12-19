@@ -3,11 +3,9 @@
 call plug#begin('~/.dot/nvim/plugged')
 
 " Plugin tables
-Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdcommenter'
 Plug 'airblade/vim-gitgutter'
 Plug 'majutsushi/tagbar'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'bling/vim-bufferline'
 Plug 'rking/ag.vim'
@@ -16,6 +14,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
+
+Plug 'bling/vim-airline'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ivalkeen/nerdtree-execute'
@@ -23,6 +24,8 @@ Plug 'ivalkeen/nerdtree-execute'
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
+
+Plug 'ryanoasis/vim-devicons'
 
 " Add plugins to &runtimepath
 call plug#end()
@@ -391,3 +394,9 @@ call plug#end()
 	let NERDTreeShowHidden = 1
 	let NERDTreeBookmarksFile = expand('$HOME') . '/.config/nvim/NERDTreeBookmarks'
 " }
+
+" vim-devicons {
+	autocmd FileType nerdtree setlocal nolist
+	let g:WebDevIconsNerdTreeAfterGlyphPadding = ''
+" }
+
