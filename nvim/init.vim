@@ -20,12 +20,13 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+\ | Plug 'ryanoasis/vim-devicons'
+
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
 
-Plug 'ryanoasis/vim-devicons'
 
 " Add plugins to &runtimepath
 call plug#end()
