@@ -11,6 +11,12 @@ This repo includes configuration files come from various most common used softew
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
 
+# Prerequisite
+
+To obtain the full features of this configuration, you have to install NERD fonts which are patched lots of icons.
+
+You can find more details of NERD fonts here: [https://github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
+
 ---
 
 # NeoVim
@@ -25,7 +31,7 @@ You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 Here, we use `ag` as the search command of `CtrlP` command. So you need to install it accoradingly. If there is no any `ag` in your system, the default search mechanism of CtrlP is used.
 
-## Create configuration director
+## Create configuration directory
 
 Instead of `.vimr` and `.vim/` dir, neovim uses the XDG specification to manage its configuration files.
 
