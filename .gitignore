@@ -10,6 +10,9 @@ nvim/cache_dir/ctrlp_cache
 nvim/cache_dir/undo_cache
 NERDTreeBookmarks
 
+# tmux
+tmux/plugins
+
 # Other tmp files
 *.swp
 *~
