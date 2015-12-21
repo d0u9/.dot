@@ -10,6 +10,7 @@ This repo includes configuration files come from various most common used softew
 # Content
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
+- [tmux](#tmux)
 
 # Prerequisite
 
@@ -75,11 +76,39 @@ Due to the fact that YCM's default configuration file is set up for OSX, you sho
 
 ---
 
-# oh-my-zs
+# oh-my-zsh
 
 1. Copy theme to your oh-my-zsh configuration directory.
 2. Make a symbol of zshrc to your ~ directory.
 
+---
+
+# tmux
+
+## Make symbol link
+
+Link `tmux` dir and `tmux.conf` to your home directory:
+
+```
+ln -s /path/to/.dot/tmux ~/.tmux
+ln -s /path/to/.dot/tmux/tmux.conf ~/.tmux.conf
+```
+
+## Install tpm plugin
+
+The official installation guide can be found [https://github.com/tmux-plugins/tpm#installation](https://github.com/tmux-plugins/tpm#installation).
+
+Simply:
+
+```
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
+## Install other plugins
+
+Launch tmux and press the shortcut: `Prefix + I`.
+
+---
 
 # License
 ![CC License](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
