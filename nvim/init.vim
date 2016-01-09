@@ -14,6 +14,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
+Plug 'dhruvasagar/vim-table-mode'
 
 Plug 'bling/vim-airline'
 Plug 'ctrlpvim/ctrlp.vim'
