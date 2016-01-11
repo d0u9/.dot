@@ -14,7 +14,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/ListToggle'
 Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
-Plug 'dhruvasagar/vim-table-mode'
 
 Plug 'bling/vim-airline'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -27,6 +26,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
+Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
 
 " Add plugins to &runtimepath
