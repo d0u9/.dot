@@ -25,7 +25,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'bfredl/nvim-ipy', { 'for': 'python' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python'] }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python', 'css', 'html'] }
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
 
