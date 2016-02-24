@@ -16,6 +16,7 @@ Plug 'd0u9/cscope.vim'
 Plug 'Shougo/vinarise.vim'
 
 Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
