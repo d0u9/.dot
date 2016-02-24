@@ -149,7 +149,7 @@ call plug#end()
 " }
 
 " Formatting {
-	set nowrap                      " Do not wrap long lines
+"	set nowrap                      " Do not wrap long lines
 	set shiftwidth=8                " Use indents of 4 spaces
 	set tabstop=8                   " An indentation every eight columns
 	set softtabstop=8               " Let backspace delete indent
