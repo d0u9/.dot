@@ -31,6 +31,8 @@
 import os
 import ycm_core
 
+zephyr_project_include_path = os.environ.get('ZEPHYR_BASE') + '/include'
+
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
 # CHANGE THIS LIST OF FLAGS. YES, THIS IS THE DROID YOU HAVE BEEN LOOKING FOR.
@@ -86,6 +88,7 @@ flags = [
 '-isystem','/usr/local/include',
 '-isystem','/usr/include',
 '-I','/usr/include/c++/4.8',
+'-I',zephyr_project_include_path,
 ]
 
 
