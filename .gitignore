@@ -17,4 +17,7 @@ tmux/plugins
 *.swp
 *~
 *.pyc
+
+# Files and dirs to be ommited
+conf
 private_files
