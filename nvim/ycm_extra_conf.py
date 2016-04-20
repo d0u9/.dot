@@ -31,7 +31,11 @@
 import os
 import ycm_core
 
-zephyr_project_include_path = os.environ.get('ZEPHYR_BASE') + '/include'
+zepyhr_project = os.environ.get('ZEPHYR_BASE')
+if zepyhr_project:
+    zephyr_project_include_path = os.environ.get('ZEPHYR_BASE') + '/include'
+else:
+    zephyr_project_include_path = '/tmp'
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
