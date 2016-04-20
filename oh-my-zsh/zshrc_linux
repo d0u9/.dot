@@ -49,11 +49,11 @@ ZSH_THEME="mytheme"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git pip fasd tmux)
+plugins=(git pip python colored-man-pages history-substring-search vi-mode web-search)
 
 # User configuration
 
-export PATH="$HOME/Applications/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -83,29 +83,23 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Env for manpages
-MANPATH="$HOME/Applications/share"
 
-# Aliases for fasd
-alias a='fasd -a'        # any
-alias s='fasd -si'       # show / search / select
-alias d='fasd -d'        # directory
-alias f='fasd -f'        # file
-alias sd='fasd -sid'     # interactive directory selection
-alias sf='fasd -sif'     # interactive file selection
-alias z='fasd_cd -d'     # cd, same functionality as j in autojump
-alias zz='fasd_cd -d -i' # cd with interactive selection
+###
+## Custom variable
+###
 
-# For pyenv
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# For personal settings
+TRI_CONF=$HOME/.dot/conf
+PERSONAL_ZSHRC_PATH=$TRI_CONF/oh-my-zsh
 
-# For Zephyr SD
-export ZEPHYR_GCC_VARIANT=zephyr
-export ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
+if [ -f "$PERSONAL_ZSHRC_PATH/tri-zshrc.sh" ]; then
+    source $PERSONAL_ZSHRC_PATH/tri-zshrc.sh
+fi
 
-setopt posixargzero
+unset PERSONAL_ZSHRC_PATH
 
-source "$HOME/Zephyr/zephyr-project/zephyr-env.sh"
+if [ ! -d TRI_CONF ]; then
+    unset TRI_CONF
+fi
+
 

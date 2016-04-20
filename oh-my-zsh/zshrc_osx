@@ -45,12 +45,11 @@ ZSH_THEME="mytheme"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git osx brew pip fasd python tmux)
+plugins=(git pip python colored-man-pages history-substring-search vi-mode web-search)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin"
-export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -62,7 +61,7 @@ export LANG=en_US.UTF-8
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#    export EDITOR='mvim'
 # fi
 
 # Compilation flags
@@ -79,17 +78,23 @@ export LANG=en_US.UTF-8
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias ls="gls --color=always"
-alias du="gdu"
-alias em="emacs"
 
-alias a='fasd -a'        # any
-alias s='fasd -si'       # show / search / select
-alias d='fasd -d'        # directory
-alias f='fasd -f'        # file
-alias sd='fasd -sid'     # interactive directory selection
-alias sf='fasd -sif'     # interactive file selection
-alias z='fasd_cd -d'     # cd, same functionality as j in autojump
-alias zz='fasd_cd -d -i' # cd with interactive selection
 
-# Custom variable
+###
+## Custom variable
+###
+
+# For personal settings
+TRI_CONF=$HOME/.dot/conf
+PERSONAL_ZSHRC_PATH=$TRI_CONF/oh-my-zsh
+
+if [ -f "$PERSONAL_ZSHRC_PATH/tri-zshrc.sh" ]; then
+    source $PERSONAL_ZSHRC_PATH/tri-zshrc.sh
+fi
+
+unset PERSONAL_ZSHRC_PATH
+
+if [ ! -d TRI_CONF ]; then
+    unset TRI_CONF
+fi
+
