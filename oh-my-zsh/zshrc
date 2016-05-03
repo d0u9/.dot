@@ -86,7 +86,7 @@ export LANG=en_US.UTF-8
 ## Custom variable
 ###
 
-source tri-zshrc.sh
+source $HOME/.dot/oh-my-zsh/tri-zshrc.sh
 
 if [ ! -d TRI_CONF ]; then
     unset TRI_CONF

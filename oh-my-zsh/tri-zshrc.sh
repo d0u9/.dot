@@ -1,5 +1,4 @@
-TRI='TRI'
-TRI_CONF=$HOME/.dot/conf
+PRIVATE_CONF=$HOME/.dot/conf/oh-my-zsh
 
 # For pyenv
 PYENV_PATH=$HOME/.pyenv/bin
@@ -20,13 +19,17 @@ if hash tmux 2> /dev/null; then
 fi
 
 ## For different platform
-PERSONAL_ZSHRC_PATH=$TRI_CONF/oh-my-zsh
 if [[ "$OSTYPE" = darwin* ]]; then
-    source $PERSONAL_ZSHRC_PATH/macos.sh
+    source macos.sh
 else
-    source $PERSONAL_ZSHRC_PATH/linux.sh
+    source linux.sh
 fi
-unset PERSONAL_ZSHRC_PATH
+
+## For private configurations
+if [ -d "$PRIVATE_CONF" ]; then
+    source $PRIVATE_CONF/private-zshrc.sh
+fi
+unset PRIVATE_CONF
 
 ############
 ############
