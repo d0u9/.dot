@@ -85,14 +85,8 @@ export LANG=en_US.UTF-8
 ###
 ## Custom variable
 ###
-TRI_CONF=$HOME/.dot/conf
-PERSONAL_ZSHRC_PATH=$TRI_CONF/oh-my-zsh
 
-if [ -f "$PERSONAL_ZSHRC_PATH/tri-zshrc.sh" ]; then
-    source $PERSONAL_ZSHRC_PATH/tri-zshrc.sh
-fi
-
-unset PERSONAL_ZSHRC_PATH
+source tri-zshrc.sh
 
 if [ ! -d TRI_CONF ]; then
     unset TRI_CONF
