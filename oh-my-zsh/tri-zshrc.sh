@@ -20,9 +20,9 @@ fi
 
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
-    source macos.sh
+    source $HOME/.dot/oh-my-zsh/macos.sh
 else
-    source linux.sh
+    source $HOME/.dot/oh-my-zsh/linux.sh
 fi
 
 ## For private configurations
