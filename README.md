@@ -3,7 +3,7 @@ The bucket of dot files.
 
 # Description
 
-This repo includes configuration files come from various most common used softewares, such as neovim, oh-my-zsh, tmux or chunks of my private applications. Each application's specific configuration files are contained in one directory which named as the application's name.
+This repo includes configuration files come from various most common used softewares, such as neovim, oh-my-zsh, tmux or private applications(this private configuration is managed by an independent git repo, and won't be added in this repo to avoid sensitive information leakage). Each application's specific configuration files are contained in one directory which named as the application's name.
 
 ---
 
