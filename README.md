@@ -8,6 +8,8 @@ This repo includes configuration files come from various most common used softew
 ---
 
 # Content
+- [Prerequisite](#Prerequisite)
+- [Private config files](#Private config files)
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
 - [tmux](#tmux)
