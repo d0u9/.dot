@@ -17,6 +17,7 @@ tmux/plugins
 *.swp
 *~
 *.pyc
+.DS_Store
 
 # Files and dirs to be ommited
 conf
