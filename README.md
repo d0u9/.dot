@@ -8,7 +8,7 @@ This repo includes configuration files come from various most common used softew
 ---
 
 # Content
-- [Prerequisite](#Prerequisite)
+- [Prerequisite](#prerequisite)
 - [Private config files](#Private config files)
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
@@ -22,6 +22,12 @@ You can find more details of NERD fonts here: [https://github.com/ryanoasis/nerd
 
 ---
 
+# Private config files
+
+If you have any private files(files contained sensitive content), you may gather all of them together and put them in the `conf` directory. This `conf` directory has been added in `gitignore` file, which won't be push to the server.
+
+---
+
 # NeoVim
 
 > If you are a man occasionally understands Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
@@ -32,7 +38,10 @@ You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 ## Install ag command
 
-Here, we use `ag` as the search command of `CtrlP` command. So you need to install it accoradingly. If there is no any `ag` in your system, the default search mechanism of CtrlP is used.
+Here, we use `ag`([the silver searcher](https://github.com/ggreer/the_silver_searcher)) as the search command of `CtrlP` command, So you need to install it accoradingly. If there is no any `ag` in your system, the default search mechanism of CtrlP is used.
+
+For installation details, check [here](https://github.com/ggreer/the_silver_searcher#installing).
+
 
 ## Create configuration directory
 
@@ -47,13 +56,17 @@ ln -s .dot/nvim $XDG_CONFIG_HOME/
 
 [Here](https://neovim.io/doc/user/nvim_from_vim.html) gives more information about the differences between vim and neovim.
 
+
 ## Install python support of Neovim
 
 ```
 pip install neovim
 ```
 
+or, if you familiar with python3 use `pip3` instead.
+
 If you are using OSX El capitan, like me, and have failed installing pip, you have to understand the new protect mechanism, i.e. [SIP](https://en.wikipedia.org/wiki/System_Integrity_Protection).
+
 
 ## Install [vim-plug](https://github.com/junegunn/vim-plug).
 
@@ -72,9 +85,12 @@ Otherwise, you may check [this](https://github.com/junegunn/vim-plug#installatio
 - Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation).
 - Update remote plugins by running `:UpdateRemotePlugins` in nvim.
 
-## Note about ycm confugration in Linux
+## Install YCM with a specific version of python.
 
-Due to the fact that YCM's default configuration file is set up for OSX, you should change this file(`.dot/nvim/ycm_extra_config.py`) for Linux accoradingly. For more details about this configuration, you need to check the official document of YCM.
+If you don't want to use the system's default python interpreter, or if you opt with many different versions of python, you can compile YCM with a specific version of python.
+
+For the details, please check this [article](http://www.d0u9.xyz/compile-ycm-with-a-specific-verion-of-python-which-is-installed-via-pyenv).
+
 
 ---
 
