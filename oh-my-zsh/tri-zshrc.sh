@@ -18,6 +18,10 @@ if hash tmux 2> /dev/null; then
     plugins+=(tmuxinator)
 fi
 
+if hash pyenv 2> /dev/null; then
+    plugins+=(pyenv)
+fi
+
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
     source $HOME/.dot/oh-my-zsh/macos.sh
