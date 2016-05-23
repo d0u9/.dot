@@ -158,6 +158,9 @@ call plug#end()
 	set splitright                  " Puts new vsplit windows to the right of the current
 	set splitbelow                  " Puts new split windows to the bottom of the current
 
+	" Autoindent according to filetypes
+	autocmd Filetype html setlocal ts=3 sw=3 expandtab
+
 " }
 
 " Key (re)Mappings {
