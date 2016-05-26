@@ -417,3 +417,11 @@ call plug#end()
 	let g:WebDevIconsNerdTreeAfterGlyphPadding = ''
 " }
 
+"""""""""""""""""""""""""""""""""""""""""""""
+
+" source private configurations {
+	if !empty(glob("~/.config/nvim/private.vim"))
+		source ~/.config/nvim/private.vim
+	endif
+" }
+
