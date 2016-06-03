@@ -1,5 +1,18 @@
 PRIVATE_CONF=$HOME/.dot/conf/oh-my-zsh
 
+## For different platform
+if [[ "$OSTYPE" = darwin* ]]; then
+    source $HOME/.dot/oh-my-zsh/macos.sh
+else
+    source $HOME/.dot/oh-my-zsh/linux.sh
+fi
+
+## For private configurations
+if [ -d "$PRIVATE_CONF" ]; then
+    source $PRIVATE_CONF/private-zshrc.sh
+fi
+unset PRIVATE_CONF
+
 # For pyenv
 PYENV_PATH=$HOME/.pyenv/bin
 if [ -d "$PYENV_PATH" ]; then
@@ -21,19 +34,6 @@ fi
 if hash pyenv 2> /dev/null; then
     plugins+=(pyenv)
 fi
-
-## For different platform
-if [[ "$OSTYPE" = darwin* ]]; then
-    source $HOME/.dot/oh-my-zsh/macos.sh
-else
-    source $HOME/.dot/oh-my-zsh/linux.sh
-fi
-
-## For private configurations
-if [ -d "$PRIVATE_CONF" ]; then
-    source $PRIVATE_CONF/private-zshrc.sh
-fi
-unset PRIVATE_CONF
 
 ############
 ############
