@@ -344,7 +344,7 @@ call plug#end()
 	if executable('ag')
 	let file_type_to_be_ignored = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif'
 	let g:ctrlp_user_command = 'ag %s -i -l --nocolor --depth 5 -g "" '
-			\ . '-G "^(.(?!(\.(' . file_type_to_be_ignored . ')$)))*$"'
+			\ . '--ignore "' . file_type_to_be_ignored . '"'
 	endif
 	let g:ctrlp_clear_cache_on_exit = 1
 " }
