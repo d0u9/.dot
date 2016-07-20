@@ -23,11 +23,11 @@ Plug 'scrooloose/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 \ | Plug 'ryanoasis/vim-devicons'
+Plug 'klen/python-mode'
 
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
-Plug 'bfredl/nvim-ipy', { 'for': 'python' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'python', 'css', 'html'] }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html'] }
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
 
