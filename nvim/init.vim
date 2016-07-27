@@ -374,12 +374,6 @@ call plug#end()
 " }
 
 
-" nvim-ipy {
-	let g:nvim_ipy_perform_mappings = 0
-	map <silent> <c-s>   <Plug>(IPy-Run)
-	imap <silent> <c-f>   <Plug>(IPy-Complete)
-" }
-
 " Ag {
 " }
 
