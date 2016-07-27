@@ -91,7 +91,7 @@ flags = [
 '-isystem','/usr/lib/gcc/x86_64-linux-gnu/4.8',
 '-isystem','/usr/local/include',
 '-isystem','/usr/include',
-'-I','/usr/include/c++/4.8',
+'-I','/usr/include/c++/4.9',
 '-I',zephyr_project_include_path,
 ]
 
