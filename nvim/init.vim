@@ -27,7 +27,9 @@ Plug 'klen/python-mode'
 
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
+Plug  'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html'] }
+
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
 
