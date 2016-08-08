@@ -163,6 +163,7 @@ call plug#end()
 	" Autoindent according to filetypes
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
+	autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
 " }
 
 " Key (re)Mappings {
