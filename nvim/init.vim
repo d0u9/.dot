@@ -169,6 +169,7 @@ call plug#end()
 	autocmd Filetype c setlocal ts=8 sw=8 sts=8
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
+	autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
 " }
 
 " Key (re)Mappings {
