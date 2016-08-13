@@ -23,12 +23,11 @@ Plug 'scrooloose/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 \ | Plug 'ryanoasis/vim-devicons'
-Plug 'klen/python-mode'
 
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug  'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html'] }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html', 'python'] }
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
@@ -48,8 +47,14 @@ call plug#end()
 	endfunction
 " }
 
+" Custom settings {
+	let g:python3_host_prog = '/home/doug/.pyenv/versions/3.5.2/bin/python3.5'
+	let g:ycm_server_python_interpreter = '/home/doug/.pyenv/versions/3.5.2/bin/python3.5'
+" }
+
+
 " General settings {
-	set background=dark	
+	set background=dark
 
 	filetype plugin indent on	" Automatically detect file types.
 	syntax on			" Syntax highlighting
@@ -153,14 +158,15 @@ call plug#end()
 
 " Formatting {
 "	set nowrap                      " Do not wrap long lines
-	set shiftwidth=8                " Use indents of 4 spaces
-	set tabstop=8                   " An indentation every eight columns
-	set softtabstop=8               " Let backspace delete indent
+	set shiftwidth=4                " Use indents of 4 spaces
+	set tabstop=4                   " An indentation every eight columns
+	set softtabstop=4               " Let backspace delete indent
 	set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
 	set splitright                  " Puts new vsplit windows to the right of the current
 	set splitbelow                  " Puts new split windows to the bottom of the current
 
 	" Autoindent according to filetypes
+	autocmd Filetype c setlocal ts=8 sw=8 sts=8
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
 " }
@@ -269,7 +275,7 @@ call plug#end()
 
 
 " YCM {
-
+	let g:ycm_python_binary_path = 'python'
 	let g:ycm_enable_diagnostic_signs = 0
 	let g:ycm_autoclose_preview_window_after_insertion = 1
 	let g:ycm_global_ycm_extra_conf = '~/.config/nvim/ycm_extra_conf.py'
