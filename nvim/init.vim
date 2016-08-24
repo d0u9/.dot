@@ -30,6 +30,7 @@ Plug  'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html', 'python'] }
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
+Plug 'wesQ3/vim-windowswap'
 
 
 " Add plugins to &runtimepath
