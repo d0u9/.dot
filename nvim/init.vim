@@ -26,7 +26,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
-Plug  'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
+Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html', 'python'] }
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
@@ -159,25 +159,29 @@ call plug#end()
 
 " Formatting {
 "	set nowrap                      " Do not wrap long lines
-	set shiftwidth=4                " Use indents of 4 spaces
-	set tabstop=4                   " An indentation every eight columns
-	set softtabstop=4               " Let backspace delete indent
+	set shiftwidth=8                " Use indents of 4 spaces
+	set tabstop=8                   " An indentation every eight columns
+	set softtabstop=8               " Let backspace delete indent
 	set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
 	set splitright                  " Puts new vsplit windows to the right of the current
 	set splitbelow                  " Puts new split windows to the bottom of the current
+	set expandtab
 
 	" Autoindent according to filetypes
 	set cindent
 	set cinoptions=g-1
-	autocmd Filetype c setlocal ts=8 sw=8 sts=8 expandtab
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
-	autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
+	"autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
+	autocmd Filetype c setlocal ts=8 sw=8 sts=8 expandtab
 " }
 
 " Key (re)Mappings {
 	" Set leader key
 	let mapleader=","
+
+        " Exit form terminal mode
+        tnoremap <c-q> <c-\><c-n>
 
 	" Easier moving in tabs and windows
 	" The lines conflict with the default digraph mapping of <C-K>
