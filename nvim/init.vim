@@ -31,6 +31,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': 
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 Plug 'wesQ3/vim-windowswap'
+Plug 'tpope/vim-unimpaired'
 
 
 " Add plugins to &runtimepath
@@ -376,10 +377,12 @@ call plug#end()
 	"let g:buffergator_mru_cycle_loop = 1
 
 	" Go to the previous buffer open
-	nmap <leader>bj :BuffergatorMruCyclePrev<cr>
+        " Use [b instead
+	"nmap <leader>bj :BuffergatorMruCyclePrev<cr>
 
 	" Go to the next buffer open
-	nmap <leader>bk :BuffergatorMruCycleNext<cr>
+        " Use ]b instead
+	"nmap <leader>bk :BuffergatorMruCycleNext<cr>
 
 	" View the entire list of buffers open
 	nmap <leader>bl :BuffergatorOpen<cr>
