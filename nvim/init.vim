@@ -373,7 +373,7 @@ call plug#end()
 
 
 " tagbar {
-	nnoremap <silent> <leader>tb :TagbarToggle<CR>
+	nnoremap <silent> <F4> :TagbarToggle<CR>
 " }
 
 
