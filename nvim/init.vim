@@ -274,7 +274,7 @@ call plug#end()
 
 		function! FindCscopeDB()
 			let cscope_file = "cscope.out"
-			let relative_path = ""
+			let relative_path = "./"
 			let found_cscope_file = 0
 			let g:cscope_i = 0
 
@@ -283,21 +283,19 @@ call plug#end()
 					let before = substitute(system("pwd"), '\n$', '', '')
 					:execute "lcd " . relative_path
 					let after = substitute(system("pwd"), '\n$', '', '')
-					:execute "echo \"Load cscop db in ". after . "\""
+					:execute "echo \"Load cscope db in ". after . "\""
 					:execute "silent !cscope -Rbq"
 					:execute "silent! cs add " . cscope_file
 					:execute "lcd " . before
 					let found_cscope_file = 1
 					break
 				else
-					"let cscope_file = "../" . cscope_file
 					let relative_path = "../" . relative_path
 					let g:cscope_i += 1
 				endif
 			endwhile
 
 			if found_cscope_file != 1
-				:echo "xxxxxxxxxxxxxxxxxX"
 				let pwd = substitute(system("pwd"), '\n$', '', '')
 				:execute "echo \"Create and load cscop db in ". pwd . "\""
 				:execute "silent !cscope -Rbq"
