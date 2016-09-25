@@ -50,8 +50,8 @@ call plug#end()
 " }
 
 " Custom settings {
-	let g:python3_host_prog = '/home/doug/.pyenv/versions/3.5.2/bin/python3.5'
-	let g:ycm_server_python_interpreter = '/home/doug/.pyenv/versions/3.5.2/bin/python3.5'
+	let g:python3_host_prog = $HOME . '/.pyenv/versions/3.5.2/bin/python3.5'
+	let g:ycm_server_python_interpreter = $HOME . '/.pyenv/versions/3.5.2/bin/python3.5'
 " }
 
 
