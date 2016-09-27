@@ -27,11 +27,12 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html', 'python'] }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html'] }
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 Plug 'wesQ3/vim-windowswap'
 Plug 'tpope/vim-unimpaired'
+Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 
 
 " Add plugins to &runtimepath
