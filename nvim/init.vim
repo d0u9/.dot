@@ -173,7 +173,7 @@ call plug#end()
 
 	" Autoindent according to filetypes
 	set cindent
-	set cinoptions=g-1
+	set cinoptions=g-1,:0
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
 	"autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
