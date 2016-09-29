@@ -271,40 +271,10 @@ call plug#end()
 	" }
 
 	" Re-generate and load cscope lib {
-		if !exists("g:cscope_max_depth")
-			let g:cscope_max_depth = 6
-		endif
-
 		function! FindCscopeDB()
-			let cscope_file = "cscope.out"
-			let relative_path = "./"
-			let found_cscope_file = 0
-			let g:cscope_i = 0
-
-			while g:cscope_i < g:cscope_max_depth
-				if filereadable(relative_path . cscope_file)
-					let before = substitute(system("pwd"), '\n$', '', '')
-					:execute "lcd " . relative_path
-					let after = substitute(system("pwd"), '\n$', '', '')
-					:execute "echo \"Load cscope db in ". after . "\""
-					:execute "silent !cscope -Rbq"
-					:execute "silent! cs add " . cscope_file
-					:execute "lcd " . before
-					let found_cscope_file = 1
-					break
-				else
-					let relative_path = "../" . relative_path
-					let g:cscope_i += 1
-				endif
-			endwhile
-
-			if found_cscope_file != 1
-				let pwd = substitute(system("pwd"), '\n$', '', '')
-				:execute "echo \"Create and load cscop db in ". pwd . "\""
-				:execute "silent !cscope -Rbq"
-				:execute "silent! cs add " . cscope_file
-			endif
-
+			:execute "echo \"Regenerate and load cscop db.\""
+			:execute "silent !cscope -Rbq"
+			:execute "silent cscope reset"
 		endfunc
 
 		map <silent> <F9> :call FindCscopeDB()<CR>
