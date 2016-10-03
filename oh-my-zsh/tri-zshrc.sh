@@ -35,6 +35,12 @@ if hash pyenv 2> /dev/null; then
     plugins+=(pyenv)
 fi
 
+## For alias
+alias tmux="tmux -2"
+
+## For environment variables
+export TERM=xterm-256color
+
 ############
 ############
 
