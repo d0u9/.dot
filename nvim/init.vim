@@ -174,7 +174,11 @@ call plug#end()
 
 	" Autoindent according to filetypes
 	set cindent
-	set cinoptions=g-1,:0,(0
+	set cinoptions=g-1,:0,(0,w0
+
+	" let the code style of .h file act as .c not .cpp
+	" the default is cpp
+	let c_syntax_for_h = 1
 
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
