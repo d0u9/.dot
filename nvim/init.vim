@@ -28,6 +28,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'rizzatti/dash.vim', { 'for': ['c', 'cpp', 'python', 'php'] }
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'for': ['c', 'cpp', 'css', 'html'] }
+Plug 'vivien/vim-linux-coding-style', { 'for': ['c'] }
 
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 Plug 'wesQ3/vim-windowswap'
@@ -173,7 +174,8 @@ call plug#end()
 
 	" Autoindent according to filetypes
 	set cindent
-	set cinoptions=g-1,:0
+	set cinoptions=g-1,:0,(0
+
 	autocmd Filetype html setlocal ts=3 sw=3 expandtab
 	autocmd Filetype css setlocal ts=3 sw=3 expandtab
 	"autocmd Filetype cpp setlocal ts=4 sw=4 expandtab
