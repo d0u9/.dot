@@ -84,7 +84,7 @@ nvim()
 {
     echo "installing nvim config files"
     NVIM_CONF=$DOT_DIR/nvim
-    TGT_NVIM_CONF=$HOME/conf/nvim
+    TGT_NVIM_CONF=$HOME/.config/nvim
 
     back_or_override $TGT_NVIM_CONF
     ln -s $NVIM_CONF $TGT_NVIM_CONF
