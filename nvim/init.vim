@@ -278,9 +278,18 @@ call plug#end()
 
 	" Re-generate and load cscope lib {
 		function! FindCscopeDB()
-			:execute "echo \"Regenerate and load cscop db.\""
-			:execute "silent !cscope -Rbq"
-			:execute "silent cscope reset"
+			execute "echo \"Regenerate and load cscop db.\""
+			execute "silent !cscope -Rbq"
+
+			redir => cs_file
+			silent cscope show
+			redir END
+
+			if cs_file =~ "^no"
+				execute "silent cscope add cscope.out"
+			else
+				execute "silent cscope reset"
+			endif
 		endfunc
 
 		map <silent> <F9> :call FindCscopeDB()<CR>
