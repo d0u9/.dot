@@ -66,6 +66,7 @@ call plug#end()
 	filetype plugin indent on	" Automatically detect file types.
 	syntax on			" Syntax highlighting
 	set mousehide			" Hide the mouse cursor while typing
+	set noeol
 
 
 	" Share content with the system's clipborad
