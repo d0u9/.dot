@@ -24,7 +24,7 @@ You can find more details of NERD fonts here: [https://github.com/ryanoasis/nerd
 
 # Private config files
 
-If you have any private files(files contained sensitive content), you may gather all of them together and put them in the `conf` directory. This `conf` directory has been added in `gitignore` file, which won't be push to the server.
+If you have any private files(files containe sensitive contents), you may gather all of them together and put them in the `conf` directory. The `conf` directory has been added in `gitignore` file, which won't be pushed to the server.
 
 ---
 
