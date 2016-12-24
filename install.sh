@@ -97,6 +97,11 @@ nvim()
     echo "install finished, you have to execute ":plugInstall" in nvim to install plugins"
 }
 
+if ! hash curl 2> /dev/null; then
+    echo "curl can not be found"
+    exit 1
+fi
+
 case "$1" in
     "zsh")
         zsh
