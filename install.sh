@@ -50,8 +50,6 @@ zsh()
 
     back_or_override $TGT_RC_FILE
 
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
     ln -s $ZSHRC_FILE $TGT_RC_FILE
     rm -fr $TGT_THEME_FILE
     ln -s $ZSHTHEME_FILE $TGT_THEME_FILE
