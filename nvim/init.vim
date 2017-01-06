@@ -55,8 +55,8 @@ call plug#end()
 
 " Custom settings {
 	if LINUX()
-		let g:python3_host_prog = $HOME . '/.pyenv/versions/3.5.2/bin/python3.5'
-		let g:ycm_server_python_interpreter = $HOME . '/.pyenv/versions/3.5.2/bin/python3.5'
+		let g:python3_host_prog = $HOME . '/.pyenv/versions/3.6.0/bin/python'
+		let g:ycm_server_python_interpreter = $HOME . '/.pyenv/versions/3.6.0/bin/python'
 	endif
 " }
 
