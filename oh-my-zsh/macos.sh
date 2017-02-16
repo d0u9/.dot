@@ -4,7 +4,3 @@
 ## For plugins
 plugins+=(osx)
 
-if hash brew 2> /dev/null; then
-    plugins+=(brew)
-fi
-
