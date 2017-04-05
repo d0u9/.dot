@@ -1,16 +1,23 @@
-if &compatible
-  set nocompatible
-endif
-set runtimepath+=~/.dot/nvim/plugins/repos/github.com/Shougo/dein.vim
+" User settings
+let g:dein_path = "~/.config/nvim/plugins/repos/github.com/Shougo/dein.vim"
+let g:plugin_path="~/.config/nvim/plugins"
 
-if dein#load_state(expand('~/.dot/nvim/plugins'))
-  call dein#begin(expand('~/.dot/nvim/plugins'))
+" For dein to install plugins
+source $HOME/.config/nvim/plugin_list.vim
 
-  call dein#add('Shougo/dein.vim')
+" For vim's basic settings
+source $HOME/.config/nvim/basic_settings.vim
 
-  call dein#end()
-  call dein#save_state()
-endif
+" Set the color scheme
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set t_Co=256
 
-filetype plugin indent on
-syntax enable
+let g:jellybeans_overrides = {
+\    'background': { 'guibg': 'none' },
+\    'Delimiter': { 'guibg': 'none' },
+\}
+
+colorscheme  jellybeans
+
+" Configure plugins
+source $HOME/.config/nvim/plugin_settings.vim
