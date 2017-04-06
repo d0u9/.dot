@@ -35,6 +35,10 @@ if hash pyenv 2> /dev/null; then
     plugins+=(pyenv)
 fi
 
+if hash docker 2> /dev/null; then
+    plugins+=(docker)
+fi
+
 ## For alias
 alias tmux="tmux -2"
 
