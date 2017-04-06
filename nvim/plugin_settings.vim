@@ -44,9 +44,36 @@
                 \ }
 " }
 
+" nerdcommenter {
+    let g:NERDAltDelims_c = 1
+    let g:NERDTrimTrailingWhitespace = 1
+    let g:NERDSpaceDelims = 1
+" }
+
 " gitgutter {
     " Disable all the git-gutter key bindings
     let g:gitgutter_map_keys = 0
     " Show the gutter always
     let g:gitgutter_sign_column_always = 1
+" }
+
+" undotree {
+    let g:undotree_SplitWidth = 50
+    let g:undotree_WindowLayout = 2
+" }
+
+" NERDtree {
+    map <F3> :NERDTreeToggle<cr>
+    let NERDTreeWinSize = 33
+    let NERDTreeShowBookmarks = 1
+    let NERDTreeIgnore = ['\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
+    let NERDTreeChDirMode = 0
+    let NERDTreeMouseMode = 2
+    let NERDTreeShowHidden = 1
+    let NERDTreeBookmarksFile = expand('$HOME') . '/.config/nvim/NERDTreeBookmarks'
+" }
+
+" vim-devicons {
+    autocmd FileType nerdtree setlocal nolist
+    let g:WebDevIconsNerdTreeAfterGlyphPadding = ''
 " }

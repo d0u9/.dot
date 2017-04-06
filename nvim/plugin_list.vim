@@ -23,6 +23,8 @@ if dein#load_state(expand(g:plugin_path))
             \ { 'on_ft': 'python' })
     call dein#add('tweekmonster/deoplete-clang2',
             \ { 'on_ft': ['c', 'cpp'] })
+    call dein#add('Shougo/neco-vim',
+            \ { 'on_ft': 'vim' })
 
     " Enhancement
     call dein#add('Konfekt/FastFold')
@@ -38,8 +40,10 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('airblade/vim-gitgutter')
 
     " Others
-    call dein#add('majutsushi/tagbar')
-    call dein#add('scrooloose/nerdcommenter')
+    call dein#add('majutsushi/tagbar',
+            \ { 'lazy': 1 })
+    call dein#add('scrooloose/nerdcommenter',
+            \ { 'lazy': 1 })
     call dein#add('tpope/vim-fugitive',
             \ { 'on_cmd': ['Gstatus', 'Gdiff'] })
 

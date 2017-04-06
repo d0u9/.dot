@@ -27,10 +27,28 @@
     " For when you forget to sudo.. Really Write the file.
     cmap w!! w !sudo tee % >/dev/null
 
+    " Easier horizontal scrolling
+    map zl zL
+    map zh zH
 " }
 
+" Window, Panel, Tabs {
+    " Windows resizeing
+    nnoremap <silent> <Leader>wk :exe "resize +" . (&lines * 1/4)<CR>
+    nnoremap <silent> <Leader>wj :exe "resize -" . (&lines * 1/4)<CR>
+    nnoremap <silent> <Leader>wl :exe "vertical resize -" . (&columns * 1/8)<CR>
+    nnoremap <silent> <Leader>wh :exe "vertical resize +" . (&columns * 1/8)<CR>
+
+    " Adjust viewports to the same size
+    map <Leader>w= <C-w>=
+
+    " Also check ChooseWin's documentation for more window and tab
+    " manipulations.
+" }
+
+"""""""""""""""""" key bindings for specific plugins """"""""""""""""""""""""
+
 " Denite {
-    nnoremap <C-I> :Denite<CR>
 " }
 
 " deoplete {
@@ -50,6 +68,18 @@
 " }
 
 " ChooseWin {
-    nmap - <Plug>(choosewin)
+    nmap <silent> <Leader>ww <Plug>(choosewin)
+" }
+
+" undotree {
+    nnoremap <leader>ut :UndotreeToggle<cr>
+" }
+
+" NERDtree {
+    nnoremap <silent> <F3> :NERDTreeToggle<cr>
+" }
+
+" tagbar {
+    nnoremap <silent> <F4> :TagbarToggle<CR>
 " }
 
