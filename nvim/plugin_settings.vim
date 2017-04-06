@@ -1,20 +1,10 @@
-" For deoplete {
+" dein {
+    let g:dein#cache_directory=g:dein_cache_dir
+" }
+
+" deoplete {
     " Auto load deoplete
     let g:deoplete#enable_at_startup = 1
-
-    " Setup deoplete to use TAB
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ deoplete#mappings#manual_complete()
-
-    function! s:check_back_space() abort
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~ '\s'
-    endfunction
-
-    inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS> deoplete#smart_close_popup()."\<C-h>"
 " }
 
 
@@ -36,6 +26,7 @@
     let g:airline#extensions#tabline#enabled = 1
     let g:airline#extensions#tabline#fnamemod = ':t'
     let g:airline#extensions#tabline#show_tabs = 0
+    let g:airline#extensions#tabline#exclude_preview = 1
 
     " define the set of text to display for each mode.
     let g:airline_mode_map = {
@@ -53,12 +44,9 @@
                 \ }
 " }
 
-" ChooseWin {
-    nmap - <Plug>(choosewin)
-" }
-
 " gitgutter {
-    set t_8f=^[[38;2;%lu;%lu;%lum
-    set t_8b=^[[48;2;%lu;%lu;%lum
-    let g:airline#extensions#tabline#exclude_preview = 1
+    " Disable all the git-gutter key bindings
+    let g:gitgutter_map_keys = 0
+    " Show the gutter always
+    let g:gitgutter_sign_column_always = 1
 " }
