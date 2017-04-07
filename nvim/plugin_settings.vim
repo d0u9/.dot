@@ -1,5 +1,38 @@
-" dein {
+" Dein {
     let g:dein#cache_directory=g:dein_cache_dir
+" }
+
+" Denite {
+    " Ag command on grep source
+	let ignore_list = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif'
+    call denite#custom#var('grep', 'command', ['ag'])
+    call denite#custom#var('grep', 'default_opts',
+        \ ['-i', '--vimgrep', '--depth', '5', '--ignore', ignore_list])
+    call denite#custom#var('grep', 'recursive_opts', [])
+    call denite#custom#var('grep', 'pattern_opt', [])
+    call denite#custom#var('grep', 'separator', ['--'])
+    call denite#custom#var('grep', 'final_opts', [])
+
+    call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+        \ [ '*~', '*.o', '*.exe', '*.bak', '.DS_Store', '*.pyc', '*.sw[po]', 
+        \   '*.class', '.hg/', '.git/', '.bzr/', '.svn/', 'tags', 'tags-*',
+        \   '*.out', '*.jpg', '*.so', '*.dll', '*.png', '*.jpeg', '*.doc',
+        \   '*.docx', '*.bin', '*.icon', '*.pdf', '*.gif'
+        \ ])
+
+    call denite#custom#source('file_rec', 'matchers',
+        \ ['matcher_fuzzy', 'matcher_ignore_globs'])
+
+" }
+
+" neomru {
+    let g:neomru#directory_mru_path = g:neomru_dir . "/neodirectory.txt"
+    let g:neomru#file_mru_path = g:neomru_dir . "/neofile.txt"
+    let g:neomru#file_mru_limit = 300
+" }
+
+" neoyank {
+    let g:neoyank#file = g:neoyank_file
 " }
 
 " deoplete {

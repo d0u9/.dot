@@ -17,19 +17,26 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('nanotech/jellybeans.vim')
 
     " Completion support
-    call dein#add('Shougo/deoplete.nvim')
     call dein#add('Shougo/neoinclude.vim')
-    call dein#add('zchee/deoplete-jedi', 
-            \ { 'on_ft': 'python' })
-    call dein#add('tweekmonster/deoplete-clang2',
-            \ { 'on_ft': ['c', 'cpp'] })
+    call dein#add('Shougo/deoplete.nvim',
+            \ { 'name': 'deoplete',
+            \   'if' : 1 })
+    call dein#add('zchee/deoplete-jedi',
+            \ { 'on_ft': 'python',
+            \   'depends': 'deoplete' })
+    call dein#add('Rip-Rip/clang_complete',
+            \ { 'on_ft': ['c', 'cpp'],
+            \   'depends': 'deoplete',
+            \   'build': 'make install' })
     call dein#add('Shougo/neco-vim',
-            \ { 'on_ft': 'vim' })
+            \ { 'on_ft': 'vim',
+            \   'depends': 'deoplete' })
 
     " Enhancement
     call dein#add('Konfekt/FastFold')
     call dein#add('tmux-plugins/vim-tmux-focus-events')
     call dein#add('t9md/vim-choosewin')
+    call dein#add('Shougo/neoyank.vim')
     call dein#add('mbbill/undotree',
             \ { 'on_cmd': 'UndotreeToggle' })
 
@@ -51,9 +58,9 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('scrooloose/nerdtree',
             \ { 'on_cmd': ['NERDTreeToggle','NERDTree'] })
     call dein#add('ivalkeen/nerdtree-execute',
-            \ { 'on_source': 'nerdtree' })
+            \ {'depends': 'nerdtree' })
     call dein#add('Xuyuanp/nerdtree-git-plugin',
-            \ { 'on_source': 'nerdtree' })
+            \ { 'depends': 'nerdtree' })
 
     " For better cpp file hightlight
     call dein#add('octol/vim-cpp-enhanced-highlight',
@@ -62,7 +69,8 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('dhruvasagar/vim-table-mode',
             \ { 'on_cmd': 'TableModeToggle' })
     " For hex editing
-    call dein#add('Shougo/vinarise.vim')
+    call dein#add('Shougo/vinarise.vim',
+            \ { 'on_idle': 1 })
 
     call dein#end()
     call dein#save_state()

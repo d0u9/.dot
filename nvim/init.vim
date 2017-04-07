@@ -6,6 +6,8 @@ let g:undo_dir="~/.config/nvim/tmp_files/undo_cache"
 let g:backup_dir="~/.config/nvim/tmp_files/backup_files"
 let g:swap_dir="~/.config/nvim/tmp_files/swap_files"
 let g:dein_cache_dir="~/.config/nvim/tmp_files/dein_cache"
+let g:neoyank_file="~/.config/nvim/tmp_files/denite_files/yankring.txt"
+let g:neomru_dir="~/.config/nvim/tmp_files/denite_files"
 
 " For dein to install plugins
 source $HOME/.config/nvim/plugin_list.vim

@@ -20,10 +20,6 @@
     set mousehide                       " Hide the mouse cursor while typing
     set noeol
 
-
-    " Share content with the system's clipborad
-    set clipboard+=unnamedplus
-
     set shortmess+=filmnrxoOtT          " Avoiding the 'Hit ENTER to continue' prompts
     set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
     set virtualedit=onemore             " Allow for cursor beyond last character

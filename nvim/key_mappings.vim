@@ -49,6 +49,46 @@
 """""""""""""""""" key bindings for specific plugins """"""""""""""""""""""""
 
 " Denite {
+    call denite#custom#map(
+          \ 'insert',
+          \ '<C-d>',
+          \ '<denite:move_to_next_line>',
+          \ 'noremap'
+          \)
+    call denite#custom#map(
+          \ 'insert',
+          \ '<C-f>',
+          \ '<denite:move_to_previous_line>',
+          \ 'noremap'
+          \)
+
+    nnoremap <silent> <leader>fe :Denite -default-action=open file_rec<CR>
+    nnoremap <silent> <leader>fs :Denite -default-action=split file_rec<CR>
+    nnoremap <silent> <leader>fv :Denite -default-action=vsplit file_rec<CR>
+    nnoremap <silent> <leader>fy :Denite -default-action=yank file_rec<CR>
+
+    nnoremap <silent> <leader>me :Denite -default-action=open file_mru<CR>
+    nnoremap <silent> <leader>ms :Denite -default-action=split file_mru<CR>
+    nnoremap <silent> <leader>mv :Denite -default-action=vsplit file_mru<CR>
+    nnoremap <silent> <leader>my :Denite -default-action=yank file_mru<CR>
+
+    nnoremap <silent> <leader>ge :Denite -default-action=open grep<CR>
+    nnoremap <silent> <leader>gs :Denite -default-action=split grep<CR>
+    nnoremap <silent> <leader>gv :Denite -default-action=vsplit grep<CR>
+    nnoremap <silent> <leader>gy :Denite -default-action=yank grep<CR>
+
+    nnoremap <silent> <leader>be :Denite -default-action=open buffer<CR>
+    nnoremap <silent> <leader>bs :Denite -default-action=split buffer<CR>
+    nnoremap <silent> <leader>bv :Denite -default-action=vsplit buffer<CR>
+    nnoremap <silent> <leader>by :Denite -default-action=yank buffer<CR>
+    nnoremap <silent> <leader>bx :Denite -default-action=delete buffer<CR>
+
+    nnoremap <silent> <leader>oe :Denite -default-action=open outline<CR>
+    nnoremap <silent> <leader>os :Denite -default-action=split outline<CR>
+    nnoremap <silent> <leader>ov :Denite -default-action=vsplit outline<CR>
+
+    nnoremap <silent> <leader>oc :Denite -default-action=default command_history<CR>
+    nnoremap <silent> <leader>oy :Denite -default-action=default neoyank<CR>
 " }
 
 " deoplete {
