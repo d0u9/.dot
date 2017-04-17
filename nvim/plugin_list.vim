@@ -21,16 +21,15 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('Shougo/deoplete.nvim',
             \ { 'name': 'deoplete',
             \   'if' : 1 })
-    call dein#add('zchee/deoplete-jedi',
-            \ { 'on_ft': 'python',
-            \   'depends': 'deoplete' })
     call dein#add('Rip-Rip/clang_complete',
-            \ { 'on_ft': ['c', 'cpp'],
-            \   'depends': 'deoplete',
-            \   'build': 'make install' })
+            \ { 'name': 'clang_complete',
+            \   'on_ft': ['c', 'cpp'],
+            \   'depends': 'deoplete' })
     call dein#add('Shougo/neco-vim',
             \ { 'on_ft': 'vim',
             \   'depends': 'deoplete' })
+    call dein#add('davidhalter/jedi-vim',
+            \ { 'on_ft': 'python'})
 
     " Enhancement
     call dein#add('Konfekt/FastFold')
@@ -68,6 +67,9 @@ if dein#load_state(expand(g:plugin_path))
     " Draw tables in vim
     call dein#add('dhruvasagar/vim-table-mode',
             \ { 'on_cmd': 'TableModeToggle' })
+    " For better markdown highlight
+    call dein#add('plasticboy/vim-markdown',
+            \ { 'on_ft': 'markdown' })
     " For hex editing
     call dein#add('Shougo/vinarise.vim',
             \ { 'on_idle': 1 })
@@ -76,3 +78,4 @@ if dein#load_state(expand(g:plugin_path))
     call dein#save_state()
 endif
 
+autocmd FileType python let b:deoplete_disable_auto_complete = 1
