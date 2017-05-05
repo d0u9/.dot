@@ -21,9 +21,8 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('Shougo/deoplete.nvim',
             \ { 'name': 'deoplete',
             \   'if' : 1 })
-    call dein#add('Rip-Rip/clang_complete',
-            \ { 'name': 'clang_complete',
-            \   'on_ft': ['c', 'cpp'],
+    call dein#add('tweekmonster/deoplete-clang2',
+            \ { 'on_ft': ['c'],
             \   'depends': 'deoplete' })
     call dein#add('Shougo/neco-vim',
             \ { 'on_ft': 'vim',
