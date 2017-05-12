@@ -72,10 +72,15 @@
     nnoremap <silent> <leader>mv :Denite -default-action=vsplit file_mru<CR>
     nnoremap <silent> <leader>my :Denite -default-action=yank file_mru<CR>
 
-    nnoremap <silent> <leader>ge :Denite -default-action=open grep<CR>
-    nnoremap <silent> <leader>gs :Denite -default-action=split grep<CR>
-    nnoremap <silent> <leader>gv :Denite -default-action=vsplit grep<CR>
-    nnoremap <silent> <leader>gy :Denite -default-action=yank grep<CR>
+    nnoremap <silent> <leader>ge :DeniteCursorWord -default-action=open grep<CR>
+    nnoremap <silent> <leader>gs :DeniteCursorWord -default-action=split grep<CR>
+    nnoremap <silent> <leader>gv :DeniteCursorWord -default-action=vsplit grep<CR>
+    nnoremap <silent> <leader>gy :DeniteCursorWord -default-action=yank grep<CR>
+    nnoremap <silent> <leader>gge :Denite -default-action=open grep<CR>
+    nnoremap <silent> <leader>ggs :Denite -default-action=split grep<CR>
+    nnoremap <silent> <leader>ggv :Denite -default-action=vsplit grep<CR>
+    nnoremap <silent> <leader>ggy :Denite -default-action=yank grep<CR>
+
 
     nnoremap <silent> <leader>be :Denite -default-action=open buffer<CR>
     nnoremap <silent> <leader>bs :Denite -default-action=split buffer<CR>
