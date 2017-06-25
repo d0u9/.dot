@@ -92,7 +92,7 @@ nvim()
     curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > /tmp/installer.sh
     sh /tmp/installer.sh $TGT_NVIM_CONF/plugins
 
-    echo "install finished, you have to execute ":call dein#install()" in nvim to install plugins"
+    echo 'install finished, you have to execute ":call dein#install()" in nvim to install plugins'
 }
 
 if ! hash curl 2> /dev/null; then
