@@ -88,11 +88,11 @@ nvim()
 
     back_or_override $TGT_NVIM_CONF
     ln -s $NVIM_CONF $TGT_NVIM_CONF
+    
+    curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > /tmp/installer.sh
+    sh /tmp/installer.sh $TGT_NVIM_CONF/plugins
 
-    curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-    echo "install finished, you have to execute ":plugInstall" in nvim to install plugins"
+    echo "install finished, you have to execute ":call dein#install()" in nvim to install plugins"
 }
 
 if ! hash curl 2> /dev/null; then
