@@ -52,6 +52,9 @@
     " set UTF-8 encoding
     set fileencoding=utf-8
     scriptencoding utf-8
+
+    " Share content with the system's clipboard
+    set clipboard+=unnamedplus
 " }
 
 " Vim UI {

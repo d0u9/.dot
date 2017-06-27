@@ -110,3 +110,12 @@
     autocmd FileType nerdtree setlocal nolist
     let g:WebDevIconsNerdTreeAfterGlyphPadding = ''
 " }
+
+" vim-markdown {
+    let g:vim_markdown_folding_disabled = 1
+
+" }
+
+" deoplete-clang2 {
+    let g:deoplete#sources#clang#executable = system("which clang | tr -d '\n'")
+" }
