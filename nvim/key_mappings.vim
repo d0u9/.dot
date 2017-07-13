@@ -81,6 +81,14 @@
     nnoremap <silent> <leader>ggv :Denite -default-action=vsplit grep<CR>
     nnoremap <silent> <leader>ggy :Denite -default-action=yank grep<CR>
 
+    nnoremap <silent> <leader>se :DeniteCursorWord -default-action=open line<CR>
+    nnoremap <silent> <leader>ss :DeniteCursorWord -default-action=split line<CR>
+    nnoremap <silent> <leader>sv :DeniteCursorWord -default-action=vsplit line<CR>
+    nnoremap <silent> <leader>sy :DeniteCursorWord -default-action=yank line<CR>
+    nnoremap <silent> <leader>sse :Denite -default-action=open line<CR>
+    nnoremap <silent> <leader>sss :Denite -default-action=split line<CR>
+    nnoremap <silent> <leader>ssv :Denite -default-action=vsplit line<CR>
+    nnoremap <silent> <leader>ssy :Denite -default-action=yank line<CR>
 
     nnoremap <silent> <leader>be :Denite -default-action=open buffer<CR>
     nnoremap <silent> <leader>bs :Denite -default-action=split buffer<CR>
