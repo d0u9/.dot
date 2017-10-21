@@ -88,10 +88,15 @@ export LANG=en_US.UTF-8
 
 source $HOME/.dot/oh-my-zsh/tri-zshrc.sh
 
+
+### Done everything
+source $ZSH/oh-my-zsh.sh
+
+
+### Post hook
+source $HOME/.dot/oh-my-zsh/tri-post-zshrc.sh
+
 if [ ! -d TRI_CONF ]; then
     unset TRI_CONF
 fi
 
-
-### Done everything
-source $ZSH/oh-my-zsh.sh
