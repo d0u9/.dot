@@ -2,4 +2,7 @@
 # You can set any variables ONLY to OS X platform.
 
 ## Alias
-alias ls='gls --color=tty'
+
+if hash gls 2> /dev/null; then
+    alias ls='gls --color=tty'
+fi
