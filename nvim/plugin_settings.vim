@@ -87,7 +87,8 @@
     " Disable all the git-gutter key bindings
     let g:gitgutter_map_keys = 0
     " Show the gutter always
-    let g:gitgutter_sign_column_always = 1
+    "let g:gitgutter_sign_column_always = 1, obsoleted
+    set signcolumn=yes
 " }
 
 " undotree {
