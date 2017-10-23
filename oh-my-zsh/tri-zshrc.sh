@@ -32,7 +32,9 @@ if hash tmux 2> /dev/null; then
 fi
 
 if hash pyenv 2> /dev/null; then
-    plugins+=(pyenv)
+    # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
+    # by using the command below
+    eval "$(pyenv init -)"
 fi
 
 if hash docker 2> /dev/null; then
