@@ -45,8 +45,7 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('airblade/vim-gitgutter')
 
     " Others
-    call dein#add('majutsushi/tagbar',
-            \ { 'lazy': 1 })
+    call dein#add('majutsushi/tagbar')
     call dein#add('scrooloose/nerdcommenter')
     call dein#add('tpope/vim-fugitive',
             \ { 'on_cmd': ['Gstatus', 'Gdiff'] })

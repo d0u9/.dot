@@ -61,6 +61,9 @@
     let g:airline#extensions#tabline#show_tabs = 0
     let g:airline#extensions#tabline#exclude_preview = 1
 
+    let g:airline#extensions#tagbar#enabled = 1
+    let g:airline_section_warning = ''
+
     " define the set of text to display for each mode.
     let g:airline_mode_map = {
                 \ '__' : '-',
