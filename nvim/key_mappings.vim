@@ -30,6 +30,9 @@
     " Easier horizontal scrolling
     map zl zL
     map zh zH
+
+    " toggle relative line numbers
+    map <F2> :set relativenumber!<CR>
 " }
 
 " Window, Panel, Tabs {
