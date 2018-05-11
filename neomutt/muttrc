@@ -1,0 +1,95 @@
+# Default account
+source ~/.mutt/account_default.info
+
+###
+# Add more account here
+###
+
+set sleep_time      = 0
+set alias_format    = "%4n %t %-20a %r"
+set delete          = yes
+set forward_format  = "Fwd: %s"
+# set imap_check_subscribed = yes
+set timeout         = 30
+set mail_check      = 120
+set imap_keepalive  = 120
+set move            = no
+set pager_context   = 5
+set pager_index_lines = 10
+set pager_stop      = no
+set confirmappend   = no
+set use_from        = yes
+set ssl_force_tls   = yes
+set ssl_starttls    = yes
+set sort            = threads
+set sort_aux        = last-date-received
+set alias_format    = "%4n %t %-20a %r"
+set index_format    = "%4C %Z %<[y?%<[m?%<[d?%[%H:%M ]&%[%a %d]>&%[%b %d]>&%[%m/%y ]> %-15.15L %<M?(#%03M)&(%<l?%4l&%4c>)> %s"
+
+set beep_new
+set edit_headers
+set include
+set reverse_alias
+set menu_scroll
+
+unset mark_old
+# Allow Mutt to open a new IMAP connection automatically.
+unset imap_passive
+
+ignore *
+unignore from: to: cc: date: subject:
+hdr_order from: to: cc: date: subject:
+
+###
+# Sidebar
+###
+set sidebar_visible
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+
+# Sidebar key bindings
+# https://neomutt.org/guide/gettingstarted#2-4-1-%C2%A0navigation
+bind index,pager J sidebar-next
+bind index,pager K sidebar-prev
+bind index,pager O sidebar-open
+
+# Sidebar color settings
+# https://neomutt.org/guide/gettingstarted#2-4-4-%C2%A0colors
+color sidebar_indicator default color17
+color sidebar_highlight white   color238
+color sidebar_spoolfile yellow  default
+color sidebar_new       green   default
+color sidebar_ordinary  default default
+color sidebar_flagged   red     default
+color sidebar_divider   color8  default
+
+# Set color scheme
+# Color scheme from https://github.com/jelly/Dotfiles
+source ~/.mutt/colors
+color status  green default
+
+bind index,pager,attach g  noop
+bind index,pager R noop
+
+bind index ,d delete-message
+
+bind pager gg top
+bind pager G bottom
+bind pager j next-line
+bind pager k previous-line
+
+bind index,pager ,f imap-fetch-mail
+bind index,pager R  group-reply
+bind index,pager \cj next-thread
+bind index,pager \ck previous-thread
+bind index,pager \co read-thread
+
+bind index,attach gg first-entry
+bind index,attach G last-entry
+
+bind index,pager,attach \Cd next-page
+bind index,pager,attach \Cu previous-page
+
+macro index ,i  "<change-folder>!<return>" "go to inbox"
+macro index d   "<save-message>=Deleted<enter>" "Trash"
+macro index \c? "<save-message>=Archive<enter>" "Move to archive"

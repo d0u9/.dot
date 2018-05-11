@@ -88,11 +88,18 @@ nvim()
 
     back_or_override $TGT_NVIM_CONF
     ln -s $NVIM_CONF $TGT_NVIM_CONF
-    
+
     curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > /tmp/installer.sh
     sh /tmp/installer.sh $TGT_NVIM_CONF/plugins
 
     echo 'install finished, you have to execute ":call dein#install()" in nvim to install plugins'
+}
+
+mutt()
+{
+    cp -r neomutt $HOME/.mutt
+    mkdir -p $HOME/.mutt/cache/default/{headers,bodies}
+    ln -s $HOME/.dot/conf/neomutt/account_default.info $HOME/.mutt
 }
 
 if ! hash curl 2> /dev/null; then
@@ -110,11 +117,15 @@ case "$1" in
     "nvim")
         nvim
     ;;
+    "mutt")
+        mutt
+    ;;
     *)
         echo "install all"
         zsh
         tmux
         nvim
+        mutt
     ;;
 esac
 
