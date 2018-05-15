@@ -31,6 +31,7 @@ set edit_headers
 set include
 set reverse_alias
 set menu_scroll
+set quit=ask-yes
 
 unset mark_old
 # Allow Mutt to open a new IMAP connection automatically.

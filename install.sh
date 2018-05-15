@@ -97,7 +97,7 @@ nvim()
 
 mutt()
 {
-    cp -r neomutt $HOME/.mutt
+    ln -s $(pwd)/neomutt $HOME/.mutt
     mkdir -p $HOME/.mutt/cache/default/{headers,bodies}
     ln -s $HOME/.dot/conf/neomutt/account_default.info $HOME/.mutt
 }

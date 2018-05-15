@@ -9,6 +9,10 @@ nvim/plugins
 # tmux
 tmux/plugins
 
+# mutt
+neomutt/*.info
+neomutt/cache
+
 # Other tmp files
 *.swp
 *~
