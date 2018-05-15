@@ -1,0 +1,5 @@
+text/html;      /usr/local/bin/w3m -dump -T text/html %s; \
+                    print=open %s & sleep 1; \
+                    nametemplate=%s.html; \
+                    needsterminal; copiousoutput
+

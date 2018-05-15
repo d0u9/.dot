@@ -32,6 +32,10 @@ set include
 set reverse_alias
 set menu_scroll
 set quit=ask-yes
+set print=ask-yes
+set mailcap_path    = ~/.mutt/mailcap
+
+auto_view text/html
 
 unset mark_old
 # Allow Mutt to open a new IMAP connection automatically.
