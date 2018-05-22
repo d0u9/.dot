@@ -100,5 +100,3 @@ if [ ! -d TRI_CONF ]; then
     unset TRI_CONF
 fi
 
-### Make neomutt happy
-stty discard undef
