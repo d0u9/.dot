@@ -123,3 +123,9 @@
 " deoplete-clang2 {
     let g:deoplete#sources#clang#executable = system("which clang | tr -d '\n'")
 " }
+
+" vim-choosewin {
+    nmap  \  <Plug>(choosewin)
+    let g:choosewin_overlay_enable = 1
+" }
+
