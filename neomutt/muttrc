@@ -49,6 +49,7 @@ hdr_order from: to: cc: date: subject:
 # Sidebar
 ###
 set sidebar_visible
+set sidebar_width = 36
 set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
 set mail_check_stats
 
