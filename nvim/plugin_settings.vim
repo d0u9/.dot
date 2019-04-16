@@ -129,3 +129,7 @@
     let g:choosewin_overlay_enable = 1
 " }
 
+" vim-table-mode {
+    let g:table_mode_corner='|'
+" }
+
