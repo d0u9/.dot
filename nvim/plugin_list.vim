@@ -21,7 +21,7 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('Shougo/deoplete.nvim',
             \ { 'name': 'deoplete',
             \   'if' : 1 })
-    call dein#add('tweekmonster/deoplete-clang2',
+    call dein#add('Shougo/deoplete-clangx',
             \ { 'on_ft': ['c'],
             \   'depends': 'deoplete' })
     call dein#add('Shougo/neco-vim',
@@ -70,9 +70,13 @@ if dein#load_state(expand(g:plugin_path))
     " For hex editing
     call dein#add('Shougo/vinarise.vim',
             \ { 'on_idle': 1 })
+    " An ASCII box drawing plugin
+    call dein#add('gyim/vim-boxdraw',
+            \ { 'on_idle': 1 })
 
     call dein#end()
     call dein#save_state()
 endif
 
 autocmd FileType python let b:deoplete_disable_auto_complete = 1
+
