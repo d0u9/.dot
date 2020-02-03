@@ -52,18 +52,6 @@
 """""""""""""""""" key bindings for specific plugins """"""""""""""""""""""""
 
 " Denite {
-    call denite#custom#map(
-          \ 'insert',
-          \ '<C-d>',
-          \ '<denite:move_to_next_line>',
-          \ 'noremap'
-          \)
-    call denite#custom#map(
-          \ 'insert',
-          \ '<C-f>',
-          \ '<denite:move_to_previous_line>',
-          \ 'noremap'
-          \)
 
     nnoremap <silent> <leader>fe :Denite -default-action=open file_rec<CR>
     nnoremap <silent> <leader>fs :Denite -default-action=split file_rec<CR>
