@@ -17,13 +17,18 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('nanotech/jellybeans.vim')
 
     " Completion support
+            "\   'on_ft': ['c', 'cpp', 'go', 'vim', 'python'],
     call dein#add('Shougo/neoinclude.vim')
     call dein#add('Shougo/deoplete.nvim',
             \ { 'name': 'deoplete',
             \   'if' : 1 })
     call dein#add('Shougo/deoplete-clangx',
-            \ { 'on_ft': ['c'],
+            \ { 'on_ft': ['c', 'cpp'],
             \   'depends': 'deoplete' })
+    call dein#add('deoplete-plugins/deoplete-go',
+            \ { 'on_ft': ['go'],
+            \   'depends': 'deoplete',
+            \   'build': 'make' })
     call dein#add('Shougo/neco-vim',
             \ { 'on_ft': 'vim',
             \   'depends': 'deoplete' })

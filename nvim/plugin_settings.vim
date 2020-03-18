@@ -54,6 +54,8 @@
 " deoplete {
     " Auto load deoplete
     let g:deoplete#enable_at_startup = 1
+
+    call deoplete#custom#option('deoplete-options-auto_complete', 1)
 " }
 
 
