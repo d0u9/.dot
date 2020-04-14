@@ -20,8 +20,7 @@ if dein#load_state(expand(g:plugin_path))
             "\   'on_ft': ['c', 'cpp', 'go', 'vim', 'python'],
     call dein#add('Shougo/neoinclude.vim')
     call dein#add('Shougo/deoplete.nvim',
-            \ { 'name': 'deoplete',
-            \   'if' : 1 })
+            \ { 'name': 'deoplete' })
     call dein#add('Shougo/deoplete-clangx',
             \ { 'on_ft': ['c', 'cpp'],
             \   'depends': 'deoplete' })
