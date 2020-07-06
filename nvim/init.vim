@@ -32,7 +32,7 @@ colorscheme  jellybeans
     autocmd Filetype cpp setlocal ts=2 sw=2 expandtab
     autocmd Filetype cu  setlocal ts=4 sw=4 expandtab
     autocmd Filetype c setlocal ts=8 sw=8 sts=8 noexpandtab nolist
-    autocmd Filetype go setlocal ts=2 sw=2 expandtab
+    autocmd Filetype go setlocal ts=4 sw=4 expandtab
     autocmd Filetype proto setlocal ts=2 sw=2 expandtab
 " }
 
