@@ -19,11 +19,13 @@
                     \ denite#do_map('toggle_select').'j'
     endfunction
 
+    call denite#custom#source('line,grep', 'max_candidates', 100000)
+
     " Ag command on grep source
-    let ignore_list = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif'
+    let ignore_list = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif|out'
     call denite#custom#var('grep', 'command', ['ag'])
     call denite#custom#var('grep', 'default_opts',
-        \ ['-i', '--vimgrep', '--depth', '5', '--ignore', ignore_list])
+        \ ['-Qr', '--vimgrep', '--depth', '5', '--ignore', ignore_list])
     call denite#custom#var('grep', 'recursive_opts', [])
     call denite#custom#var('grep', 'pattern_opt', [])
     call denite#custom#var('grep', 'separator', ['--'])
