@@ -20,6 +20,8 @@
     endfunction
 
     call denite#custom#source('line,grep', 'max_candidates', 100000)
+    call denite#custom#option('_', 'highlight_matched_char', 'Keyword')
+    call denite#custom#option('_', 'highlight_matched_range', 'String')
 
     " Ag command on grep source
     let ignore_list = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif|out'
