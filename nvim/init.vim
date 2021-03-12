@@ -15,13 +15,6 @@ source $HOME/.config/nvim/plugin_list.vim
 " For vim's basic settings
 source $HOME/.config/nvim/basic_settings.vim
 
-" Set the color scheme
-let g:jellybeans_overrides = {
-\    'background': { 'guibg': 'none' },
-\    'ColorColumn': { 'guibg': '303030' },
-\}
-colorscheme  jellybeans
-
 " Hack File Formattings {
     " let the code style of .h file act as .c not .cpp
     " the default is cpp
@@ -41,3 +34,11 @@ source $HOME/.config/nvim/plugin_settings.vim
 
 " Import key bindings.
 source $HOME/.config/nvim/key_mappings.vim
+
+" Set the color scheme
+let g:jellybeans_overrides = {
+\    'background': { 'guibg': 'none' },
+\    'ColorColumn': { 'guibg': '303030' },
+\}
+colorscheme  jellybeans
+
