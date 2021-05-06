@@ -184,7 +184,7 @@
 " LanguageClient-neovim
     " 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
 let g:LanguageClient_serverCommands = {
-    \ 'go': ['gopls'],
+    \ 'go': ['~/.go/bin/gopls'],
     \ 'rust': ['~/Apps/bin/rust-analyzer'],
     \ 'c':  ['~/Apps/bin/ccls'],
     \ 'cpp': ['~/Apps/bin/ccls'],
