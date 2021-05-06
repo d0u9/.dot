@@ -16,23 +16,28 @@ if dein#load_state(expand(g:plugin_path))
     " Theme
     call dein#add('nanotech/jellybeans.vim')
 
+    " Autocompletion
+    call dein#add('autozimu/LanguageClient-neovim', {
+            \ 'rev': 'next',
+            \ 'build': 'bash install.sh',
+            \ })
+
     " Completion support
-            "\   'on_ft': ['c', 'cpp', 'go', 'vim', 'python'],
     call dein#add('Shougo/neoinclude.vim')
     call dein#add('Shougo/deoplete.nvim',
             \ { 'name': 'deoplete' })
-    call dein#add('Shougo/deoplete-clangx',
-            \ { 'on_ft': ['c', 'cpp'],
-            \   'depends': 'deoplete' })
-    call dein#add('deoplete-plugins/deoplete-go',
-            \ { 'on_ft': ['go'],
-            \   'depends': 'deoplete',
-            \   'build': 'make' })
+    "call dein#add('Shougo/deoplete-clangx',
+    "        \ { 'on_ft': ['c', 'cpp'],
+    "        \   'depends': 'deoplete' })
+    " call dein#add('deoplete-plugins/deoplete-go',
+    "         \ { 'on_ft': ['go'],
+    "         \   'depends': 'deoplete',
+    "         \   'build': 'make' })
     call dein#add('Shougo/neco-vim',
             \ { 'on_ft': 'vim',
             \   'depends': 'deoplete' })
-    call dein#add('davidhalter/jedi-vim',
-            \ { 'on_ft': 'python'})
+    "call dein#add('davidhalter/jedi-vim',
+    "        \ { 'on_ft': 'python'})
 
     " Enhancement
     call dein#add('Konfekt/FastFold')

@@ -142,10 +142,6 @@
 
 " }
 
-" deoplete-clang2 {
-    let g:deoplete#sources#clang#executable = system("which clang | tr -d '\n'")
-" }
-
 " vim-choosewin {
     nmap  \  <Plug>(choosewin)
     let g:choosewin_overlay_enable = 1
@@ -184,3 +180,14 @@
         \ 'ctagsargs' : '-sort -silent'
     \ }
 " }
+
+" LanguageClient-neovim
+    " 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+let g:LanguageClient_serverCommands = {
+    \ 'go': ['gopls'],
+    \ 'rust': ['~/Apps/bin/rust-analyzer'],
+    \ 'c':  ['~/Apps/bin/ccls'],
+    \ 'cpp': ['~/Apps/bin/ccls'],
+    \ 'objc': ['~/Apps/bin/ccls'],
+    \ }
+

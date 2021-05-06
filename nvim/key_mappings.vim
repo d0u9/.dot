@@ -126,3 +126,8 @@
     nnoremap <silent> <F4> :TagbarToggle<CR>
 " }
 
+
+" LanguageClient-neovim {
+    nnoremap <silent> <leader>cd :call LanguageClient#textDocument_hover()<CR>
+    nnoremap <silent> <leader>cr :call LanguageClient#textDocument_rename()<CR>
+" }
