@@ -46,8 +46,8 @@
     endif
 
     " http://vim.wikia.com/wiki/Remove_swap_and_backup_files_from_your_working_directory
-    execute 'set backupdir=./.backup,' . g:backup_dir . ',/tmp'
-    execute 'set directory=.,./.backup,' . g:swap_dir . ',tmp'
+    execute 'set backupdir=' . g:backup_dir . ',/tmp'
+    execute 'set directory=' . g:swap_dir . ',tmp'
 
     " set UTF-8 encoding
     set fileencoding=utf-8

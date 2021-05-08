@@ -100,13 +100,3 @@ if [ ! -d TRI_CONF ]; then
     unset TRI_CONF
 fi
 
-### Golang setting
-if hash go 2> /dev/null; then
-    export GOPATH=$HOME/.go
-    export PATH="$HOME/.go/bin:$PATH"
-fi
-
-### Rust lang setting
-if [ -d $HOME/.cargo ]; then
-    source $HOME/.cargo/env
-fi
