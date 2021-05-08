@@ -181,13 +181,13 @@
     \ }
 " }
 
-" LanguageClient-neovim
-    " 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-let g:LanguageClient_serverCommands = {
-    \ 'go': ['~/.go/bin/gopls'],
-    \ 'rust': ['~/Apps/bin/rust-analyzer'],
-    \ 'c':  ['~/Apps/bin/ccls'],
-    \ 'cpp': ['~/Apps/bin/ccls'],
-    \ 'objc': ['~/Apps/bin/ccls'],
-    \ }
+" LanguageClient-neovim {
+    let g:LanguageClient_serverCommands = {
+        \ 'go': ['~/.go/bin/gopls'],
+        \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+        \ 'c':  ['~/Apps/bin/ccls'],
+        \ 'cpp': ['~/Apps/bin/ccls'],
+        \ 'objc': ['~/Apps/bin/ccls'],
+        \ }
+" }
 
