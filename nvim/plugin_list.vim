@@ -20,6 +20,7 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('autozimu/LanguageClient-neovim', {
             \ 'rev': 'next',
             \ 'build': 'bash install.sh',
+            \ 'on_ft': ['go', 'rust'],
             \ })
 
     " Completion support
@@ -44,20 +45,22 @@ if dein#load_state(expand(g:plugin_path))
     call dein#add('tmux-plugins/vim-tmux-focus-events')
     call dein#add('t9md/vim-choosewin')
     call dein#add('Shougo/neoyank.vim')
-    call dein#add('mbbill/undotree',
-            \ { 'on_cmd': 'UndotreeToggle' })
+    call dein#add('mbbill/undotree', {
+            \ 'on_cmd': 'UndotreeToggle',
+            \ 'on_ft': ['nerdtree'],
+            \ })
 
     " GUI relative
     call dein#add('ryanoasis/vim-devicons')
-    call dein#add('vim-airline/vim-airline')
+    call dein#add('vim-airline/vim-airline',
+            \ { 'rev': 'f7cbf8c' })
     call dein#add('itchyny/vim-cursorword')
     call dein#add('airblade/vim-gitgutter')
 
     " Others
     call dein#add('majutsushi/tagbar')
     call dein#add('scrooloose/nerdcommenter')
-    call dein#add('tpope/vim-fugitive',
-            \ { 'on_cmd': ['Gstatus', 'Gdiff'] })
+    call dein#add('tpope/vim-fugitive')
 
     " Here we use nerdtree, vimfiler currently not support denite
     call dein#add('scrooloose/nerdtree',
