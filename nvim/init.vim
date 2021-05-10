@@ -15,19 +15,7 @@ source $HOME/.config/nvim/plugin_list.vim
 " For vim's basic settings
 source $HOME/.config/nvim/basic_settings.vim
 
-" Hack File Formattings {
-    " let the code style of .h file act as .c not .cpp
-    " the default is cpp
-    let c_syntax_for_h = 1
-
-    autocmd Filetype html setlocal ts=4 sw=4 expandtab
-    autocmd Filetype css setlocal ts=4 sw=4 expandtab
-    autocmd Filetype cpp setlocal ts=2 sw=2 expandtab
-    autocmd Filetype cu  setlocal ts=4 sw=4 expandtab
-    autocmd Filetype c setlocal ts=8 sw=8 sts=8 noexpandtab nolist
-    autocmd Filetype go setlocal ts=4 sw=4 expandtab
-    autocmd Filetype proto setlocal ts=2 sw=2 expandtab
-" }
+source $HOME/.config/nvim/file_formatting.vim
 
 " Configure plugins
 source $HOME/.config/nvim/plugin_settings.vim

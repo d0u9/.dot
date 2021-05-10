@@ -128,6 +128,8 @@
 
 
 " LanguageClient-neovim {
-    nnoremap <silent> <leader>cd :call LanguageClient#textDocument_hover()<CR>
-    nnoremap <silent> <leader>cr :call LanguageClient#textDocument_rename()<CR>
+    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_references()<CR>
+    nnoremap <silent> <leader>li :call LanguageClient#textDocument_implementation()<CR>
+    nnoremap <silent> <leader>ld :call LanguageClient#textDocument_hover()<CR>
+    nnoremap <silent> <leader>lr :call LanguageClient#textDocument_rename()<CR>
 " }
