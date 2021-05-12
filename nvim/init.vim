@@ -25,8 +25,11 @@ source $HOME/.config/nvim/key_mappings.vim
 
 " Set the color scheme
 let g:jellybeans_overrides = {
-\    'background': { 'guibg': 'none' },
+\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
 \    'ColorColumn': { 'guibg': '303030' },
 \}
+if has('termguicolors') && &termguicolors
+    let g:jellybeans_overrides['background']['guibg'] = 'none'
+endif
 colorscheme  jellybeans
 
