@@ -49,6 +49,8 @@ if dein#load_state(expand(g:plugin_path))
             \ 'on_cmd': 'UndotreeToggle',
             \ 'on_ft': ['nerdtree'],
             \ })
+    call dein#add('Thyrum/vim-stabs')
+
 
     " GUI relative
     call dein#add('ryanoasis/vim-devicons')

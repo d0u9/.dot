@@ -104,9 +104,10 @@
 
 " deoplete {
     " Setup deoplete to use TAB
+    let g:stabs_maps = 'boO='
     inoremap <silent><expr> <TAB>
                 \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
+                \ <SID>check_back_space() ? StabsTab() :
                 \ deoplete#manual_complete()
     function! s:check_back_space() abort "{{{
         let col = col('.') - 1
