@@ -43,6 +43,38 @@
     call denite#custom#source('file_rec', 'matchers',
         \ ['matcher_fuzzy', 'matcher_ignore_globs'])
 
+    call denite#custom#var('buffer', 'date_format', '')
+
+    let s:denite_options = {'default' : {
+    \ 'split': 'floating',
+    \ 'start_filter': 0,
+    \ 'auto_resize': 1,
+    \ 'source_names': 'short',
+    \ 'prompt': 'λ ',
+    \ 'highlight_matched_char': 'QuickFixLine',
+    \ 'highlight_matched_range': 'Visual',
+    \ 'highlight_window_background': 'Visual',
+    \ 'highlight_filter_background': 'DiffAdd',
+    \ 'winrow': 1,
+    \ 'vertical_preview': 0,
+    \ 'floating_preview': 1,
+    \ 'preview_width': 80,
+    \ 'winwidth': 1000
+    \ }}
+
+    " Loop through denite options and enable them
+    function! s:profile(opts) abort
+      for l:fname in keys(a:opts)
+        for l:dopt in keys(a:opts[l:fname])
+          call denite#custom#option(l:fname, l:dopt, a:opts[l:fname][l:dopt])
+        endfor
+      endfor
+    endfunction
+
+    call s:profile(s:denite_options)
+    " catch
+      " echo 'Denite not installed. It should work after running :PlugInstall'
+    " endtry
 " }
 
 " neomru {
