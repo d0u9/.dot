@@ -35,11 +35,11 @@
     map <F2> :set relativenumber!<CR>
 
     " Command-line key bin
-    :cnoremap <C-A> <Home>
-    :cnoremap <C-F> <Right>
-    :cnoremap <C-B> <Left>
-    :cnoremap <Esc>b <S-Left>
-    :cnoremap <Esc>f <S-Right>
+    cnoremap <C-A> <Home>
+    cnoremap <C-F> <Right>
+    cnoremap <C-B> <Left>
+    cnoremap <Esc>b <S-Left>
+    cnoremap <Esc>f <S-Right>
 " }
 
 " Window, Panel, Tabs {
@@ -58,86 +58,37 @@
 
 """""""""""""""""" key bindings for specific plugins """"""""""""""""""""""""
 
-" Denite {
-
-    nnoremap <silent> <leader>fe :Denite -default-action=open file_rec<CR>
-    nnoremap <silent> <leader>fs :Denite -default-action=split file_rec<CR>
-    nnoremap <silent> <leader>fv :Denite -default-action=vsplit file_rec<CR>
-    nnoremap <silent> <leader>fy :Denite -default-action=yank file_rec<CR>
-
-    nnoremap <silent> <leader>me :Denite -default-action=open file_mru<CR>
-    nnoremap <silent> <leader>ms :Denite -default-action=split file_mru<CR>
-    nnoremap <silent> <leader>mv :Denite -default-action=vsplit file_mru<CR>
-    nnoremap <silent> <leader>my :Denite -default-action=yank file_mru<CR>
-
-    nnoremap <silent> <leader>ge :DeniteCursorWord -default-action=open grep<CR>
-    nnoremap <silent> <leader>gs :DeniteCursorWord -default-action=split grep<CR>
-    nnoremap <silent> <leader>gv :DeniteCursorWord -default-action=vsplit grep<CR>
-    nnoremap <silent> <leader>gy :DeniteCursorWord -default-action=yank grep<CR>
-    nnoremap <silent> <leader>gge :Denite -default-action=open grep<CR>
-    nnoremap <silent> <leader>ggs :Denite -default-action=split grep<CR>
-    nnoremap <silent> <leader>ggv :Denite -default-action=vsplit grep<CR>
-    nnoremap <silent> <leader>ggy :Denite -default-action=yank grep<CR>
-
-    nnoremap <silent> <leader>se :DeniteCursorWord -default-action=open line<CR>
-    nnoremap <silent> <leader>ss :DeniteCursorWord -default-action=split line<CR>
-    nnoremap <silent> <leader>sv :DeniteCursorWord -default-action=vsplit line<CR>
-    nnoremap <silent> <leader>sy :DeniteCursorWord -default-action=yank line<CR>
-    nnoremap <silent> <leader>sse :Denite -default-action=open line<CR>
-    nnoremap <silent> <leader>sss :Denite -default-action=split line<CR>
-    nnoremap <silent> <leader>ssv :Denite -default-action=vsplit line<CR>
-    nnoremap <silent> <leader>ssy :Denite -default-action=yank line<CR>
-
-    nnoremap <silent> <leader>be :Denite -default-action=open buffer<CR>
-    nnoremap <silent> <leader>bs :Denite -default-action=split buffer<CR>
-    nnoremap <silent> <leader>bv :Denite -default-action=vsplit buffer<CR>
-    nnoremap <silent> <leader>by :Denite -default-action=yank buffer<CR>
-    nnoremap <silent> <leader>bx :Denite -default-action=delete buffer<CR>
-
-    nnoremap <silent> <leader>oe :Denite -default-action=open outline<CR>
-    nnoremap <silent> <leader>os :Denite -default-action=split outline<CR>
-    nnoremap <silent> <leader>ov :Denite -default-action=vsplit outline<CR>
-
-    nnoremap <silent> <leader>oc :Denite -default-action=default command_history<CR>
-    nnoremap <silent> <leader>oy :Denite -default-action=default neoyank<CR>
+" nvim-cmp {
+" See lua/plugin_settings.lua
 " }
 
-" deoplete {
-    " Setup deoplete to use TAB
-    let g:stabs_maps = 'boO='
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? StabsTab() :
-                \ deoplete#manual_complete()
-    function! s:check_back_space() abort "{{{
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~ '\s'
-    endfunction"}}}
+" telescope {
+    " Ref: https://github.com/nvim-telescope/telescope.nvim#mappings
+    " Ref: https://github.com/nvim-telescope/telescope.nvim#pickers
 
-    inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS> deoplete#smart_close_popup()."\<C-h>"
+    " Lists files in your current working directory, respects .gitignore
+    nnoremap <Leader>gf :lua require'telescope.builtin'.find_files()<cr>
+    " Fuzzy search through the output of git ls-files command,
+    " respects .gitignore, optionally ignores untracked files
+    nnoremap <Leader>gl :lua require'telescope.builtin'.git_files()<cr>
+    " Searches for the string under your cursor in your current working directory
+    nnoremap <Leader>gs :lua require'telescope.builtin'.grep_string()<cr>
+    " Search for a string in your current working directory and get results live as you type
+    nnoremap <Leader>gg :lua require'telescope.builtin'.live_grep()<cr>
+
+    " Lists files and folders in your current working directory, open files,
+    " navigate your filesystem, and create new files and folders
+    nnoremap <Leader>sf :lua require'telescope.builtin'.file_browser()<cr>
+    " Lists open buffers in current neovim instance
+    nnoremap <Leader>sb :lua require'telescope.builtin'.buffers()<cr>
+
+    " Lists LSP references for word under the cursor
+    nnoremap <Leader>lr :lua require'telescope.builtin'.lsp_references()<cr>
+    " Goto the implementation of the word under the cursor if there's
+    " only one, otherwise show all options in Telescope
+    nnoremap <Leader>li :lua require'telescope.builtin'.lsp_implementations()<cr>
+    " Goto the definition of the word under the cursor, if there's only
+    " one, otherwise show all options in Telescope
+    nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions()<cr>
 " }
 
-" ChooseWin {
-    nmap <silent> <Leader>ww <Plug>(choosewin)
-" }
-
-" undotree {
-    nnoremap <leader>ut :UndotreeToggle<cr>
-" }
-
-" NERDtree {
-    nnoremap <silent> <F3> :NERDTreeToggle<cr>
-" }
-
-" tagbar {
-    nnoremap <silent> <F4> :TagbarToggle<CR>
-" }
-
-
-" LanguageClient-neovim {
-    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_references()<CR>
-    nnoremap <silent> <leader>li :call LanguageClient#textDocument_implementation()<CR>
-    nnoremap <silent> <leader>ld :call LanguageClient#textDocument_hover()<CR>
-    nnoremap <silent> <leader>lr :call LanguageClient#textDocument_rename()<CR>
-" }

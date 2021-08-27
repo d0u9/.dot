@@ -1,99 +1,98 @@
-" Dein {
-    let g:dein#cache_directory=g:dein_cache_dir
+" nvim-tree {
+    let g:nvim_tree_side = 'left' "left by default
+    let g:nvim_tree_width = 40 "30 by default, can be width_in_columns or 'width_in_percent%'
+    let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
+    let g:nvim_tree_gitignore = 1 "0 by default
+    let g:nvim_tree_auto_open = 0 "0 by default, opens the tree when typing `vim $DIR` or `vim`
+    let g:nvim_tree_auto_close = 1 "0 by default, closes the tree when it's the last window
+    let g:nvim_tree_auto_ignore_ft = [ 'startify', 'dashboard' ] "empty by default, don't auto open tree on specific filetypes.
+    let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
+    let g:nvim_tree_follow = 1 "0 by default, this option allows the cursor to be updated when entering a buffer
+    let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
+    let g:nvim_tree_hide_dotfiles = 1 "0 by default, this option hides files and folders starting with a dot `.`
+    let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
+    let g:nvim_tree_highlight_opened_files = 1 "0 by default, will enable folder and file icon highlight for opened files/directories.
+    let g:nvim_tree_root_folder_modifier = ':~' "This is the default. See :help filename-modifiers for more options
+    let g:nvim_tree_tab_open = 1 "0 by default, will open the tree when entering a new tab and the tree was previously open
+    let g:nvim_tree_auto_resize = 0 "1 by default, will resize the tree to its saved width when opening a file
+    let g:nvim_tree_disable_netrw = 0 "1 by default, disables netrw
+    let g:nvim_tree_hijack_netrw = 0 "1 by default, prevents netrw from automatically opening when opening directories (but lets you keep its other utilities)
+    let g:nvim_tree_add_trailing = 1 "0 by default, append a trailing slash to folder names
+    let g:nvim_tree_group_empty = 1 " 0 by default, compact folders that only contain a single folder into one node in the file tree
+    let g:nvim_tree_lsp_diagnostics = 1 "0 by default, will show lsp diagnostics in the signcolumn. See :help nvim_tree_lsp_diagnostics
+    let g:nvim_tree_disable_window_picker = 1 "0 by default, will disable the window picker.
+    let g:nvim_tree_hijack_cursor = 0 "1 by default, when moving cursor in the tree, will position the cursor at the start of the file on the current line
+    let g:nvim_tree_icon_padding = ' ' "one space by default, used for rendering the space between the icon and the filename. Use with caution, it could break rendering if you set an empty string depending on your font.
+    let g:nvim_tree_symlink_arrow = ' >> ' " defaults to ' ➛ '. used as a separator between symlinks' source and target.
+    let g:nvim_tree_update_cwd = 1 "0 by default, will update the tree cwd when changing nvim's directory (DirChanged event). Behaves strangely with autochdir set.
+    let g:nvim_tree_respect_buf_cwd = 1 "0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
+    let g:nvim_tree_window_picker_exclude = {
+        \   'filetype': [
+        \     'packer',
+        \     'qf'
+        \   ],
+        \   'buftype': [
+        \     'terminal'
+        \   ]
+        \ }
+    " Dictionary of buffer option names mapped to a list of option values that
+    " indicates to the window picker that the buffer's window should not be
+    " selectable.
+    let g:nvim_tree_special_files = { 'README.md': 1, 'Makefile': 1, 'MAKEFILE': 1 } " List of filenames that gets highlighted with NvimTreeSpecialFile
+    let g:nvim_tree_show_icons = {
+        \ 'git': 1,
+        \ 'folders': 0,
+        \ 'files': 0,
+        \ 'folder_arrows': 0,
+        \ }
+    "If 0, do not show the icons for one of 'git' 'folder' and 'files'
+    "1 by default, notice that if 'files' is 1, it will only display
+    "if nvim-web-devicons is installed and on your runtimepath.
+    "if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
+    "but this will not work when you set indent_markers (because of UI conflict)
+
+    " default will show icon by default if no icon is provided
+    " default shows no icon by default
+    let g:nvim_tree_icons = {
+        \ 'default': '',
+        \ 'symlink': '',
+        \ 'git': {
+        \   'unstaged': "✗",
+        \   'staged': "✓",
+        \   'unmerged': "",
+        \   'renamed': "➜",
+        \   'untracked': "★",
+        \   'deleted': "",
+        \   'ignored': "◌"
+        \   },
+        \ 'folder': {
+        \   'arrow_open': "",
+        \   'arrow_closed': "",
+        \   'default': "",
+        \   'open': "",
+        \   'empty': "",
+        \   'empty_open': "",
+        \   'symlink': "",
+        \   'symlink_open': "",
+        \   },
+        \   'lsp': {
+        \     'hint': "",
+        \     'info': "",
+        \     'warning': "",
+        \     'error': "",
+        \   }
+        \ }
+
+    nnoremap <F3> :NvimTreeToggle<CR>
+    " nnoremap <leader>r :NvimTreeRefresh<CR>
+    " nnoremap <leader>n :NvimTreeFindFile<CR>
+    " NvimTreeOpen, NvimTreeClose and NvimTreeFocus are also available if you need them
+
+    set termguicolors " this variable must be enabled for colors to be applied properly
+
+    " a list of groups can be found at `:help nvim_tree_highlight`
+    highlight NvimTreeFolderIcon guibg=blue
 " }
-
-" Denite {
-    autocmd FileType denite call s:denite_my_settings()
-    function! s:denite_my_settings() abort
-        nnoremap <silent><buffer><expr> <CR>
-                    \ denite#do_map('do_action')
-        nnoremap <silent><buffer><expr> d
-                    \ denite#do_map('do_action', 'delete')
-        nnoremap <silent><buffer><expr> p
-                    \ denite#do_map('do_action', 'preview')
-        nnoremap <silent><buffer><expr> q
-                    \ denite#do_map('quit')
-        nnoremap <silent><buffer><expr> i
-                    \ denite#do_map('open_filter_buffer')
-        nnoremap <silent><buffer><expr> <Space>
-                    \ denite#do_map('toggle_select').'j'
-    endfunction
-
-    call denite#custom#source('line,grep', 'max_candidates', 100000)
-    call denite#custom#option('_', 'highlight_matched_char', 'Keyword')
-    call denite#custom#option('_', 'highlight_matched_range', 'String')
-
-    " Ag command on grep source
-    let ignore_list = 'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif|out'
-    call denite#custom#var('grep', 'command', ['ag'])
-    call denite#custom#var('grep', 'default_opts',
-        \ ['-Qr', '--vimgrep', '--depth', '5', '--ignore', ignore_list])
-    call denite#custom#var('grep', 'recursive_opts', [])
-    call denite#custom#var('grep', 'pattern_opt', [])
-    call denite#custom#var('grep', 'separator', ['--'])
-    call denite#custom#var('grep', 'final_opts', [])
-
-    call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-        \ [ '*~', '*.o', '*.exe', '*.bak', '.DS_Store', '*.pyc', '*.sw[po]',
-        \   '*.class', '.hg/', '.git/', '.bzr/', '.svn/', 'tags', 'tags-*',
-        \   '*.out', '*.jpg', '*.so', '*.dll', '*.png', '*.jpeg', '*.doc',
-        \   '*.docx', '*.bin', '*.icon', '*.pdf', '*.gif'
-        \ ])
-
-    call denite#custom#source('file_rec', 'matchers',
-        \ ['matcher_fuzzy', 'matcher_ignore_globs'])
-
-    call denite#custom#var('buffer', 'date_format', '')
-
-    let s:denite_options = {'default' : {
-    \ 'split': 'floating',
-    \ 'start_filter': 0,
-    \ 'auto_resize': 1,
-    \ 'source_names': 'short',
-    \ 'prompt': 'λ ',
-    \ 'highlight_matched_char': 'QuickFixLine',
-    \ 'highlight_matched_range': 'Visual',
-    \ 'highlight_window_background': 'Visual',
-    \ 'highlight_filter_background': 'DiffAdd',
-    \ 'winrow': 1,
-    \ 'vertical_preview': 0,
-    \ 'floating_preview': 1,
-    \ 'preview_width': 80,
-    \ 'winwidth': 1000
-    \ }}
-
-    " Loop through denite options and enable them
-    function! s:profile(opts) abort
-      for l:fname in keys(a:opts)
-        for l:dopt in keys(a:opts[l:fname])
-          call denite#custom#option(l:fname, l:dopt, a:opts[l:fname][l:dopt])
-        endfor
-      endfor
-    endfunction
-
-    call s:profile(s:denite_options)
-    " catch
-      " echo 'Denite not installed. It should work after running :PlugInstall'
-    " endtry
-" }
-
-" neomru {
-    let g:neomru#directory_mru_path = g:neomru_dir . "/neodirectory.txt"
-    let g:neomru#file_mru_path = g:neomru_dir . "/neofile.txt"
-    let g:neomru#file_mru_limit = 300
-" }
-
-" neoyank {
-    let g:neoyank#file = g:neoyank_file
-" }
-
-" deoplete {
-    " Auto load deoplete
-    let g:deoplete#enable_at_startup = 1
-
-    call deoplete#custom#option('deoplete-options-auto_complete', 1)
-" }
-
 
 " Vim-airline {
     " let g:airline_powerline_fonts = 1
@@ -133,93 +132,3 @@
                 \ '' : 'S',
                 \ }
 " }
-
-" nerdcommenter {
-    let g:NERDAltDelims_c = 1
-    let g:NERDTrimTrailingWhitespace = 1
-    let g:NERDSpaceDelims = 1
-" }
-
-" gitgutter {
-    " Disable all the git-gutter key bindings
-    let g:gitgutter_map_keys = 0
-    " Show the gutter always
-    "let g:gitgutter_sign_column_always = 1, obsoleted
-    set signcolumn=yes
-" }
-
-" undotree {
-    let g:undotree_SplitWidth = 50
-    let g:undotree_WindowLayout = 2
-" }
-
-" NERDtree {
-    map <F3> :NERDTreeToggle<cr>
-    let NERDTreeWinSize = 33
-    let NERDTreeShowBookmarks = 1
-    let NERDTreeIgnore = ['\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
-    let NERDTreeChDirMode = 0
-    let NERDTreeMouseMode = 2
-    let NERDTreeShowHidden = 1
-    let NERDTreeBookmarksFile = expand('$HOME') . '/.config/nvim/NERDTreeBookmarks'
-" }
-
-" vim-devicons {
-    autocmd FileType nerdtree setlocal nolist
-    let g:WebDevIconsNerdTreeAfterGlyphPadding = ''
-" }
-
-" vim-markdown {
-    let g:vim_markdown_folding_disabled = 1
-
-" }
-
-" vim-choosewin {
-    nmap  \  <Plug>(choosewin)
-    let g:choosewin_overlay_enable = 1
-" }
-
-" vim-table-mode {
-    let g:table_mode_corner='|'
-" }
-
-" tag-bar {
-    let g:tagbar_type_go = {
-        \ 'ctagstype' : 'go',
-        \ 'kinds'     : [
-            \ 'p:package',
-            \ 'i:imports:1',
-            \ 'c:constants',
-            \ 'v:variables',
-            \ 't:types',
-            \ 'n:interfaces',
-            \ 'w:fields',
-            \ 'e:embedded',
-            \ 'm:methods',
-            \ 'r:constructor',
-            \ 'f:functions'
-        \ ],
-        \ 'sro' : '.',
-        \ 'kind2scope' : {
-            \ 't' : 'ctype',
-            \ 'n' : 'ntype'
-        \ },
-        \ 'scope2kind' : {
-            \ 'ctype' : 't',
-            \ 'ntype' : 'n'
-        \ },
-        \ 'ctagsbin'  : 'gotags',
-        \ 'ctagsargs' : '-sort -silent'
-    \ }
-" }
-
-" LanguageClient-neovim {
-    let g:LanguageClient_serverCommands = {
-        \ 'go': ['~/.go/bin/gopls'],
-        \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-        \ 'c':  ['~/Apps/bin/ccls'],
-        \ 'cpp': ['~/Apps/bin/ccls'],
-        \ 'objc': ['~/Apps/bin/ccls'],
-        \ }
-" }
-

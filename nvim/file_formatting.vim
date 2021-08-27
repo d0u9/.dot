@@ -8,5 +8,5 @@
 " }
 
 " Golang {
-    autocmd Filetype go setlocal noet ci pi sts=0 sw=4 ts=4
+    autocmd Filetype go setlocal ci pi ts=4 sw=4 sts=0 expandtab
 " }

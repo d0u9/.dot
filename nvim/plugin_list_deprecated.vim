@@ -16,6 +16,17 @@ if dein#load_state(expand(g:plugin_path))
     " Theme
     call dein#add('nanotech/jellybeans.vim')
 
+    " Nvim 0.5 Only
+    call dein#add('neovim/nvim-lspconfig')
+    call dein#add('hrsh7th/nvim-cmp')
+
+    call dein#add('hrsh7th/cmp-nvim-lsp')
+    call dein#add('saadparwaiz1/cmp_luasnip')
+    call dein#add('L3MON4D3/LuaSnip')
+    call dein#add('nvim-lua/plenary.nvim')
+    call dein#add('nvim-telescope/telescope.nvim')
+    call dein#add('arcticicestudio/nord-vim')
+
     " Autocompletion
     call dein#add('autozimu/LanguageClient-neovim', {
             \ 'rev': 'next',

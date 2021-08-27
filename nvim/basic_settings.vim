@@ -83,9 +83,9 @@
         " Broken down into easily includeable segments
         set statusline=%<%f\                     " Filename
         set statusline+=%w%h%m%r                 " Options
-        if !exists('g:override_spf13_bundles')
-            set statusline+=%{fugitive#statusline()} " Git Hotness
-        endif
+        "if !exists('g:override_spf13_bundles')
+            "set statusline+=%{fugitive#statusline()} " Git Hotness
+        "endif
         set statusline+=\ [%{&ff}/%Y]            " Filetype
         set statusline+=\ [%{getcwd()}]          " Current dir
         set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
@@ -98,12 +98,13 @@
     set winminheight=0              " Windows can be 0 line high
     set ignorecase                  " Case insensitive search
     set smartcase                   " Case sensitive when uc present
-    set wildmode=list:longest,full  " Command <Tab> completion, list matches, then longest common part, then all.
+    set wildmode=longest,full       " Command <Tab> completion, list matches, then longest common part, then all.
     set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
     set scrolljump=5                " Lines to scroll when cursor leaves screen
     set scrolloff=3                 " Minimum lines to keep above and below cursor
     set foldenable                  " Auto fold code
     set list
+    set signcolumn=yes
     set listchars=tab:›\ ,trail:•,extends:+,nbsp:. " Highlight problematic whitespace
 " }
 
@@ -121,5 +122,4 @@
     set cindent
     set cinoptions=g-1,:0,(0,w0
 " }
-
 
