@@ -15,6 +15,12 @@
     nnoremap <Leader>gs :lua require'telescope.builtin'.grep_string()<cr>
     " Search for a string in your current working directory and get results live as you type
     nnoremap <Leader>gg :lua require'telescope.builtin'.live_grep()<cr>
+    " Searches for the string under your cursor in your current working directory
+    " Restrict to currently open files
+    nnoremap <Leader>gc :lua require'telescope.builtin'.grep_string({grep_open_files=true})<cr>
+    " Search for a string in your current working directory and get results live as you type
+    " Restrict to currently open files
+    nnoremap <Leader>gb :lua require'telescope.builtin'.live_grep({grep_open_files=true})<cr>
 
     " Lists files and folders in your current working directory, open files,
     " navigate your filesystem, and create new files and folders
