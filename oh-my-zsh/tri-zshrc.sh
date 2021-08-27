@@ -13,15 +13,6 @@ if [ -d "$PRIVATE_CONF" ]; then
 fi
 unset PRIVATE_CONF
 
-# For pyenv
-PYENV_PATH=$HOME/.pyenv/bin
-if [ -d "$PYENV_PATH" ]; then
-    export PATH="$PYENV_PATH:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-fi
-unset PYENV_PATH
-
 ## For plugins
 if hash fasd 2> /dev/null; then
     plugins+=(fasd)
@@ -34,6 +25,7 @@ fi
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
     # by using the command below
+    eval "$(pyenv init --path)"
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi
