@@ -18,6 +18,9 @@ require('plugins')
 -- nvim's basic settings
 vim.cmd('source $HOME/.config/nvim/basic_settings.vim')
 
+-- vimscript key mappings
+vim.cmd('source $HOME/.config/nvim/key_mappings.vim')
+
 -- nvim's file format
 vim.cmd('source $HOME/.config/nvim/file_formatting.vim')
 
@@ -28,4 +31,4 @@ require('plugin_settings')
 vim.cmd('source $HOME/.config/nvim/plugin_settings.vim')
 
 -- vimscript key mappings
-vim.cmd('source $HOME/.config/nvim/key_mappings.vim')
+vim.cmd('source $HOME/.config/nvim/plugin_key_mappings.vim')
