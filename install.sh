@@ -89,10 +89,9 @@ nvim()
     back_or_override $TGT_NVIM_CONF
     ln -s $NVIM_CONF $TGT_NVIM_CONF
 
-    curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > /tmp/installer.sh
-    sh /tmp/installer.sh $TGT_NVIM_CONF/plugins
+    git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/plugins/pack/packer/start/packer.nvim
 
-    echo 'install finished, you have to execute ":call dein#install()" in nvim to install plugins'
+    echo 'install finished, you have to execute `PackerInstall` in nvim to install plugins'
 }
 
 mutt()

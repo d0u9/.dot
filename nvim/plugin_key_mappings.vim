@@ -10,7 +10,7 @@
     nnoremap <Leader>gf :lua require'telescope.builtin'.find_files()<cr>
     " Fuzzy search through the output of git ls-files command,
     " respects .gitignore, optionally ignores untracked files
-    nnoremap <Leader>gl :lua require'telescope.builtin'.git_files()<cr>
+    nnoremap <Leader>gt :lua require'telescope.builtin'.git_files()<cr>
     " Searches for the string under your cursor in your current working directory
     nnoremap <Leader>gs :lua require'telescope.builtin'.grep_string()<cr>
     " Search for a string in your current working directory and get results live as you type
