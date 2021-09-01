@@ -38,6 +38,10 @@
     nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions()<cr>
 " }
 
+" nvim-lspconfig {
+    nnoremap <Leader>lr :lua vim.lsp.buf.rename()<cr>
+" }
+
 " kommentary {
     lua vim.api.nvim_set_keymap("n", "<leader>cc", "<Plug>kommentary_line_default", {})
     lua vim.api.nvim_set_keymap("n", "<leader>c", "<Plug>kommentary_motion_default", {})
