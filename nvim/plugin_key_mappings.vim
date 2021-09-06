@@ -29,7 +29,7 @@
     nnoremap <Leader>sb :lua require'telescope.builtin'.buffers()<cr>
 
     " Lists LSP references for word under the cursor
-    nnoremap <Leader>lr :lua require'telescope.builtin'.lsp_references()<cr>
+    nnoremap <Leader>lf :lua require'telescope.builtin'.lsp_references()<cr>
     " Goto the implementation of the word under the cursor if there's
     " only one, otherwise show all options in Telescope
     nnoremap <Leader>li :lua require'telescope.builtin'.lsp_implementations()<cr>
