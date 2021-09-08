@@ -94,41 +94,88 @@
     highlight NvimTreeFolderIcon guibg=blue
 " }
 
-" Vim-airline {
-    " let g:airline_powerline_fonts = 1
+" linghtline {
+    let g:lightline = {
+    \ 'colorscheme': 'one',
+    \ 'mode_map': {
+    \   'n' : 'NM',
+    \   'i' : 'IS',
+    \   'R' : 'RP',
+    \   'v' : 'VS',
+    \   'V' : 'VL ',
+    \   "\<C-v>": 'VB',
+    \   'c' : 'CM',
+    \   's' : 'SE',
+    \   'S' : 'SL',
+    \   "\<C-s>": 'SB',
+    \   't': 'TM',
+    \ },
+    \ 'active': {
+    \ 'left': [ [ 'mode', 'paste' ],
+    \           [ 'gitbranch', 'readonly', 'filename', 'modified', 'function' ] ]
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'LightlineGitBranch',
+    \   'percent': 'LightlinePercent',
+    \   'filetype': 'LightlineFiletype',
+    \   'fileencoding': 'LightlineFileencoding',
+    \   'fileformat': 'LightlineFileformat',
+    \   'modified': 'LightlineModified',
+    \   'function': 'NearestMethodOrFunction',
+    \ },
+    \ 'component': {
+    \ },
+    \ }
 
-    " enable spell detection
-    let g:airline_detect_spell = 1
+	function! LightlineModified()
+	  return &ft ==# 'help' ? "\uf059" : &modified ? "\uf0fe" : &modifiable ? "\uf0c8" : "\uf146"
+	endfunction
 
-    " enable paste detection
-    let g:airline_detect_paste = 1
+    function! LightlineGitBranch()
+        let l:branch = FugitiveHead()
+        return l:branch ==# '' ? '' : " \ue725 " . FugitiveHead()
+    endfunction
 
-    " enable modified detection
-    let g:airline_detect_modified = 1
+    function! LightlinePercent()
+        let l:percent = (100 * line('.') / line('$'))
+        return &ft =~? 'vimfiler' ? '' : printf("\uf718 %03d/%03d %02d%%", line('.'), line('$'), l:percent)
+    endfunction
 
-    let g:airline_theme='dark'
-    let g:airline_skip_empty_sections = 1
+    function! LightlineFiletype()
+        return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    endfunction
 
-    let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#fnamemod = ':t'
-    let g:airline#extensions#tabline#show_tabs = 0
-    let g:airline#extensions#tabline#exclude_preview = 1
+    function! LightlineFileencoding()
+        return winwidth(0) > 70 ? "\ufbd6 " . &fileencoding : ''
+    endfunction
 
-    let g:airline#extensions#tagbar#enabled = 1
-    let g:airline_section_warning = ''
+    function! LightlineFileformat()
+        return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    endfunction
 
-    " define the set of text to display for each mode.
-    let g:airline_mode_map = {
-                \ '__' : '-',
-                \ 'n'  : 'N',
-                \ 'i'  : 'I',
-                \ 'R'  : 'R',
-                \ 'c'  : 'C',
-                \ 'v'  : 'V',
-                \ 'V'  : 'V',
-                \ '' : 'V',
-                \ 's'  : 'S',
-                \ 'S'  : 'S',
-                \ '' : 'S',
-                \ }
+    function! LightlineNearestMethodOrFunction() abort
+      return get(b:, 'vista_nearest_method_or_function', '')
+    endfunction
+    set statusline+=%{NearestMethodOrFunction()}
+    autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+" }
+
+" gitgutter {
+    autocmd BufWritePost * GitGutter
+" }
+
+" vista.vim {
+    let g:vista_default_executive = 'ctags'
+    let g:vista_executive_for = {
+        \ 'vimwiki': 'markdown',
+        \ 'pandoc': 'markdown',
+        \ 'markdown': 'toc',
+        \ 'rust': 'nvim_lsp',
+        \ 'go': 'nvim_lsp',
+        \ 'c': 'nvim_lsp',
+        \ 'cpp': 'nvim_lsp',
+        \ }
+    let g:vista_blink = [0, 0]
+    let g:vista_top_level_blink = [0, 0]
+    let g:vista_echo_cursor = 0
 " }

@@ -27,6 +27,15 @@
     nnoremap <Leader>sf :lua require'telescope.builtin'.file_browser()<cr>
     " Lists open buffers in current neovim instance
     nnoremap <Leader>sb :lua require'telescope.builtin'.buffers()<cr>
+    " Lists vim marks and their value
+    nnoremap <Leader>sm :lua require'telescope.builtin'.marks()<cr>
+    " Lists Jump List entries
+    nnoremap <Leader>sj :lua require'telescope.builtin'.jumplist()<cr>
+    " Lists vim registers, pastes the contents of the register on <cr>
+    nnoremap <Leader>sr :lua require'telescope.builtin'.registers()<cr>
+    " Lists all available highlights
+    nnoremap <Leader>sh :lua require'telescope.builtin'.highlights()<cr>
+
 
     " Lists LSP references for word under the cursor
     nnoremap <Leader>lf :lua require'telescope.builtin'.lsp_references()<cr>
@@ -36,6 +45,8 @@
     " Goto the definition of the word under the cursor, if there's only
     " one, otherwise show all options in Telescope
     nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions()<cr>
+    " Lists LSP document symbols in the current buffer
+    nnoremap <Leader>ls :lua require'telescope.builtin'.lsp_document_symbols()<cr>
 " }
 
 " nvim-lspconfig {
@@ -55,3 +66,6 @@
     lua vim.api.nvim_set_keymap("x", "<leader>cd", "<Plug>kommentary_visual_decrease", {})
 " }
 
+" vista.vim {
+    noremap <Leader>t :Vista focus<cr>
+" }

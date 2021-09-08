@@ -5,6 +5,7 @@
     autocmd Filetype cu  setlocal ts=4 sw=4 expandtab
     autocmd Filetype c setlocal ts=8 sw=8 sts=8 noexpandtab nolist
     autocmd Filetype proto setlocal ts=2 sw=2 expandtab
+    autocmd Filetype lua setlocal ts=2 sw=2 expandtab
 " }
 
 " Golang {

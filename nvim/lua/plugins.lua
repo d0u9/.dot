@@ -20,16 +20,24 @@ return packer.startup(function()
   use 'neovim/nvim-lspconfig'
 
   -- Autocompletion plugin
-  use 'hrsh7th/nvim-cmp'
-  use 'hrsh7th/cmp-nvim-lsp'            -- LSP source for nvim-cmp
-  use 'saadparwaiz1/cmp_luasnip'        -- Snippets source for nvim-cmp
-  use 'L3MON4D3/LuaSnip'                -- Snippets plugin
+  use { 'hrsh7th/nvim-cmp',
+    requires = {
+      'hrsh7th/cmp-nvim-lsp',
+    }
+  }
 
   -- GUI relative
   use 'ryanoasis/vim-devicons'
-  use 'vim-airline/vim-airline'
+  -- use 'vim-airline/vim-airline'
+  use { 'itchyny/lightline.vim',
+    requires = {
+      'tpope/vim-fugitive',
+      'liuchengxu/vista.vim',
+    }
+  }
   use 'itchyny/vim-cursorword'
   use 'wesQ3/vim-windowswap'
+  use 'liuchengxu/vista.vim'
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
@@ -44,16 +52,12 @@ return packer.startup(function()
   -- telescope
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { {'nvim-lua/plenary.nvim'} }
+    requires = 'nvim-lua/plenary.nvim'
   }
 
   -- Git
-  use {
-    'lewis6991/gitsigns.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim'
-    }
-  }
+  use 'airblade/vim-gitgutter'
+  use 'tpope/vim-fugitive'
 
   -- comment
   use 'b3nj5m1n/kommentary'
