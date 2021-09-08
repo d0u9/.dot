@@ -29,6 +29,7 @@ return packer.startup(function()
   use 'ryanoasis/vim-devicons'
   use 'vim-airline/vim-airline'
   use 'itchyny/vim-cursorword'
+  use 'wesQ3/vim-windowswap'
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
