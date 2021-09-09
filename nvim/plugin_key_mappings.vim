@@ -44,7 +44,7 @@
     nnoremap <Leader>li :lua require'telescope.builtin'.lsp_implementations()<cr>
     " Goto the definition of the word under the cursor, if there's only
     " one, otherwise show all options in Telescope
-    nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions()<cr>
+    nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions({ jump_type = "never" })<cr>
     " Lists LSP document symbols in the current buffer
     nnoremap <Leader>ls :lua require'telescope.builtin'.lsp_document_symbols()<cr>
 " }
