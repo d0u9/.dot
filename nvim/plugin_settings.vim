@@ -112,7 +112,7 @@
     \ },
     \ 'active': {
     \ 'left': [ [ 'mode', 'paste' ],
-    \           [ 'gitbranch', 'readonly', 'filename', 'modified', 'function' ] ]
+    \           [ 'gitbranch', 'bufwin', 'readonly', 'relativepath', 'modified', 'function' ] ]
     \ },
     \ 'component_function': {
     \   'gitbranch': 'LightlineGitBranch',
@@ -121,15 +121,20 @@
     \   'fileencoding': 'LightlineFileencoding',
     \   'fileformat': 'LightlineFileformat',
     \   'modified': 'LightlineModified',
-    \   'function': 'NearestMethodOrFunction',
+    \   'function': 'LightlineNearestMethodOrFunction',
+    \   'bufwin': 'LightlineBufWin',
     \ },
     \ 'component': {
     \ },
     \ }
 
-	function! LightlineModified()
-	  return &ft ==# 'help' ? "\uf059" : &modified ? "\uf0fe" : &modifiable ? "\uf0c8" : "\uf146"
-	endfunction
+    function! LightlineBufWin()
+        return winwidth(0) > 70 ? "\uf2d2 " . win_getid() . " \ufb18 " . bufnr('%'): ''
+    endfunction
+
+    function! LightlineModified()
+        return &ft ==# 'help' ? "\uf059" : &modified ? "\uf0fe" : &modifiable ? "\uf0c8" : "\uf146"
+    endfunction
 
     function! LightlineGitBranch()
         let l:branch = FugitiveHead()
