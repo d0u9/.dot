@@ -96,7 +96,7 @@
 
 " linghtline {
     let g:lightline = {
-    \ 'colorscheme': 'one',
+    \ 'colorscheme': 'PaperColor',
     \ 'mode_map': {
     \   'n' : 'NM',
     \   'i' : 'IS',

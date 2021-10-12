@@ -16,6 +16,55 @@ local function config_nvim_lsconfig()
 end
 setup_if_has(config_nvim_lsconfig, 'lspconfig')
 
+----------- lspkind-nvim -----------
+function config_lspkind_nvim()
+  require('lspkind').init({
+    -- enables text annotations
+    --
+    -- default: true
+    with_text = true,
+
+    -- default symbol map
+    -- can be either 'default' (requires nerd-fonts font) or
+    -- 'codicons' for codicon preset (requires vscode-codicons font)
+    --
+    -- default: 'default'
+    preset = 'codicons',
+
+    -- override preset symbols
+    --
+    -- default: {}
+    symbol_map = {
+      Text = "",
+      Method = "",
+      Function = "",
+      Constructor = "",
+      Field = "ﰠ",
+      Variable = "",
+      Class = "ﴯ",
+      Interface = "",
+      Module = "",
+      Property = "ﰠ",
+      Unit = "塞",
+      Value = "",
+      Enum = "",
+      Keyword = "",
+      Snippet = "",
+      Color = "",
+      File = "",
+      Reference = "",
+      Folder = "",
+      EnumMember = "",
+      Constant = "",
+      Struct = "פּ",
+      Event = "",
+      Operator = "",
+      TypeParameter = ""
+    },
+  })
+end
+setup_if_has(config_lspkind_nvim, 'lspkind')
+
 ----------- nvim-cmp -----------
 function config_nvim_cmp()
   local cmp = require('cmp')
@@ -26,6 +75,17 @@ function config_nvim_cmp()
         vim.fn['vsnip#anonymous'](args.body)
       end
     },
+    sorting = {
+      comparators = {
+        cmp.config.compare.offset,
+        cmp.config.compare.exact,
+        cmp.config.compare.score,
+        -- cmp.config.compare.kind,
+        cmp.config.compare.sort_text,
+        cmp.config.compare.length,
+        -- cmp.config.compare.order,
+      },
+    },
     mapping = {
       -- ['<C-p>'] = cmp.mapping.select_prev_item(),
       -- ['<C-n>'] = cmp.mapping.select_next_item(),
@@ -34,8 +94,8 @@ function config_nvim_cmp()
       -- ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
       ['<CR>'] = cmp.mapping.confirm {
-        behavior = cmp.ConfirmBehavior.Replace,
-        select = true,
+        behavior = cmp.ConfirmBehavior.Insert,
+        -- select = true,
       },
       ['<Tab>'] = function(fallback)
         if vim.fn.pumvisible() == 1 then
@@ -54,10 +114,27 @@ function config_nvim_cmp()
     },
     sources = {
       { name = 'nvim_lsp' },
+      { name = 'buffer' },
+    },
+    formatting = {
+      format = function(entry, vim_item)
+        -- fancy icons and a name of kind
+        vim_item.kind = "      " .. require('lspkind').presets.default[vim_item.kind] .. " " .. vim_item.kind
+
+        -- set a name for each source
+        vim_item.menu = ({
+          buffer = "[Buffer]",
+          nvim_lsp = "[LSP]",
+          luasnip = "[LuaSnip]",
+          nvim_lua = "[Lua]",
+          latex_symbols = "[Latex]",
+        })[entry.source.name]
+        return vim_item
+      end,
     },
   }
 end
-setup_if_has(config_nvim_cmp, 'cmp')
+setup_if_has(config_nvim_cmp, 'cmp', 'lspkind')
 
 ----------- nvim-treesitter -----------
 function config_nvim_treesitter()

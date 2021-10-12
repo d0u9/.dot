@@ -47,9 +47,14 @@
     nnoremap <Leader>ld :lua require'telescope.builtin'.lsp_definitions({ jump_type = "never" })<cr>
     " Lists LSP document symbols in the current buffer
     nnoremap <Leader>ls :lua require'telescope.builtin'.lsp_document_symbols()<cr>
+    " Lists LSP diagnostics for the current buffer
+    nnoremap <Leader>lg :lua require'telescope.builtin'.lsp_document_diagnostics()<cr>
+    " Lists LSP diagnostics for the current workspace if supported, otherwise searches in all open buffers
+    nnoremap <Leader>lw :lua require'telescope.builtin'.lsp_workspace_diagnostics()<cr>
 " }
 
 " nvim-lspconfig {
+    " Rename
     nnoremap <Leader>lr :lua vim.lsp.buf.rename()<cr>
 " }
 

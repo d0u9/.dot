@@ -23,12 +23,13 @@ return packer.startup(function()
   use { 'hrsh7th/nvim-cmp',
     requires = {
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
     }
   }
 
   -- GUI relative
   use 'ryanoasis/vim-devicons'
-  -- use 'vim-airline/vim-airline'
+  use 'onsails/lspkind-nvim'
   use { 'itchyny/lightline.vim',
     requires = {
       'tpope/vim-fugitive',
