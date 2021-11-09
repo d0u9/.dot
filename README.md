@@ -91,6 +91,10 @@ If you don't want to use the system's default python interpreter, or if you opt 
 
 For the details, please check this [article](http://www.d0u9.xyz/compile-ycm-with-a-specific-verion-of-python-which-is-installed-via-pyenv).
 
+```
+CONFIGURE_OPTS="--enable-shared --with-system-expat " pyenv install 3.9.3
+```
+
 
 ---
 
