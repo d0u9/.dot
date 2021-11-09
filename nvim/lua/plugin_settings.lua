@@ -136,14 +136,19 @@ function config_nvim_tree()
         -- list of mappings to set on the tree manually
         list = {}
       }
+    },
+
+    filters = {
+      -- 0 by default, this option hides files and folders starting with a dot `.`
+      dotfiles = true,
+      -- empty by default
+      custom = { '.git', 'node_modules', '.cache' }
     }
   }
   -- left by default
   vim.api.nvim_set_var('nvim_tree_side', 'left')
   -- 30 by default, can be width_in_columns or 'width_in_percent%'
   vim.api.nvim_set_var('nvim_tree_width', 40)
-  -- empty by default
-  vim.api.nvim_set_var('nvim_tree_ignore', { '.git', 'node_modules', '.cache' })
   -- 0 by default
   vim.api.nvim_set_var('nvim_tree_gitignore', 1)
   -- empty by default, don't auto open tree on specific filetypes.
@@ -152,8 +157,6 @@ function config_nvim_tree()
   vim.api.nvim_set_var('nvim_tree_quit_on_open', 1)
   -- 0 by default, this option shows indent markers when folders are open
   vim.api.nvim_set_var('nvim_tree_indent_markers', 1) 
-  -- 0 by default, this option hides files and folders starting with a dot `.`
-  vim.api.nvim_set_var('nvim_tree_hide_dotfiles', 1)
   -- 0 by default, will enable file highlight for git attributes (can be used without the icons).
   vim.api.nvim_set_var('nvim_tree_git_hl', 1)
   -- 0 by default, will enable folder and file icon highlight for opened files/directories.
