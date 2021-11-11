@@ -2,7 +2,7 @@
 # You can set any variables ONLY to OS X platform.
 
 ## For plugins
-plugins+=(osx brew)
+plugins+=(macos brew)
 
 ## Homebrew
 export PATH="/opt/homebrew/bin:$PATH"
