@@ -143,14 +143,17 @@ function config_nvim_tree()
       dotfiles = true,
       -- empty by default
       custom = { '.git', 'node_modules', '.cache' }
+    },
+
+    git = {
+      -- 0 by default
+      ignore = true
     }
   }
   -- left by default
   vim.api.nvim_set_var('nvim_tree_side', 'left')
   -- 30 by default, can be width_in_columns or 'width_in_percent%'
   vim.api.nvim_set_var('nvim_tree_width', 40)
-  -- 0 by default
-  vim.api.nvim_set_var('nvim_tree_gitignore', 1)
   -- empty by default, don't auto open tree on specific filetypes.
   vim.api.nvim_set_var('nvim_tree_auto_ignore_ft', { 'startify', 'dashboard' })
   -- 0 by default, closes the tree when you open a file
