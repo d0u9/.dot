@@ -26,7 +26,6 @@ test -d $HOME/.pyenv/bin && export PATH="$PATH:$HOME/.pyenv/bin"
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
     # by using the command below
-    eval "$(pyenv init --path)"
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi
