@@ -337,12 +337,10 @@ function config_telescope()
   require('telescope').setup{
     defaults = {
       vimgrep_arguments = {
-        'ag',
+        'rg',
         '--vimgrep',
-        '--depth',
+        '--max-depth',
         '5',
-        '--ignore',
-        'exe|so|dll|class|png|jpg|jpeg|doc|docx|pdf|icon|gif|out|o',
       },
     },
     file_ignore_patterns = {"%.o"},
