@@ -83,6 +83,7 @@ tmux()
 nvim()
 {
     echo "installing nvim config files"
+    mkdir -p $HOME/.config
     NVIM_CONF=$DOT_DIR/nvim
     TGT_NVIM_CONF=$HOME/.config/nvim
 
