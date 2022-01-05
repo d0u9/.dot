@@ -1,3 +1,4 @@
+let g:c_syntax_for_h = 1
 " {
     autocmd Filetype html setlocal ts=4 sw=4 expandtab
     autocmd Filetype css setlocal ts=4 sw=4 expandtab
