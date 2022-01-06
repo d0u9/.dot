@@ -63,5 +63,7 @@ return packer.startup(function()
   -- comment
   use 'b3nj5m1n/kommentary'
 
+  -- Language specific
+  use 'simrat39/rust-tools.nvim'
 end)
 

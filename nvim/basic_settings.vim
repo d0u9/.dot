@@ -126,5 +126,9 @@
     " Autoindent according to filetypes
     set cindent
     set cinoptions=g-1,:0,(0,w0
+
+    " Set updatetime for CursorHold
+    " 500ms of no cursor movement to trigger CursorHold
+    set updatetime=300
 " }
 
