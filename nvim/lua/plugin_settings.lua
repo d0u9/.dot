@@ -12,7 +12,23 @@ end
 ---------- nvim-lsconfig -----------
 local function config_nvim_lsconfig()
   require('lspconfig').gopls.setup{}
-  require('lspconfig').rust_analyzer.setup{}
+  require('lspconfig').rust_analyzer.setup{
+    settings = {
+      ["rust-analyzer"] = {
+        diagnostics = {
+          disabled = {
+            "inactive-code",
+          }
+        },
+        cargo = {
+          loadOutDirsFromCheck = true
+        },
+        procMacro = {
+          enable = true
+        },
+      }
+    }
+  }
 end
 setup_if_has(config_nvim_lsconfig, 'lspconfig')
 
