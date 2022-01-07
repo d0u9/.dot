@@ -24,6 +24,7 @@ return packer.startup(function()
     requires = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
+      'hrsh7th/vim-vsnip',
     }
   }
 
