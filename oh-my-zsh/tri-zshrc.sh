@@ -22,6 +22,10 @@ if hash tmux 2> /dev/null; then
     plugins+=(tmuxinator)
 fi
 
+if hash cargo 2> /dev/null; then
+    plugins+=(rust)
+fi
+
 test -d $HOME/.pyenv/bin && export PATH="$PATH:$HOME/.pyenv/bin"
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
