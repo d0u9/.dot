@@ -33,9 +33,6 @@ local function config_nvim_lsconfig()
       }
     }
   }
-
-  -- Show diagnostic popup on cursor hold
-  vim.cmd('autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()')
 end
 setup_if_has(config_nvim_lsconfig, 'lspconfig')
 

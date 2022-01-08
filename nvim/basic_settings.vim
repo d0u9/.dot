@@ -129,6 +129,6 @@
 
     " Set updatetime for CursorHold
     " 500ms of no cursor movement to trigger CursorHold
-    set updatetime=300
+    " set updatetime=300
 " }
 
