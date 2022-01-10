@@ -261,7 +261,7 @@ function config_nvim_tree()
     }
   })
 
-  vim.api.nvim_set_keymap('n', '<F3>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', '<leader>`', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
   -- nnoremap <leader>r :NvimTreeRefresh<CR>
   -- nnoremap <leader>n :NvimTreeFindFile<CR>
 

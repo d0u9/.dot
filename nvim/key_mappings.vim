@@ -32,7 +32,7 @@
     map zh zH
 
     " toggle relative line numbers
-    map <F2> :set relativenumber!<CR>
+    map <leader>1 :set relativenumber!<CR>
 
     " Command-line key bin
     cnoremap <C-A> <Home>
