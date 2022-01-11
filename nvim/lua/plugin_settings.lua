@@ -149,13 +149,14 @@ function config_nvim_tree()
       side = 'left',
       -- if true the tree will resize itself after opening a file
       auto_resize = false,
+      relativenumber = true,
       mappings = {
         -- custom only false will merge the list with the default mappings
         -- if true, it will only use your list to set the mappings
         custom_only = false,
         -- list of mappings to set on the tree manually
         list = {}
-      }
+      },
     },
 
     filters = {
