@@ -79,3 +79,7 @@
 " lsp {
     nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
 " }
+
+" rust-tools {
+    nnoremap <silent> gh    <cmd>lua require'rust-tools.hover_actions'.hover_actions()<CR>
+" }

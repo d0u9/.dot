@@ -11,7 +11,18 @@ end
 
 ---------- nvim-lsconfig -----------
 local function config_nvim_lsconfig()
-  require('lspconfig').gopls.setup{}
+  require('lspconfig').gopls.setup{
+    cmd = {"gopls", "serve"},
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+      },
+    },
+  }
+
   require('lspconfig').rust_analyzer.setup{
     settings = {
       ["rust-analyzer"] = {
@@ -39,10 +50,10 @@ setup_if_has(config_nvim_lsconfig, 'lspconfig')
 ----------- lspkind-nvim -----------
 function config_lspkind_nvim()
   require('lspkind').init({
-    -- enables text annotations
-    --
-    -- default: true
-    with_text = true,
+    -- defines how annotations are shown
+    -- default: symbol
+    -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+    mode = 'symbol_text',
 
     -- default symbol map
     -- can be either 'default' (requires nerd-fonts font) or
@@ -386,9 +397,9 @@ local function config_rust_tools()
       autoSetHints = true,
       hover_with_actions = true,
       inlay_hints = {
-        show_parameter_hints = false,
-        parameter_hints_prefix = "",
-        other_hints_prefix = "",
+        show_parameter_hints = true,
+        -- parameter_hints_prefix = "<-",
+        -- other_hints_prefix = "=>",
       },
     },
 
