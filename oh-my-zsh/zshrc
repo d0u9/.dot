@@ -92,6 +92,12 @@ source $HOME/.dot/oh-my-zsh/tri-zshrc.sh
 ### Done everything
 source $ZSH/oh-my-zsh.sh
 
+### Load config file specifc to this host
+### These specific configuration isn't included in git.
+HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/main.sh
+if [ -f $HOST_CONF_DIR ]; then
+    source $HOST_CONF
+fi
 
 ### Post hook
 source $HOME/.dot/oh-my-zsh/tri-post-zshrc.sh
@@ -99,4 +105,3 @@ source $HOME/.dot/oh-my-zsh/tri-post-zshrc.sh
 if [ ! -d TRI_CONF ]; then
     unset TRI_CONF
 fi
-

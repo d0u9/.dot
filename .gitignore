@@ -2,6 +2,9 @@
 tri_config.json
 shadowsocks*.json
 
+# oh-my-zsh host config
+oh-my-zsh/host-conf/*.sh
+
 # nvim tmp files
 nvim/tmp_files
 nvim/plugins
