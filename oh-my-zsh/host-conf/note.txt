@@ -1,0 +1,6 @@
+This host-conf directory contains files that are specific to a HOST.
+
+For example, on some test hosts, we want to setup different PATH environment
+variable that is not suitable to be inclued in git repo.
+
+To do that, set the environment in main.sh.
