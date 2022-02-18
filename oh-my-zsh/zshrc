@@ -95,7 +95,7 @@ source $ZSH/oh-my-zsh.sh
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
 HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/main.sh
-if [ -f $HOST_CONF_DIR ]; then
+if [ -f $HOST_CONF ]; then
     source $HOST_CONF
 fi
 
