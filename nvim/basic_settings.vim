@@ -24,6 +24,7 @@
     syntax on                           " Syntax highlighting
     set mousehide                       " Hide the mouse cursor while typing
     set noeol
+    set mouse=a
 
     set shortmess+=filmnrxoOtT          " Avoiding the 'Hit ENTER to continue' prompts
     set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility

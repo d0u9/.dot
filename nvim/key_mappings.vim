@@ -44,13 +44,13 @@
 
 " Window, Panel, Tabs {
     " Windows resizeing
-    nnoremap <silent> <Leader>wk :exe "resize +" . (&lines * 1/4)<CR>
-    nnoremap <silent> <Leader>wj :exe "resize -" . (&lines * 1/4)<CR>
-    nnoremap <silent> <Leader>wl :exe "vertical resize -" . (&columns * 1/8)<CR>
-    nnoremap <silent> <Leader>wh :exe "vertical resize +" . (&columns * 1/8)<CR>
+    nnoremap <silent> <C-W>+ :exe "resize +" . (&lines * 1/4)<CR>
+    nnoremap <silent> <C-W>- :exe "resize -" . (&lines * 1/4)<CR>
+    nnoremap <silent> <C-W>[ :exe "vertical resize -" . (&columns * 1/8)<CR>
+    nnoremap <silent> <C-W>] :exe "vertical resize +" . (&columns * 1/8)<CR>
 
     " Adjust viewports to the same size
-    map <Leader>w= <C-w>=
+    " map <Leader>w= <C-w>=
 
     " Also check ChooseWin's documentation for more window and tab
     " manipulations.
