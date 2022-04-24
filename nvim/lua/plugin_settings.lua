@@ -107,17 +107,8 @@ function config_nvim_tree()
     open_on_setup       = false,
     -- will not open on setup if the filetype is in this list
     ignore_ft_on_setup  = { '.git', 'node_modules', '.cache' },
-    -- closes neovim automatically when the tree is the last **WINDOW** in the view
-    auto_close          = false,
     -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
     open_on_tab         = false,
-    -- hijacks new directory buffers when they are opened.
-    update_to_buf_dir   = {
-      -- enable the feature
-      enable = true,
-      -- allow to open the tree if it was previously closed
-      auto_open = true,
-    },
     -- hijack the cursor in the tree to put it at the start of the filename
     hijack_cursor       = false,
     -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
@@ -159,7 +150,6 @@ function config_nvim_tree()
       -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
       side = 'left',
       -- if true the tree will resize itself after opening a file
-      auto_resize = false,
       relativenumber = true,
       mappings = {
         -- custom only false will merge the list with the default mappings
@@ -167,6 +157,12 @@ function config_nvim_tree()
         custom_only = false,
         -- list of mappings to set on the tree manually
         list = {}
+      },
+    },
+
+    actions = {
+      open_file = {
+        resize_window = true,
       },
     },
 
@@ -230,9 +226,9 @@ function config_nvim_tree()
   vim.api.nvim_set_var('nvim_tree_special_files', { ['README.me'] = 1, ['Makefile'] = 1, ['MAKEFILE'] = 1 })
   vim.api.nvim_set_var('nvim_tree_show_icons', {
     git = 1,
-    folders = 0,
-    files = 0,
-    folder_arrows = 0,
+    folders = 1,
+    files = 1,
+    folder_arrows = 1,
   })
 
   -- If 0, do not show the icons for one of 'git' 'folder' and 'files'
@@ -278,7 +274,7 @@ function config_nvim_tree()
   -- nnoremap <leader>n :NvimTreeFindFile<CR>
 
   vim.api.nvim_command('set termguicolors')
-  vim.api.nvim_command('highlight NvimTreeFolderIcon guibg=blue')
+  -- vim.api.nvim_command('highlight NvimTreeFolderIcon guibg=blue')
 end
 setup_if_has(config_nvim_tree, 'nvim-tree')
 
