@@ -9,8 +9,8 @@ packer.init({
 
 return packer.startup(function()
   -- Theme
-  -- use 'arcticicestudio/nord-vim'
-  use 'd0u9/nord-vim'
+  use 'arcticicestudio/nord-vim'
+  -- use 'd0u9/nord-vim'
 
 
   -- Packer can manage itself
