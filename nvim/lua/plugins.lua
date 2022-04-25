@@ -31,10 +31,11 @@ return packer.startup(function()
   -- GUI relative
   use 'ryanoasis/vim-devicons'
   use 'onsails/lspkind-nvim'
-  use { 'itchyny/lightline.vim',
-    requires = {
-      'tpope/vim-fugitive',
-      'liuchengxu/vista.vim',
+  use { 
+      'itchyny/lightline.vim',
+      requires = {
+        'tpope/vim-fugitive',
+        'liuchengxu/vista.vim',
     }
   }
   use 'itchyny/vim-cursorword'
