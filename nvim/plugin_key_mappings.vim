@@ -6,11 +6,9 @@
     " Ref: https://github.com/nvim-telescope/telescope.nvim#mappings
     " Ref: https://github.com/nvim-telescope/telescope.nvim#pickers
 
-    " Lists files in your current working directory, respects .gitignore
-    nnoremap <Leader>gf :lua require'telescope.builtin'.find_files()<cr>
     " Fuzzy search through the output of git ls-files command,
     " respects .gitignore, optionally ignores untracked files
-    nnoremap <Leader>gt :lua require'telescope.builtin'.git_files()<cr>
+    nnoremap <Leader>gf :lua require'telescope.builtin'.git_files()<cr>
     " Searches for the string under your cursor in your current working directory
     nnoremap <Leader>gs :lua require'telescope.builtin'.grep_string()<cr>
     " Search for a string in your current working directory and get results live as you type
@@ -22,9 +20,8 @@
     " Restrict to currently open files
     nnoremap <Leader>gb :lua require'telescope.builtin'.live_grep({grep_open_files=true})<cr>
 
-    " Lists files and folders in your current working directory, open files,
-    " navigate your filesystem, and create new files and folders
-    nnoremap <Leader>sf :lua require'telescope.builtin'.file_browser()<cr>
+    " Lists files in your current working directory, respects .gitignore
+    nnoremap <Leader>sf :lua require'telescope.builtin'.find_files()<cr>
     " Lists open buffers in current neovim instance
     nnoremap <Leader>sb :lua require'telescope.builtin'.buffers()<cr>
     " Lists vim marks and their value
