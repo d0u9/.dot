@@ -22,6 +22,7 @@ if hash tmux 2> /dev/null; then
     plugins+=(tmuxinator)
 fi
 
+test -f $HOME/.cargo/env && source $HOME/.cargo/env
 if hash cargo 2> /dev/null; then
     plugins+=(rust)
 fi
