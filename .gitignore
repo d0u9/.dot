@@ -25,3 +25,4 @@ neomutt/cache
 # Files and dirs to be ommited
 conf
 private
+scripts
