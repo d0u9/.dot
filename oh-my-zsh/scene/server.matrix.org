@@ -1,0 +1,4 @@
+# vim: set syntax=shell
+
+# Overwrite zsh theme
+ZSH_THEME="gentoo"

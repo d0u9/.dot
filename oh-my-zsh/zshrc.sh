@@ -2,9 +2,9 @@ PRIVATE_CONF=$HOME/.dot/conf/oh-my-zsh
 
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
-    source $HOME/.dot/oh-my-zsh/macos.sh
+    source $HOME/.dot/oh-my-zsh/macos/macos.sh
 else
-    source $HOME/.dot/oh-my-zsh/linux.sh
+    source $HOME/.dot/oh-my-zsh/linux/linux.sh
 fi
 
 ## For private configurations
