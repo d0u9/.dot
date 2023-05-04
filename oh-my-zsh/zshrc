@@ -86,14 +86,7 @@ export LANG=en_US.UTF-8
 ## Custom variable
 ###
 
-source $HOME/.dot/oh-my-zsh/zshrc.sh
-
-### Load config file specifc to this host
-### These specific configuration isn't included in git.
-HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/host.sh
-if [ -f $HOST_CONF ]; then
-    source $HOST_CONF
-fi
+source $HOME/.dot/oh-my-zsh/pre-oh_my_zsh.sh
 
 
 ### Done everything
@@ -101,17 +94,5 @@ source $ZSH/oh-my-zsh.sh
 
 
 ### Post hook
-source $HOME/.dot/oh-my-zsh/post-zshrc.sh
-
-if [ ! -d TRI_CONF ]; then
-    unset TRI_CONF
-fi
-
-### Load config file specifc to this host
-### These specific configuration isn't included in git.
-POST_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/post-host.sh
-if [ -f $HOST_CONF ]; then
-    source $HOST_CONF
-fi
-
+source $HOME/.dot/oh-my-zsh/post-oh_my_zsh.sh
 

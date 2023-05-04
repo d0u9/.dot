@@ -1,18 +1,3 @@
-PRIVATE_CONF=$HOME/.dot/conf/oh-my-zsh
-
-## For different platform
-if [[ "$OSTYPE" = darwin* ]]; then
-    source $HOME/.dot/oh-my-zsh/macos/macos.sh
-else
-    source $HOME/.dot/oh-my-zsh/linux/linux.sh
-fi
-
-## For private configurations
-if [ -d "$PRIVATE_CONF" ]; then
-    source $PRIVATE_CONF/private-zshrc.sh
-fi
-unset PRIVATE_CONF
-
 ## For plugins
 if hash fasd 2> /dev/null; then
     plugins+=(fasd)
@@ -45,6 +30,21 @@ alias tmux="tmux -2"
 
 ## For environment variables
 export TERM=xterm-256color
+##################         For Different Platforms           ##################
+if [[ "$OSTYPE" = darwin* ]]; then
+    source $HOME/.dot/oh-my-zsh/macos/macos-pre.sh
+else
+    source $HOME/.dot/oh-my-zsh/linux/linux-pre.sh
+fi
+
+
+##################     Load custom host specific config      ##################
+### Load config file specifc to this host
+### These specific configuration isn't included in git.
+HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/host.sh
+if [ -f $HOST_CONF ]; then
+    source $HOST_CONF
+fi
 
 ############
 ############

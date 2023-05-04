@@ -6,4 +6,4 @@ variable that is not suitable to be inclued in git repo.
 To do that, set the environment in host.sh.
 
 host.sh:  executed before invoke oh-my-zsh
-post-host.sh executed after invoke oh-my-zsh
+host-post.sh executed after invoke oh-my-zsh
