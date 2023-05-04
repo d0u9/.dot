@@ -26,3 +26,6 @@ neomutt/cache
 conf
 private
 scripts
+conf_pub
+conf_cloud_global
+conf_cloud_cn
