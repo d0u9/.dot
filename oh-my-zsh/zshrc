@@ -78,7 +78,9 @@ plugins=(git)
 source $HOME/.dot/oh-my-zsh/lib.sh
 source $HOME/.dot/oh-my-zsh/omz-pre.sh
 
+warn "Loading OMZ config"
 source $ZSH/oh-my-zsh.sh
+warn "Loading OMZ config - DONE"
 
 
 ### Post hook
