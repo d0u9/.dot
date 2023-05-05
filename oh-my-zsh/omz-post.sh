@@ -1,3 +1,5 @@
+info "[POST] Loading OMZ config" $(cur_path_relative "$HOME/.dot" "$0")
+
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
     source $HOME/.dot/oh-my-zsh/macos/macos-post.sh
@@ -14,3 +16,4 @@ if [ -f $POST_HOST_CONF ]; then
     done
 fi
 
+info "[POST] Loading OMZ config - DONE" $(cur_path_relative "$HOME/.dot" "$0")

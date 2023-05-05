@@ -1,3 +1,5 @@
+info "[PRE] Loading OMZ config" $(cur_path_relative "$HOME/.dot" "$0")
+
 ## For plugins
 if hash fasd 2> /dev/null; then
     plugins+=(fasd)
@@ -51,3 +53,4 @@ fi
 ############
 ############
 
+info "[PRE] Loading OMZ config - DONE" $(cur_path_relative "$HOME/.dot" "$0")

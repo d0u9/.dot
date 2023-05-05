@@ -1,3 +1,5 @@
+info "[PRE] Loading OMZ config for Macos" $(cur_path_relative "$HOME/.dot" "$0")
+
 # This config file specific to OS X platform.
 # You can set any variables ONLY to OS X platform.
 
@@ -13,3 +15,5 @@ elif [ -f /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+
+info "[PRE] Loading OMZ config for Macos - DONE" $(cur_path_relative "$HOME/.dot" "$0")

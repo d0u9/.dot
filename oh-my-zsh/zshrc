@@ -85,8 +85,8 @@ export LANG=en_US.UTF-8
 ###
 ## Custom variable
 ###
-
-source $HOME/.dot/oh-my-zsh/pre-oh_my_zsh.sh
+source $HOME/.dot/oh-my-zsh/lib.sh
+source $HOME/.dot/oh-my-zsh/omz-pre.sh
 
 
 ### Done everything
@@ -94,5 +94,5 @@ source $ZSH/oh-my-zsh.sh
 
 
 ### Post hook
-source $HOME/.dot/oh-my-zsh/post-oh_my_zsh.sh
+source $HOME/.dot/oh-my-zsh/omz-post.sh
 
