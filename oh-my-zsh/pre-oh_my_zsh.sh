@@ -41,9 +41,11 @@ fi
 ##################     Load custom host specific config      ##################
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
-HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/host-pre.sh
-if [ -f $HOST_CONF ]; then
-    source $HOST_CONF
+PRE_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf
+if [ -d $PRE_HOST_CONF ]; then
+    for f in $(find $PRE_HOST_CONF -name "*-pre.sh" | sort); do
+        source "$f"
+    done
 fi
 
 ############

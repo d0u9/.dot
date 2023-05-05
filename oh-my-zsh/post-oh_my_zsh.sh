@@ -7,8 +7,10 @@ fi
 
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
-POST_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf/post-host.sh
+POST_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf
 if [ -f $POST_HOST_CONF ]; then
-    source $POST_HOST_CONF
+    for f in $(find $POST_HOST_CONF -name "*-post.sh" | sort); do
+        source "$f"
+    done
 fi
 

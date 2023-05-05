@@ -3,7 +3,7 @@ This host-conf directory contains files that are specific to a HOST.
 For example, on some test hosts, we want to setup different PATH environment
 variable that is not suitable to be inclued in git repo.
 
-To do that, set the environment in host.sh.
+Files suffixed with `-pre.sh` such as `host-pre.sh` are loaded before invoking oh-my-zsh.
+Files suffixed with `-post.sh` such as `host-post.sh` are loaded after invoking oh-my-zsh.
 
-host-pre.sh:  executed before invoke oh-my-zsh
-host-post.sh executed after invoke oh-my-zsh
+You can index these files by prefixing number, such as `01-init-pre.sh`. The files are sourced one after another accoding to their index.
