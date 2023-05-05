@@ -10,6 +10,16 @@ source $HOME/.dot/oh-my-zsh/color.sh
 # log 'info' 'info hello'
 # log 'debug' 'debug hello'
 log() {
+    level_to_num() {
+        case "$1" in
+            'error') echo 1;;
+            'warn') echo 2;;
+            'info') echo 3;;
+            'debug') echo 4;;
+            *) echo 2;
+        esac
+    }
+
     local level="$1"
     local msg="$2"
     local file="$3"
@@ -35,7 +45,11 @@ log() {
         file="[$(color -i cyan)$file$(color reset)]"
     fi
 
-    printf "$head_str: $c%-36s$c_reset$file\n" "$msg"
+    tl=$(level_to_num "$DOT_LOG_LEVEL")
+    l=$(level_to_num "$level")
+    if [ "$l" -le "$tl" ]; then
+        printf "$head_str: $c%-36s$c_reset$file\n" "$msg"
+    fi
 }
 
 # A wrapper of log 'info'
@@ -57,7 +71,7 @@ cur_path() {
 
 # Get curent relative file path to another dir
 # Usage:
-cur_path_relative "/home" "$0"
+# cur_path_relative "/home" "$0"
 cur_path_relative() {
     base=$(realpath "$1")
     cur=$(realpath $(cur_path "$2"))
