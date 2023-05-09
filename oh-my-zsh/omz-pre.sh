@@ -14,6 +14,7 @@ if hash cargo 2> /dev/null; then
     plugins+=(rust)
 fi
 
+# Pyenv
 test -d $HOME/.pyenv/bin && export PATH="$PATH:$HOME/.pyenv/bin"
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
@@ -21,6 +22,12 @@ if hash pyenv 2> /dev/null; then
     # eval "$(pyenv init --path)"
     eval "$(pyenv init -)"
     # eval "$(pyenv virtualenv-init -)"
+fi
+
+# Rbenv
+test -d $HOME/.rbenv/bin && export PATH="$PATH:$HOME/.rbenv/bin"
+if hash rbenv 2> /dev/null; then
+    eval "$(rbenv init - zsh)"
 fi
 
 if hash docker 2> /dev/null; then
