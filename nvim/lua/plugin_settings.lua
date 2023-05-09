@@ -44,6 +44,9 @@ local function config_nvim_lsconfig()
       }
     }
   }
+
+  require'lspconfig'.solargraph.setup{
+  }
 end
 setup_if_has(config_nvim_lsconfig, 'lspconfig')
 
