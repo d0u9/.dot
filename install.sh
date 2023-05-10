@@ -93,6 +93,8 @@ nvim()
     git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/plugins/pack/packer/start/packer.nvim
 
     echo 'install finished, you have to execute `PackerInstall` in nvim to install plugins'
+    echo 'Run command below to install code highlights'
+    echo '    :TSInstall bash c cpp comment go html css javascript json json5 lua markdown python ruby rust toml yaml'
 }
 
 mutt()
