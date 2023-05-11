@@ -3,8 +3,8 @@ local util = require('packer.util')
 
 -- Set up directory to store plugins
 packer.init({
-  package_root = util.join_paths('~/.config/nvim/plugins', 'pack'),
-  compile_path = util.join_paths('~/.config/nvim/plugins', 'packer_compiled.lua'),
+  package_root = util.join_paths(_G.PLUGIN_DIR, 'pack'),
+  compile_path = util.join_paths(_G.PLUGIN_DIR, 'packer_compiled.lua'),
 })
 
 return packer.startup(function()

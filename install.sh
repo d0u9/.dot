@@ -90,7 +90,7 @@ nvim()
     back_or_override $TGT_NVIM_CONF
     ln -s $NVIM_CONF $TGT_NVIM_CONF
 
-    git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/plugins/pack/packer/start/packer.nvim
+    git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/runtime/plugins/pack/packer/start/packer.nvim
 
     echo 'install finished, you have to execute `PackerInstall` in nvim to install plugins'
     echo 'Run command below to install code highlights'

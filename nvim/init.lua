@@ -38,15 +38,16 @@ end
 
 -- Basic setings
 _G.CONFIG_DIR = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
-_G.RUNTIME_DIR = _G.CONFIG_DIR .. '/' .. 'runtime'
+_G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
+_G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
 
 -- set up environments preparation for running neovim
 env_prepare(_G.CONFIG_DIR, _G.RUNTIME_DIR)
 
-vim.opt.runtimepath:append(_G.CONFIG_DIR .. 'plugins/pack/packer/start/packer.nvim')
+vim.opt.runtimepath:append(_G.PLUGIN_DIR .. '/pack/packer/start/packer.nvim')
 
 -- Used for searching packages (vim plugins)
-vim.opt.packpath:append(_G.CONFIG_DIR .. 'plugins')
+vim.opt.packpath:append(_G.PLUGIN_DIR)
 
 vim.opt.undodir     = _G.RUNTIME_DIR .. '/undo/'
 vim.opt.backupdir   = _G.RUNTIME_DIR .. '/backup_files/'
