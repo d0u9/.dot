@@ -69,10 +69,6 @@
     autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 " }
 
-" gitgutter {
-    autocmd BufWritePost * GitGutter
-" }
-
 " vista.vim {
     let g:vista_default_executive = 'ctags'
     let g:vista_executive_for = {

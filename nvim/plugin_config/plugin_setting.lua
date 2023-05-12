@@ -34,4 +34,13 @@ require('plugin-rust_tools')
 setup_if_has(config_rust_tools, 'rust-tools')
 
 require('plugin-ufo')
-setup_if_has(config_nvim_ufo, 'ufo')
+setup_if_has(config_nvim_ufo, 'ufo', 'nvim-treesitter')
+
+local has_nvimtree, _ = pcall(require, "nvim-tree.lib")
+if has_nvimtree then
+  require('plugin-gitgutter')
+end
+
+
+
+
