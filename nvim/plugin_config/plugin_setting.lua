@@ -11,6 +11,7 @@ end
 
 ---------- nvim-lsconfig -----------
 local function config_nvim_lsconfig()
+  -- For golang
   require('lspconfig').gopls.setup{
     cmd = {"gopls", "serve"},
     settings = {
@@ -23,6 +24,7 @@ local function config_nvim_lsconfig()
     },
   }
 
+  -- For Rust
   require('lspconfig').rust_analyzer.setup{
     settings = {
       ["rust-analyzer"] = {
@@ -45,8 +47,20 @@ local function config_nvim_lsconfig()
     }
   }
 
-  require'lspconfig'.solargraph.setup{
+  -- For Ruby
+  require('lspconfig').solargraph.setup{
+    settings = {
+      solargraph = {
+        diagnostics = false,
+      },
+    }
   }
+
+  vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+  vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+  vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
 end
 setup_if_has(config_nvim_lsconfig, 'lspconfig')
 
