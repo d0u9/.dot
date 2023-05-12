@@ -13,13 +13,6 @@
 " }
 
 " General settings {
-    set background=dark
-    try
-        colorscheme nord
-    catch
-        echo "colorscheme nord hasn't installed yet"
-    endtry
-
     filetype plugin indent on           " Automatically detect file types.
     syntax on                           " Syntax highlighting
     set mousehide                       " Hide the mouse cursor while typing

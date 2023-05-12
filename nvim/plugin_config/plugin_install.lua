@@ -10,8 +10,6 @@ packer.init({
 return packer.startup(function()
   -- Theme
   use 'arcticicestudio/nord-vim'
-  -- use 'd0u9/nord-vim'
-
 
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
@@ -31,7 +29,7 @@ return packer.startup(function()
   -- GUI relative
   use 'ryanoasis/vim-devicons'
   use 'onsails/lspkind-nvim'
-  use { 
+  use {
       'itchyny/lightline.vim',
       requires = {
         'tpope/vim-fugitive',
@@ -41,6 +39,10 @@ return packer.startup(function()
   use 'itchyny/vim-cursorword'
   use 'wesQ3/vim-windowswap'
   use 'liuchengxu/vista.vim'
+  use {
+    'kevinhwang91/nvim-ufo',
+    requires = 'kevinhwang91/promise-async'
+  }
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'

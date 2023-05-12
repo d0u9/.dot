@@ -62,6 +62,9 @@ vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/basic_setting.vim')
 -- nvim's file format
 vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/file_formatting.vim')
 
+-- colors
+vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/color.vim')
+
 -- lua plugin settings
 require('plugin_setting')
 
@@ -73,5 +76,4 @@ vim.cmd('source' .. _G.CONFIG_DIR .. '/key_mapping/basic_key_mapping.vim')
 
 -- vimscript key mappings
 vim.cmd('source' .. _G.CONFIG_DIR .. '/key_mapping/plugin_key_mappings.vim')
-
 
