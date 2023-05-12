@@ -30,11 +30,10 @@ return packer.startup(function()
   use 'ryanoasis/vim-devicons'
   use 'onsails/lspkind-nvim'
   use {
-      'itchyny/lightline.vim',
+      'nvim-lualine/lualine.nvim',
       requires = {
-        'tpope/vim-fugitive',
-        'liuchengxu/vista.vim',
-    }
+        'nvim-tree/nvim-web-devicons', opt = true
+      }
   }
   use 'itchyny/vim-cursorword'
   use 'wesQ3/vim-windowswap'
@@ -69,5 +68,15 @@ return packer.startup(function()
 
   -- Language specific
   use 'simrat39/rust-tools.nvim'
+
+  -- Deprecated
+  -- use {
+  --     'itchyny/lightline.vim',
+  --     requires = {
+  --       'tpope/vim-fugitive',
+  --       'liuchengxu/vista.vim',
+  --   }
+  -- }
+
 end)
 
