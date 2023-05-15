@@ -15,7 +15,6 @@ if hash cargo 2> /dev/null; then
 fi
 
 # Pyenv
-test -d $HOME/.pyenv/bin && export PATH="$PATH:$HOME/.pyenv/bin"
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
     # by using the command below
@@ -25,7 +24,6 @@ if hash pyenv 2> /dev/null; then
 fi
 
 # Rbenv
-test -d $HOME/.rbenv/bin && export PATH="$PATH:$HOME/.rbenv/bin"
 if hash rbenv 2> /dev/null; then
     eval "$(rbenv init - zsh)"
 fi
