@@ -60,7 +60,7 @@ return packer.startup(function()
   }
 
   -- Git
-  use 'airblade/vim-gitgutter'
+  use 'lewis6991/gitsigns.nvim'
   use 'tpope/vim-fugitive'
 
   -- comment
@@ -77,6 +77,8 @@ return packer.startup(function()
   --       'liuchengxu/vista.vim',
   --   }
   -- }
+  --
+  -- use 'airblade/vim-gitgutter'
 
 end)
 

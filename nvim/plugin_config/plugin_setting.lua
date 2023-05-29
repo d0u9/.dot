@@ -40,9 +40,12 @@ require('plugin-lualine')
 setup_if_has(config_lualine, 'lualine')
 
 local has_nvimtree, _ = pcall(require, "nvim-tree.lib")
-if has_nvimtree then
-  require('plugin-gitgutter')
-end
+-- if has_nvimtree then
+--   require('plugin-gitgutter')
+-- end
+
+require('plugin-gitsigns')
+setup_if_has(config_gitsigns, 'gitsigns')
 
 
 
