@@ -39,7 +39,7 @@ setup_if_has(config_nvim_ufo, 'ufo', 'nvim-treesitter')
 require('plugin-lualine')
 setup_if_has(config_lualine, 'lualine')
 
-local has_nvimtree, _ = pcall(require, "nvim-tree.lib")
+-- local has_nvimtree, _ = pcall(require, "nvim-tree.lib")
 -- if has_nvimtree then
 --   require('plugin-gitgutter')
 -- end

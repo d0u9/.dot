@@ -80,3 +80,7 @@
 " rust-tools {
     nnoremap <silent> gh    <cmd>lua require'rust-tools.hover_actions'.hover_actions()<CR>
 " }
+
+" nvim-tree {
+    lua vim.api.nvim_set_keymap("n", "<leader>`", ":NvimTreeToggle<CR>", {})
+" }
