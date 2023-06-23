@@ -65,15 +65,13 @@ vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/file_formatting.vim')
 -- colors
 vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/color.vim')
 
+-- nvim's diagostic settings
+require('diagnostic_setting')
+
 -- lua plugin settings
 require('plugin_setting')
 
--- vimscript plugin settings
-vim.cmd('source' .. _G.CONFIG_DIR .. '/plugin_config/plugin_setting.vim')
 
--- vimscript key mappings
-vim.cmd('source' .. _G.CONFIG_DIR .. '/key_mapping/basic_key_mapping.vim')
-
--- vimscript key mappings
-vim.cmd('source' .. _G.CONFIG_DIR .. '/key_mapping/plugin_key_mappings.vim')
+-- lua key mappings
+require('keymaps')
 

@@ -37,7 +37,7 @@ return packer.startup(function()
   }
   use 'itchyny/vim-cursorword'
   use 'wesQ3/vim-windowswap'
-  use 'liuchengxu/vista.vim'
+  use 'simrat39/symbols-outline.nvim'
   use {
     'kevinhwang91/nvim-ufo',
     requires = 'kevinhwang91/promise-async'
@@ -64,10 +64,13 @@ return packer.startup(function()
   use 'tpope/vim-fugitive'
 
   -- comment
-  use 'b3nj5m1n/kommentary'
+  use 'numToStr/Comment.nvim'
 
   -- Language specific
   use 'simrat39/rust-tools.nvim'
+
+  -- Enhancement
+  use 'lambdalisue/suda.vim'
 
   -- Deprecated
   -- use {
@@ -79,6 +82,8 @@ return packer.startup(function()
   -- }
   --
   -- use 'airblade/vim-gitgutter'
+  -- use 'b3nj5m1n/kommentary'
+  -- use 'liuchengxu/vista.vim'
 
 end)
 

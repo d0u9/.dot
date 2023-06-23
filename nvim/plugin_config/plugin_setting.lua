@@ -27,8 +27,8 @@ setup_if_has(config_nvim_treesitter, 'nvim-treesitter')
 require('plugin-telescope')
 setup_if_has(config_telescope, 'telescope')
 
-require('plugin-kommentary')
-setup_if_has(config_kommentary, 'kommentary')
+require('plugin-comment')
+setup_if_has(config_comment, 'Comment')
 
 require('plugin-rust_tools')
 setup_if_has(config_rust_tools, 'rust-tools')
@@ -47,6 +47,7 @@ setup_if_has(config_lualine, 'lualine')
 require('plugin-gitsigns')
 setup_if_has(config_gitsigns, 'gitsigns')
 
-
+require('plugin-symbols_outline')
+setup_if_has(config_symbols_outline, 'symbols-outline')
 
 

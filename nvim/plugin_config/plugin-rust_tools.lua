@@ -1,7 +1,9 @@
 ----------- rust-tools.nvim -----------
 function config_rust_tools()
   local opts = {
-    tools = { -- rust-tools options
+    tools = {
+      -- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
+      reload_workspace_from_cargo_toml = true,
       autoSetHints = true,
       inlay_hints = {
         show_parameter_hints = true,
