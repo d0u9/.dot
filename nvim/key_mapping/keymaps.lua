@@ -114,7 +114,7 @@ local plugin_telescope_grep = function()
   vim.keymap.set('n', '<leader>gc', "<Cmd>lua require('telescope.builtin').grep_string({grep_open_files=true})<CR>", {noremap = true})
 
   -- " Search for a string in your current working directory and get results live as you type Restrict to currently open files
-  vim.keymap.set('n', '<leader>gl', "<Cmd>lua require('telescope.builtin').live_grep({grep_open_files=true})<CR>", {noremap = true})
+  vim.keymap.set('n', '<leader>gl', require('telescope.builtin').current_buffer_fuzzy_find, {noremap = true})
 end
 plugin_telescope_grep()
 
