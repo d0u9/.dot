@@ -1,5 +1,7 @@
 ----------- lualine -----------
 function config_lualine()
+  local navic = require("nvim-navic")
+
   require('lualine').setup {
     options = {
       icons_enabled = true,
@@ -70,12 +72,6 @@ function config_lualine()
           'filename',
           path = 3,
           shorting_target = 30,
-          symbols = {
-            modified = '',  -- f0fe
-            readonly = '',  -- f146
-            newfile = '',   -- f0c8
-            unnamed = '',   -- f096
-          },
         }
       },
       lualine_x = {'location'},
@@ -83,9 +79,31 @@ function config_lualine()
       lualine_z = {},
     },
     tabline = {},
-    winbar = {},
-    inactive_winbar = {},
-    extensions = {'nvim-tree', 'symbols-outline', 'quickfix'}
+    winbar = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_x = {},
+      lualine_y = {'filename'},
+      lualine_z = {},
+      lualine_c = {
+        "navic",
+        color_correction = nil,
+        navic_opts = nil
+      },
+    },
+    inactive_winbar = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_x = {},
+      lualine_y = {'filename'},
+      lualine_z = {},
+      lualine_c = {
+        "navic",
+        color_correction = nil,
+        navic_opts = nil
+      },
+    },
+    extensions = {'nvim-tree', 'symbols-outline', 'quickfix', 'fugitive'}
   }
 end
 

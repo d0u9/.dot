@@ -42,6 +42,10 @@ return packer.startup(function()
     'kevinhwang91/nvim-ufo',
     requires = 'kevinhwang91/promise-async'
   }
+  use {
+    "SmiteshP/nvim-navic",
+    requires = "neovim/nvim-lspconfig"
+  }
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'

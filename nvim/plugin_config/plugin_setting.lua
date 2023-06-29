@@ -50,4 +50,5 @@ setup_if_has(config_gitsigns, 'gitsigns')
 require('plugin-symbols_outline')
 setup_if_has(config_symbols_outline, 'symbols-outline')
 
-
+require('plugin-nvim_navic')
+setup_if_has(config_nvim_navic, 'symbols-outline', 'lspconfig')
