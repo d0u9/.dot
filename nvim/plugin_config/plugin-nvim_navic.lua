@@ -2,7 +2,15 @@
 function config_nvim_navic()
   local navic = require("nvim-navic")
 
+  -- For Rust
   require("lspconfig").rust_analyzer.setup {
+    on_attach = function(client, bufnr)
+      navic.attach(client, bufnr)
+    end
+  }
+
+  -- For Ruby
+  require("lspconfig").solargraph.setup {
     on_attach = function(client, bufnr)
       navic.attach(client, bufnr)
     end
@@ -10,17 +18,17 @@ function config_nvim_navic()
 
   navic.setup {
     icons = {
-        File          = "󰈙 ",
-        Module        = " ",
-        Namespace     = "󰌗 ",
-        Package       = " ",
-        Class         = "󰌗 ",
+        file          = "󰈙 ",
+        module        = " ",
+        namespace     = "󰌗 ",
+        package       = " ",
+        class         = "󰌗 ",
         Method        = "󰆧 ",
         Property      = " ",
         Field         = " ",
         Constructor   = " ",
-        Enum          = "󰕘",
-        Interface     = "󰕘",
+        Enum          = "󱡠 ",
+        Interface     = "󰕘 ",
         Function      = "󰊕 ",
         Variable      = "󰆧 ",
         Constant      = "󰏿 ",
@@ -46,7 +54,7 @@ function config_nvim_navic()
     depth_limit = 0,
     depth_limit_indicator = "..",
     safe_output = true,
-    click = false
-}
+    click = false,
+  }
 end
 
