@@ -28,12 +28,12 @@ function config_lualine()
           file_status = true,
           newfile_status = true,
           path = 4,
+          shorting_target = 30,
           symbols = {
             modified = '',  -- f0fe
             readonly = '',  -- f146
             newfile = '',   -- f0c8
             unnamed = '',   -- f096
-
           }
         }
       },
@@ -65,7 +65,19 @@ function config_lualine()
     inactive_sections = {
       lualine_a = {},
       lualine_b = {},
-      lualine_c = {'filename'},
+      lualine_c = {
+        {
+          'filename',
+          path = 3,
+          shorting_target = 30,
+          symbols = {
+            modified = '',  -- f0fe
+            readonly = '',  -- f146
+            newfile = '',   -- f0c8
+            unnamed = '',   -- f096
+          },
+        }
+      },
       lualine_x = {'location'},
       lualine_y = {},
       lualine_z = {},
@@ -73,7 +85,7 @@ function config_lualine()
     tabline = {},
     winbar = {},
     inactive_winbar = {},
-    extensions = {'nvim-tree'}
+    extensions = {'nvim-tree', 'symbols-outline', 'quickfix'}
   }
 end
 
