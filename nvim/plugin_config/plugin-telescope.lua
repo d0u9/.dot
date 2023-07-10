@@ -7,7 +7,7 @@ function config_telescope()
         'rg',
         '--vimgrep',
         '--max-depth',
-        '5',
+        '10',
       },
     },
     file_ignore_patterns = {"%.o"},

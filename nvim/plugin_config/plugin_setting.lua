@@ -31,7 +31,11 @@ require('plugin-comment')
 setup_if_has(config_comment, 'Comment')
 
 require('plugin-rust_tools')
-setup_if_has(config_rust_tools, 'rust-tools')
+setup_if_has(config_rust_tools, 'rust-tools', 'lspconfig')
+
+-- nvim-navic must be executed before rust-tools
+require('plugin-nvim_navic')
+setup_if_has(config_nvim_navic, 'symbols-outline', 'lspconfig')
 
 require('plugin-ufo')
 setup_if_has(config_nvim_ufo, 'ufo', 'nvim-treesitter')
@@ -39,16 +43,9 @@ setup_if_has(config_nvim_ufo, 'ufo', 'nvim-treesitter')
 require('plugin-lualine')
 setup_if_has(config_lualine, 'lualine')
 
--- local has_nvimtree, _ = pcall(require, "nvim-tree.lib")
--- if has_nvimtree then
---   require('plugin-gitgutter')
--- end
-
 require('plugin-gitsigns')
 setup_if_has(config_gitsigns, 'gitsigns')
 
 require('plugin-symbols_outline')
 setup_if_has(config_symbols_outline, 'symbols-outline')
 
-require('plugin-nvim_navic')
-setup_if_has(config_nvim_navic, 'symbols-outline', 'lspconfig')
