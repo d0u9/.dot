@@ -94,7 +94,7 @@ nvim()
 
     echo 'install finished, you have to execute `PackerInstall` in nvim to install plugins'
     echo 'Run command below to install code highlights'
-    echo '    :TSInstall bash c cpp comment go html css javascript json json5 lua markdown python ruby rust toml yaml'
+    echo '    :TSInstall bash c cpp comment go html css javascript json json5 lua markdown python ruby rust toml yaml kdl'
 }
 
 mutt()
@@ -102,6 +102,17 @@ mutt()
     ln -s $(pwd)/neomutt $HOME/.mutt
     mkdir -p $HOME/.mutt/cache/default/{headers,bodies}
     ln -s $HOME/.dot/conf/neomutt/account_default.info $HOME/.mutt
+}
+
+zellij()
+{
+    echo "installing zellij config files"
+    mkdir -p $HOME/.config
+    ZELLIJ_CONF=$DOT_DIR/zellij
+    TGT_ZELLIJ_CONF=$HOME/.config/zellij
+
+    back_or_override $TGT_ZELLIJ_CONF
+    ln -s $ZELLIJ_CONF $TGT_ZELLIJ_CONF
 }
 
 if ! hash curl 2> /dev/null; then
@@ -122,8 +133,12 @@ case "$1" in
     "mutt")
         mutt
     ;;
+    "zellij")
+        zellij
+    ;;
     *)
         echo "install all"
+        zellij
         zsh
         tmux
         nvim

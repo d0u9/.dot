@@ -38,6 +38,10 @@ log() {
             c=$(color cyan)
             head_str="$(color green)[W]$(color reset)"
             ;;
+        'error')
+            c=$(color cyan)
+            head_str="$(color red)[E]$(color reset)"
+            ;;
         *) c="$c_reset";;
     esac
 
@@ -60,6 +64,11 @@ info() {
 # A wrapper of log 'info'
 warn() {
     log 'warn' "$1" "$2"
+}
+
+# A wrapper of log 'error'
+error() {
+    log 'error' "$1" "$2"
 }
 
 # Get Current file path

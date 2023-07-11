@@ -7,6 +7,31 @@ else
     source $HOME/.dot/oh-my-zsh/linux/linux-post.sh
 fi
 
+## For zellij command alias
+if hash zellij 2> /dev/null; then
+    zr() {
+        zellij run -- "$@"
+    }
+
+    ze() {
+        zellij edit -- "$@"
+    }
+
+    zs() {
+        dir="$1"
+        if ! [ -d "$dir" ]; then
+            error "'$dir' is not a valid dir"
+            return 1
+        fi
+        zellij run --cwd "$dir" --close-on-exit -- $SHELL
+    }
+
+    zdump() {
+        zellij action dump-screen "$@"
+    }
+fi
+
+
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
 POST_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf
