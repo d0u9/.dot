@@ -48,6 +48,7 @@ function config_nvim_cmp()
     sources = {
       { name = 'nvim_lsp' },
       { name = 'buffer' },
+      { name = 'path' },
     },
     formatting = {
       format = function(entry, vim_item)

@@ -8,14 +8,36 @@ packer.init({
 })
 
 return packer.startup(function()
+  -- Enhancement
+  use 'nvim-lua/plenary.nvim'
+
   -- Theme
   use 'arcticicestudio/nord-vim'
 
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
-  -- Collection of configurations for built-in LSP client
+  -- LSP plugins
   use 'neovim/nvim-lspconfig'
+  use 'williamboman/mason.nvim'
+  use {
+    'williamboman/mason-lspconfig.nvim',
+    requires = {
+      'williamboman/mason.nvim',
+      'neovim/nvim-lspconfig',
+    }
+  }
+  use {
+    'SmiteshP/nvim-navic',
+    requires = 'neovim/nvim-lspconfig'
+  }
+  use {
+    'jose-elias-alvarez/null-ls.nvim',
+    requires = 'nvim-lua/plenary.nvim'
+  }
+  -- Language specific - Rust
+  use 'simrat39/rust-tools.nvim'
+
 
   -- Autocompletion plugin
   use { 'hrsh7th/nvim-cmp',
@@ -42,10 +64,6 @@ return packer.startup(function()
     'kevinhwang91/nvim-ufo',
     requires = 'kevinhwang91/promise-async'
   }
-  use {
-    "SmiteshP/nvim-navic",
-    requires = "neovim/nvim-lspconfig"
-  }
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
@@ -69,9 +87,6 @@ return packer.startup(function()
 
   -- comment
   use 'numToStr/Comment.nvim'
-
-  -- Language specific
-  use 'simrat39/rust-tools.nvim'
 
   -- Enhancement
   use 'lambdalisue/suda.vim'
