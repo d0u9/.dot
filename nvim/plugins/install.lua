@@ -35,12 +35,13 @@ return packer.startup(function()
     'jose-elias-alvarez/null-ls.nvim',
     requires = 'nvim-lua/plenary.nvim'
   }
+
   -- Language specific - Rust
   use 'simrat39/rust-tools.nvim'
 
-
   -- Autocompletion plugin
-  use { 'hrsh7th/nvim-cmp',
+  use {
+    'hrsh7th/nvim-cmp',
     requires = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
@@ -49,21 +50,22 @@ return packer.startup(function()
   }
 
   -- GUI relative
+  use 'RRethy/vim-illuminate'
   use 'ryanoasis/vim-devicons'
   use 'onsails/lspkind-nvim'
   use {
-      'nvim-lualine/lualine.nvim',
-      requires = {
-        'nvim-tree/nvim-web-devicons', opt = true
-      }
+    'nvim-lualine/lualine.nvim',
+    requires = {
+      'nvim-tree/nvim-web-devicons', opt = true
+    }
   }
-  use 'itchyny/vim-cursorword'
   use 'wesQ3/vim-windowswap'
   use 'simrat39/symbols-outline.nvim'
   use {
     'kevinhwang91/nvim-ufo',
     requires = 'kevinhwang91/promise-async'
   }
+  use 'szw/vim-maximizer'
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
@@ -92,11 +94,12 @@ return packer.startup(function()
   use 'lambdalisue/suda.vim'
 
   -- Deprecated
+  -- use 'itchyny/vim-cursorword'
   -- use {
-  --     'itchyny/lightline.vim',
-  --     requires = {
-  --       'tpope/vim-fugitive',
-  --       'liuchengxu/vista.vim',
+  --   'itchyny/lightline.vim',
+  --   requires = {
+  --     'tpope/vim-fugitive',
+  --     'liuchengxu/vista.vim',
   --   }
   -- }
   --

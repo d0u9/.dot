@@ -1,10 +1,7 @@
 -- init.lua User settings
 function init_lua_package_path(config_dir)
   local dirs = {
-    'basic_config',
-    'plugin_config',
-    'key_mapping',
-    'lib',
+    '.',
   }
 
   for _, dir in ipairs(dirs) do
@@ -17,11 +14,12 @@ function init_runtime_dirs(runtime_dir)
     'undo',
     'backup',
     'swap',
+    'mason',
   }
 
   for _, dir in ipairs(dirs) do
     path = runtime_dir .. '/' .. dir
-    ensure_directory_exists(path)
+    require('lib.utils').ensure_directory_exists(path)
   end
 
 end
@@ -29,8 +27,6 @@ end
 function env_prepare(config_dir, runtime_dir)
   -- `package.path` is used to search lub modules.
   init_lua_package_path(_G.CONFIG_DIR)
-
-  require('lib')
 
   -- set up runtime dirs
   init_runtime_dirs(_G.RUNTIME_DIR)
@@ -40,6 +36,7 @@ end
 _G.CONFIG_DIR = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
 _G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
 _G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
+_G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
 
 -- set up environments preparation for running neovim
 env_prepare(_G.CONFIG_DIR, _G.RUNTIME_DIR)
@@ -54,24 +51,14 @@ vim.opt.backupdir   = _G.RUNTIME_DIR .. '/backup_files/'
 vim.opt.directory   = _G.RUNTIME_DIR .. '/swap_files/'
 
 -- nvim plugins to be installed.
-require('plugin_install')
+require('plugins.install')
+require('plugins.setting')
 
 -- nvim's basic settings
-vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/basic_setting.vim')
-
--- nvim's file format
-vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/file_formatting.vim')
-
--- colors
-vim.cmd('source' .. _G.CONFIG_DIR .. '/basic_config/color.vim')
+require('config.vimscripts')
 
 -- nvim's diagostic settings
-require('diagnostic_setting')
-
--- lua plugin settings
-require('plugin_setting')
-
+require('config.diagnostic')
 
 -- lua key mappings
-require('keymaps')
-
+require('config.keymaps')

@@ -1,3 +1,5 @@
+local run_cb_if_has = require('lib.utils').run_cb_if_has
+
 -- Key mapping for neovim's internal functions
 local general_keymap = function()
   -- Set leader key
@@ -28,7 +30,8 @@ local general_keymap = function()
   vim.keymap.set('v', '.', ':normal .<CR>', {noremap = true})
 
   -- For when you forget to sudo.. Really Write the file.
-  -- Not working anymore
+  -- Not working anymore, use suda function instead
+  -- https://github.com/lambdalisue/suda.vim
   vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null', {noremap = true})
 
 
@@ -70,38 +73,39 @@ local diagnostic = function()
   -- Lists LSP diagnostics for the current buffer
   vim.keymap.set('n', '<leader>dl', "<Cmd>lua require('telescope.builtin').diagnostics({ bufnr=0, line_width='full' })<CR>", { noremap = true, silent = true })
 end
-diagnostic()
+run_cb_if_has(diagnostic, 'telescope')
 
 -- lsp key bindings
 -- for language related things
 local lsp = function()
   vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, {noremap = true})
   vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, {noremap = true})
+  vim.keymap.set('n', '<leader>lm', vim.lsp.buf.format, {noremap = true})
   -- " Goto the definition of the type of the word under the cursor, if there's only one, otherwise show all options in Telescope
   vim.keymap.set('n', '<leader>ls', require('telescope.builtin').lsp_document_symbols, {noremap = true})
   -- " Goto the definition of the word under the cursor, if there's only one, otherwise show all options in Telescope
   vim.keymap.set('n', '<leader>ld', "<Cmd>lua require('telescope.builtin').lsp_definitions({ jump_type='never' })<CR>", {noremap = true})
   -- " Goto the definition of the type of the word under the cursor, if there's only one, otherwise show all options in Telescope
-  vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_implementations, {noremap = true})
+  vim.keymap.set('n', '<leader>lp', require('telescope.builtin').lsp_implementations, {noremap = true})
   -- " Lists LSP references for word under the cursor
   vim.keymap.set('n', '<leader>lf', require('telescope.builtin').lsp_references, {noremap = true})
   -- " Lists LSP incoming calls for word under the cursor
-  vim.keymap.set('n', '<leader>lci', require('telescope.builtin').lsp_incoming_calls, {noremap = true})
+  vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_incoming_calls, {noremap = true})
   -- " Lists LSP outgoing calls for word under the cursor
-  vim.keymap.set('n', '<leader>lco', require('telescope.builtin').lsp_outgoing_calls, {noremap = true})
+  vim.keymap.set('n', '<leader>lo', require('telescope.builtin').lsp_outgoing_calls, {noremap = true})
 end
-lsp()
+run_cb_if_has(lsp, 'telescope')
 
 local plugin_telescope_file = function()
-    -- " Lists files in your current working directory, respects .gitignore
-    vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {noremap = true})
-    -- " Fuzzy search through the output of git ls-files command, respects .gitignore
-    vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, {noremap = true})
-    -- " Lists open buffers in current neovim instance
-    vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, {noremap = true})
-    -- " Lists vim marks and their value
+  -- " Lists files in your current working directory, respects .gitignore
+  vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {noremap = true})
+  -- " Fuzzy search through the output of git ls-files command, respects .gitignore
+  vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, {noremap = true})
+  -- " Lists open buffers in current neovim instance
+  vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, {noremap = true})
+  -- " Lists vim marks and their value
 end
-plugin_telescope_file()
+run_cb_if_has(plugin_telescope_file, 'telescope')
 
 local plugin_telescope_grep = function()
   -- " Searches for the string under your cursor in your current working directory
@@ -116,39 +120,40 @@ local plugin_telescope_grep = function()
   -- " Search for a string in your current working directory and get results live as you type Restrict to currently open files
   vim.keymap.set('n', '<leader>gl', require('telescope.builtin').current_buffer_fuzzy_find, {noremap = true})
 end
-plugin_telescope_grep()
+
+run_cb_if_has(plugin_telescope_grep, 'telescope')
 
 local plugin_telescope_generic = function()
-    vim.keymap.set('n', '<leader>tm', require('telescope.builtin').marks, {noremap = true})
-    -- " Lists Jump List entries
-    vim.keymap.set('n', '<leader>tj', require('telescope.builtin').jumplist, {noremap = true})
-    -- " Lists vim registers, pastes the contents of the register on <cr>
-    vim.keymap.set('n', '<leader>tr', require('telescope.builtin').registers, {noremap = true})
-    -- " Lists items in the quickfix list
-    vim.keymap.set('n', '<leader>tq', require('telescope.builtin').quickfix, {noremap = true})
-    -- " Lists spelling suggestions for the current word under the cursor, replaces word with selected suggestion on <cr>
-    vim.keymap.set('n', '<leader>tp', require('telescope.builtin').spell_suggest, {noremap = true})
-    -- " Lists normal mode keymappings
-    vim.keymap.set('n', '<leader>tk', require('telescope.builtin').keymaps, {noremap = true})
+  vim.keymap.set('n', '<leader>tm', require('telescope.builtin').marks, {noremap = true})
+  -- " Lists Jump List entries
+  vim.keymap.set('n', '<leader>tj', require('telescope.builtin').jumplist, {noremap = true})
+  -- " Lists vim registers, pastes the contents of the register on <cr>
+  vim.keymap.set('n', '<leader>tr', require('telescope.builtin').registers, {noremap = true})
+  -- " Lists items in the quickfix list
+  vim.keymap.set('n', '<leader>tq', require('telescope.builtin').quickfix, {noremap = true})
+  -- " Lists spelling suggestions for the current word under the cursor, replaces word with selected suggestion on <cr>
+  vim.keymap.set('n', '<leader>tp', require('telescope.builtin').spell_suggest, {noremap = true})
+  -- " Lists normal mode keymappings
+  vim.keymap.set('n', '<leader>tk', require('telescope.builtin').keymaps, {noremap = true})
 
-    -- " Lists all available highlights
-    -- vim.keymap.set('n', '<leader>th', require('telescope.builtin').highlights, {noremap = true})
+  -- " Lists all available highlights
+  -- vim.keymap.set('n', '<leader>th', require('telescope.builtin').highlights, {noremap = true})
 end
-plugin_telescope_generic()
+run_cb_if_has(plugin_telescope_generic, 'telescope')
 
 
 local plugin_nvim_tree = function()
   local api = require('nvim-tree.api')
   vim.keymap.set('n', '<leader>`', api.tree.toggle, {noremap = true})
 end
-plugin_nvim_tree()
+run_cb_if_has(plugin_nvim_tree, 'nvim-tree.api')
 
 
 local plugin_rust_tools = function()
   local api = require('rust-tools')
   vim.keymap.set('n', '<leader>man', api.hover_actions.hover_actions)
 end
-plugin_rust_tools()
+run_cb_if_has(plugin_rust_tools, 'rust-tools')
 
 -- comment tool
 local plugin_comment = function()
@@ -156,15 +161,20 @@ local plugin_comment = function()
 end
 plugin_comment()
 
--- vista, a tagbar tool
+-- symbols-outline
 local plugin_symbols_outline = function()
   -- NOTE: for other keympas, referce plguin config
   vim.keymap.set('n', '<leader>tt', ':SymbolsOutline<CR>')
 end
-plugin_symbols_outline()
+run_cb_if_has(plugin_symbols_outline, 'symbols-outline')
 
 -- Telescope
 local telescope = function()
 
 end
 telescope()
+
+local vim_maximizer = function()
+  vim.keymap.set('n', '<leader>zf', ':MaximizerToggle<CR>')
+end
+vim_maximizer()

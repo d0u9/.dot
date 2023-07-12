@@ -1,0 +1,2 @@
+-- See lsp dir for more configurations.
+-- the plugins/configs/masion-lspconfig--nvim is the entry point.
