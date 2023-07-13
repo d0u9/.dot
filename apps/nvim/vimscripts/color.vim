@@ -3,9 +3,9 @@
 set background=dark
 try
     colorscheme nord
+    let cmd="highlight FoldColumn guifg=" . g:terminal_color_6
+    execute cmd
 catch
     echo "colorscheme nord hasn't installed yet"
 endtry
 
-let cmd="highlight FoldColumn guifg=" . g:terminal_color_6
-execute cmd
