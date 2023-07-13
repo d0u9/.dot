@@ -9,6 +9,10 @@ local tools = {
     -- parameter_hints_prefix = "<-",
     -- other_hints_prefix = "=>",
   },
+  hover_actions = {
+      border = 'solid',
+  },
+  auto_focus = false,
 }
 
 function M.setup(server_settings, capabilities)

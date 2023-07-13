@@ -2,7 +2,7 @@ local navic = require("nvim-navic")
 
 local options = {
   icons_enabled = true,
-  theme = 'nord',
+  theme = _G.THEME(),
   component_separators = { left = '', right = ''},
   section_separators = { left = '', right = '' },
   disabled_filetypes = {

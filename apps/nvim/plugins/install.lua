@@ -13,6 +13,7 @@ return packer.startup(function()
 
   -- Theme
   use 'arcticicestudio/nord-vim'
+  use { "catppuccin/nvim", as = "catppuccin" }
 
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
@@ -70,6 +71,15 @@ return packer.startup(function()
     requires = 'kevinhwang91/promise-async'
   }
   use 'szw/vim-maximizer'
+  use {
+    'kosayoda/nvim-lightbulb',
+    config = function()
+      require("nvim-lightbulb").setup({
+        autocmd = { enabled = true }
+      })
+    end,
+    -- cmd = 'CodeActionMenu',
+  }
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'

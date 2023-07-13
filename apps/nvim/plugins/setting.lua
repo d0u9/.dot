@@ -36,6 +36,9 @@ require_if_has('plugins.configs.gitsigns--nvim', 'gitsigns')
 -- https://github.com/RRethy/vim-illuminate
 require_if_has('plugins.configs.vim-illuminate', 'illuminate')
 
+-- https://github.com/catppuccin/nvim
+require_if_has('plugins.configs.catppuccin', 'catppuccin')
+
 ------------------------ LSP things ------------------------
 
 -- https://github.com/simrat39/rust-tools.nvim

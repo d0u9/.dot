@@ -1,11 +1,13 @@
- let g:nord_cursor_line_number_background = 1
+" let g:nord_cursor_line_number_background = 1
 
 set background=dark
+" let scheme = "catppuccin-frappe"
+" let scheme = "nord"
+let scheme = v:lua.THEME()
+
 try
-    colorscheme nord
-    let cmd="highlight FoldColumn guifg=" . g:terminal_color_6
-    execute cmd
+    execute 'colorscheme ' .. scheme
 catch
-    echo "colorscheme nord hasn't installed yet"
+    echo "colorscheme " .. scheme .. " hasn't installed yet"
 endtry
 

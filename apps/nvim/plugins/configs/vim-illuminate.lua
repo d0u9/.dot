@@ -9,8 +9,8 @@ local opts = {
 require('illuminate').configure(opts)
 
 -- local hicolor = "Visual"
--- local hicolor = "Pmenu"
-local hicolor = "healthError"
+-- local hicolor = "healthError"
+local hicolor = "Pmenu"
 
 -- change the highlight style
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = hicolor })

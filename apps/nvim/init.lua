@@ -37,6 +37,11 @@ _G.CONFIG_DIR = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
 _G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
 _G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
 _G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
+_G.THEME = function()
+  -- return "catppuccin-frappe"
+  -- return "nord"
+  return "catppuccin-macchiato"
+end
 
 -- set up environments preparation for running neovim
 env_prepare(_G.CONFIG_DIR, _G.RUNTIME_DIR)
