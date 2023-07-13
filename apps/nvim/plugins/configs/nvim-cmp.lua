@@ -1,33 +1,25 @@
 local cmp = require('cmp')
-cmp.setup {
-  preselect = cmp.PreselectMode.None,
+
+local opts = {
   snippet = {
+    -- REQUIRED - you must specify a snippet engine
     expand = function(args)
-      vim.fn['vsnip#anonymous'](args.body)
-    end
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
   },
-  sorting = {
-    comparators = {
-      cmp.config.compare.offset,
-      cmp.config.compare.exact,
-      cmp.config.compare.score,
-      -- cmp.config.compare.kind,
-      cmp.config.compare.sort_text,
-      cmp.config.compare.length,
-      -- cmp.config.compare.order,
-    },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    -- documentation = cmp.config.window.bordered(),
   },
-  mapping = {
-    -- ['<C-p>'] = cmp.mapping.select_prev_item(),
-    -- ['<C-n>'] = cmp.mapping.select_next_item(),
+  mapping = cmp.mapping.preset.insert({
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
     ['<C-d>'] = cmp.mapping.scroll_docs(4),
-    -- ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Insert,
-      -- select = true,
-    },
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ['<Tab>'] = function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -42,26 +34,51 @@ cmp.setup {
         fallback()
       end
     end,
-  },
-  sources = {
+  }),
+  sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-    { name = 'buffer' },
+    { name = "nvim_lsp_signature_help" },
+    { name = 'vsnip' }, -- For vsnip users.
     { name = 'path' },
-  },
+    -- { name = 'luasnip' }, -- For luasnip users.
+    -- { name = 'ultisnips' }, -- For ultisnips users.
+    -- { name = 'snippy' }, -- For snippy users.
+  }, {
+    { name = 'buffer',  keyword_length = 3 },
+  }),
   formatting = {
-    format = function(entry, vim_item)
-      -- fancy icons and a name of kind
-      vim_item.kind = "      " .. require('lspkind').presets.default[vim_item.kind] .. " " .. vim_item.kind
-
-      -- set a name for each source
-      vim_item.menu = ({
-        buffer = "[Buffer]",
+    -- https://github.com/onsails/lspkind.nvim
+    -- https://github.com/hrsh7th/nvim-cmp/wiki/Menu-Appearance#basic-customisations
+    format = require("lspkind").cmp_format({
+      mode = "symbol",
+      maxwidth = 45, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      ellipsis_char = '..', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+      menu = ({
+        buffer = "[BUF]",
         nvim_lsp = "[LSP]",
-        luasnip = "[LuaSnip]",
-        nvim_lua = "[Lua]",
-        latex_symbols = "[Latex]",
-      })[entry.source.name]
-      return vim_item
-    end,
+        luasnip = "[SNP]",
+        nvim_lua = "[LUA]",
+        latex_symbols = "[LAX]",
+      }),
+    })
   },
 }
+cmp.setup(opts)
+
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+

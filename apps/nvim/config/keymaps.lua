@@ -1,4 +1,5 @@
 local run_cb_if_has = require('lib.utils').run_cb_if_has
+M={}
 
 -- Key mapping for neovim's internal functions
 local general_keymap = function()
@@ -80,6 +81,7 @@ run_cb_if_has(diagnostic, 'telescope')
 local lsp = function()
   vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, {noremap = true})
   vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, {noremap = true})
+  vim.keymap.set('n', '<leader>lh', vim.lsp.buf.hover, {noremap = true})
   vim.keymap.set('n', '<leader>lm', vim.lsp.buf.format, {noremap = true})
   -- " Goto the definition of the type of the word under the cursor, if there's only one, otherwise show all options in Telescope
   vim.keymap.set('n', '<leader>ls', require('telescope.builtin').lsp_document_symbols, {noremap = true})
@@ -149,12 +151,6 @@ end
 run_cb_if_has(plugin_nvim_tree, 'nvim-tree.api')
 
 
-local plugin_rust_tools = function()
-  local api = require('rust-tools')
-  vim.keymap.set('n', '<leader>man', api.hover_actions.hover_actions)
-end
-run_cb_if_has(plugin_rust_tools, 'rust-tools')
-
 -- comment tool
 local plugin_comment = function()
   -- NOTE: for comment.nvim keybinding, find it in plugin config.
@@ -178,3 +174,13 @@ local vim_maximizer = function()
   vim.keymap.set('n', '<leader>zf', ':MaximizerToggle<CR>')
 end
 vim_maximizer()
+
+------------------ LSP Server Specified key bindings ------------------
+local plugin_rust_tools = function()
+  local api = require('rust-tools')
+  vim.keymap.set('n', '<leader>man', api.hover_actions.hover_actions, { buffer = bufnr })
+end
+M.rust_tools_keymap = plugin_rust_tools
+
+return M
+

@@ -1,5 +1,6 @@
 M = {}
 
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 function M.setup()
   local settings = {
     ["rust-analyzer"] = {
@@ -24,7 +25,7 @@ function M.setup()
       },
     }
   }
-  require('plugins.configs.rust-tools--nvim').setup(settings)
+  require('plugins.configs.rust-tools--nvim').setup(settings, capabilities)
 end
 
 return M

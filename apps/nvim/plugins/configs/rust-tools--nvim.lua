@@ -11,9 +11,10 @@ local tools = {
   },
 }
 
-function M.setup(server_settings)
+function M.setup(server_settings, capabilities)
   local function on_attach(client, bufnr)
     require("nvim-navic").attach(client, bufnr)
+    require("config.keymaps").rust_tools_keymap()
   end
 
   local opts = {
@@ -22,6 +23,7 @@ function M.setup(server_settings)
     -- these override the defaults set by rust-tools.nvim
     -- see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
     server = {
+      capabilities = capabilities,
       on_attach = on_attach,
       settings = server_settings,
     },
