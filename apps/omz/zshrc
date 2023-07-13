@@ -75,8 +75,10 @@ plugins=(git)
 ###
 ## Custom variable
 ###
-source $HOME/.dot/apps/oh-my-zsh/lib.sh
-source $HOME/.dot/apps/oh-my-zsh/omz-pre.sh
+export DOT_OMZ_DIR=$HOME/.dot/apps/omz
+
+source $DOT_OMZ_DIR/lib.sh
+source $DOT_OMZ_DIR/omz-pre.sh
 
 warn "Loading OMZ config"
 source $ZSH/oh-my-zsh.sh
@@ -84,7 +86,7 @@ warn "Loading OMZ config - DONE"
 
 
 ### Post hook
-source $HOME/.dot/apps/oh-my-zsh/omz-post.sh
+source $DOT_OMZ_DIR/omz-post.sh
 
 # User configuration
 

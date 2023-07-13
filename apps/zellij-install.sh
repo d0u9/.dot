@@ -3,7 +3,7 @@
 # DOT_DIR is exported by parent script
 # APP_DIR is exported by parent script
 # DOT_LOG_LEVEL is exported by parent script
-source "$DOT_DIR/apps/oh-my-zsh/lib.sh"
+source "$DOT_DIR/apps/omz/lib.sh"
 
 info "Installing zellij configurations"
 

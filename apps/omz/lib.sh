@@ -3,13 +3,13 @@
 # This script contains functions that can be used anywhere during custom setup.
 
 if [ "$BASH_VERSION" ]; then
-    source $HOME/.dot/apps/oh-my-zsh/bash_color.sh
+    source $DOT_OMZ_DIR/bash_color.sh
     function log() {
         bash_log "$@"
     }
     export log
 elif [ "$ZSH_VERSION" ]; then
-    source $HOME/.dot/apps/oh-my-zsh/zsh_color.sh
+    source $DOT_OMZ_DIR/zsh_color.sh
     function log() {
         zsh_log "$@"
     }

@@ -1,5 +1,5 @@
 # oh-my-zsh host config
-apps/oh-my-zsh/host-conf/*.sh
+apps/omz/host-conf/*.sh
 
 # nvim tmp files
 apps/nvim/runtime/*

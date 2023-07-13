@@ -2,7 +2,8 @@
 
 DOT_DIR="$(pwd)/$(dirname "$0")"
 # import auxiliary functions
-source "$DOT_DIR/apps/oh-my-zsh/lib.sh"
+export DOT_OMZ_DIR=$HOME/.dot/apps/omz
+source "$DOT_DIR/apps/omz/lib.sh"
 
 env_check_and_setup() {
     set_gnu_realpath
