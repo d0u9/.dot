@@ -42,8 +42,8 @@ zsh()
 {
     echo "installing zsh config files"
 
-    ZSHRC_FILE=$DOT_DIR/oh-my-zsh/zshrc
-    ZSHTHEME_FILE=$DOT_DIR/oh-my-zsh/oh-my-zsh_themes/d0u9.zsh-theme
+    ZSHRC_FILE=$DOT_DIR/apps/oh-my-zsh/zshrc
+    ZSHTHEME_FILE=$DOT_DIR/apps/oh-my-zsh/oh-my-zsh_themes/d0u9.zsh-theme
 
     TGT_RC_FILE=$HOME/.zshrc
     TGT_THEME_FILE=$HOME/.oh-my-zsh/themes/d0u9.zsh-theme
@@ -62,8 +62,8 @@ tmux()
 {
     echo "installing zsh config files"
 
-    TMUX_CONF=$DOT_DIR/tmux/tmux.conf
-    TMUX_CONF_DIR=$DOT_DIR/tmux
+    TMUX_CONF=$DOT_DIR/apps/tmux/tmux.conf
+    TMUX_CONF_DIR=$DOT_DIR/apps/tmux
 
     TGT_TMUX_CONF=$HOME/.tmux.conf
     TGT_TMUX_CONF_DIR=$HOME/.tmux
@@ -84,7 +84,7 @@ nvim()
 {
     echo "installing nvim config files"
     mkdir -p $HOME/.config
-    NVIM_CONF=$DOT_DIR/nvim
+    NVIM_CONF=$DOT_DIR/apps/nvim
     TGT_NVIM_CONF=$HOME/.config/nvim
 
     back_or_override $TGT_NVIM_CONF
@@ -108,7 +108,7 @@ zellij()
 {
     echo "installing zellij config files"
     mkdir -p $HOME/.config
-    ZELLIJ_CONF=$DOT_DIR/zellij
+    ZELLIJ_CONF=$DOT_DIR/apps/zellij
     TGT_ZELLIJ_CONF=$HOME/.config/zellij
 
     back_or_override $TGT_ZELLIJ_CONF

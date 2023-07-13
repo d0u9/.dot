@@ -3,7 +3,7 @@
 # This script contains functions that can be used anywhere during custom setup.
 
 # Ref: https://gist.github.com/nekwebdev/5971808
-source $HOME/.dot/oh-my-zsh/color.sh
+source $HOME/.dot/apps/oh-my-zsh/color.sh
 
 # log [level=info] [message] <file>
 # Example:

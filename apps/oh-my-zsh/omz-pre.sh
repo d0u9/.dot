@@ -2,9 +2,9 @@ info "[PRE] Loading OMZ config" $(cur_path_relative "$HOME/.dot" "$0")
 
 ##################         For Different Platforms           ##################
 if [[ "$OSTYPE" = darwin* ]]; then
-    source $HOME/.dot/oh-my-zsh/macos/macos-pre.sh
+    source $HOME/.dot/apps/oh-my-zsh/macos/macos-pre.sh
 else
-    source $HOME/.dot/oh-my-zsh/linux/linux-pre.sh
+    source $HOME/.dot/apps/oh-my-zsh/linux/linux-pre.sh
 fi
 
 ## For plugins
@@ -48,7 +48,7 @@ export TERM=xterm-256color
 ##################     Load custom host specific config      ##################
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
-PRE_HOST_CONF=$HOME/.dot/oh-my-zsh/host-conf
+PRE_HOST_CONF=$HOME/.dot/apps/oh-my-zsh/host-conf
 if [ -d $PRE_HOST_CONF ]; then
     for f in $(find $PRE_HOST_CONF -name "*-pre.sh" | sort); do
         source "$f"

@@ -1,16 +1,22 @@
 # oh-my-zsh host config
-oh-my-zsh/host-conf/*.sh
+apps/oh-my-zsh/host-conf/*.sh
 
 # nvim tmp files
-nvim/runtime/*
-!nvim/runtime/*.md
+apps/nvim/runtime/*
+!apps/nvim/runtime/*.md
 
 # tmux
-tmux/plugins
+apps/tmux/plugins
 
 # mutt
-neomutt/*.info
-neomutt/cache
+apps/neomutt/*.info
+apps/neomutt/cache
+
+# Files and dirs to be ommited
+conf/
+conf_pub/
+private
+scripts
 
 # Other tmp files
 *.swp
@@ -18,8 +24,3 @@ neomutt/cache
 *.pyc
 .DS_Store
 
-# Files and dirs to be ommited
-conf/
-conf_pub/
-private
-scripts
