@@ -1,3 +1,6 @@
+#!/bin/bash
+#
+# Ref: https://gist.github.com/nekwebdev/5971808
 color() {
 color-usage() {
 cat <<"USAGE"

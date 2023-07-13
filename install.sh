@@ -1,148 +1,84 @@
 #! /bin/bash
 
-DOT_DIR=$(dirname "$(pwd)/$0")
+DOT_DIR="$(pwd)/$(dirname "$0")"
+# import auxiliary functions
+source "$DOT_DIR/apps/oh-my-zsh/lib.sh"
 
-yes_or_no()
-{
-    while true; do
-        read -p "$1 ([y]/n)?" -n 1 -r
-        echo ""
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            return 0
-        elif [[ $REPLY =~ ^[Nn]$ ]]; then
-            return 1
-        else
-            echo "Please entry Y, y or N, n"
-        fi
+env_check_and_setup() {
+    set_gnu_realpath
+}
+
+# $1: an empty array. On return, this array will be initialized as app names
+find_install_scripts() {
+    apps=()
+    for file in "$APP_DIR"/*-install.sh; do
+        file=$(basename $(realpath "$file"))
+        app=$(echo "$file" | sed 's/-install.sh//')
+        apps+=("$app")
+    done
+    echo "${apps[@]}"
+}
+
+
+print_help() {
+    printf -- "-h: %-s\n" "Print this help"
+    printf -- "-l: %-s\n" "List available apps to install"
+}
+
+list_apps() {
+    local apps=("$@")
+    for idx in ${!apps[@]}; do
+        name=${apps[$idx]}
+        printf "%-2s: %-s\n" "$idx" "$name"
     done
 }
 
-back_or_override()
-{
-    FILE=$1
-    if [ -e $FILE ]; then
-        yes_or_no "$FILE file exist, backup it"
-        if [ $? -eq "0" ]; then
-            if [ -e $FILE.bk ]; then
-                yes_or_no "$FILE.bk exist, override it?"
-                if [ $? -eq "1" ]; then
-                    echo "Can't backup $FILE, abort!"
-                    exit 1
-                fi
-                rm -fr $FILE.bk
-            fi
-            mv $FILE $FILE.bk
-        else
-            rm -fr $FILE
-        fi
+# $1: app name
+# $2: the path of install script
+install_app() {
+    name="$1"
+    install_script="$2"
+    if ! yes_or_no "Really want to install [$name]"; then
+        info "'N' is pressed, quit"
+        exit 0
     fi
+
+    DOT_LOG_LEVEL="$DOT_LOG_LEVEL" \
+    APP_DIR="$APP_DIR" \
+    DOT_DIR="$DOT_DIR" \
+    exec "$install_script"
 }
 
-zsh()
-{
-    echo "installing zsh config files"
+######################### MAIN #########################
+env_check_and_setup
+DOT_DIR=$(realpath "$DOT_DIR")
+APP_DIR=$(realpath "$DOT_DIR/apps")
+DOT_LOG_LEVEL="info"
 
-    ZSHRC_FILE=$DOT_DIR/apps/oh-my-zsh/zshrc
-    ZSHTHEME_FILE=$DOT_DIR/apps/oh-my-zsh/oh-my-zsh_themes/d0u9.zsh-theme
+apps=$(find_install_scripts)
 
-    TGT_RC_FILE=$HOME/.zshrc
-    TGT_THEME_FILE=$HOME/.oh-my-zsh/themes/d0u9.zsh-theme
+while getopts ":hli:" opt; do
+    case $opt in
+        h)
+            print_help
+            ;;
+        l)
+            printf -- "-------------------------- Apps --------------------------\n"
+            list_apps ${apps[@]}
+            ;;
+        i)
+            name="$OPTARG"
+            install_script=$(realpath -e "$APP_DIR/$name-install.sh" 2>/dev/null)
+            if [ $? -ne 0 ]; then
+                error "no [$name] app is found in $APP_DIR"
+                exit 1
+            fi
 
-    back_or_override $TGT_RC_FILE
-
-    ln -s $ZSHRC_FILE $TGT_RC_FILE
-    rm -fr $TGT_THEME_FILE
-    ln -s $ZSHTHEME_FILE $TGT_THEME_FILE
-
-    echo "install finished, you have to manually execute 'source ~/.zshrc' to active it"
-    echo "nerd font is needed, you can find it on Github"
-}
-
-tmux()
-{
-    echo "installing zsh config files"
-
-    TMUX_CONF=$DOT_DIR/apps/tmux/tmux.conf
-    TMUX_CONF_DIR=$DOT_DIR/apps/tmux
-
-    TGT_TMUX_CONF=$HOME/.tmux.conf
-    TGT_TMUX_CONF_DIR=$HOME/.tmux
-
-    back_or_override $TGT_TMUX_CONF
-    ln -s $TMUX_CONF $TGT_TMUX_CONF
-
-    back_or_override $TGT_TMUX_CONF_DIR
-    ln -s $TMUX_CONF_DIR $TGT_TMUX_CONF_DIR
-
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-    echo "install finished, you have to manuall execute 'prefix+I' in tmux to install plugins"
-
-}
-
-nvim()
-{
-    echo "installing nvim config files"
-    mkdir -p $HOME/.config
-    NVIM_CONF=$DOT_DIR/apps/nvim
-    TGT_NVIM_CONF=$HOME/.config/nvim
-
-    back_or_override $TGT_NVIM_CONF
-    ln -s $NVIM_CONF $TGT_NVIM_CONF
-
-    git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/runtime/plugins/pack/packer/start/packer.nvim
-
-    echo 'install finished, you have to execute `PackerInstall` in nvim to install plugins'
-    echo 'Run command below to install code highlights'
-    echo '    :TSInstall bash c cpp comment go html css javascript json json5 lua markdown python ruby rust toml yaml kdl'
-}
-
-mutt()
-{
-    ln -s $(pwd)/neomutt $HOME/.mutt
-    mkdir -p $HOME/.mutt/cache/default/{headers,bodies}
-    ln -s $HOME/.dot/conf/neomutt/account_default.info $HOME/.mutt
-}
-
-zellij()
-{
-    echo "installing zellij config files"
-    mkdir -p $HOME/.config
-    ZELLIJ_CONF=$DOT_DIR/apps/zellij
-    TGT_ZELLIJ_CONF=$HOME/.config/zellij
-
-    back_or_override $TGT_ZELLIJ_CONF
-    ln -s $ZELLIJ_CONF $TGT_ZELLIJ_CONF
-}
-
-if ! hash curl 2> /dev/null; then
-    echo "curl can not be found"
-    exit 1
-fi
-
-case "$1" in
-    "zsh")
-        zsh
-    ;;
-    "tmux")
-        tmux
-    ;;
-    "nvim")
-        nvim
-    ;;
-    "mutt")
-        mutt
-    ;;
-    "zellij")
-        zellij
-    ;;
-    *)
-        echo "install all"
-        zellij
-        zsh
-        tmux
-        nvim
-        mutt
-    ;;
-esac
-
+            install_app "$name" "$install_script"
+            ;;
+        *)
+            error "unknown option: -$OPTARG"
+            print_help
+            ;;
+    esac
+done
