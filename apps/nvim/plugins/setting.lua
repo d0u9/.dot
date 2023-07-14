@@ -58,6 +58,3 @@ require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig')
 
 -- https://github.com/SmiteshP/nvim-navic
 require_if_has('plugins.configs.nvim-navic', 'symbols-outline', 'lspconfig')
---
---
---

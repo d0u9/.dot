@@ -143,13 +143,25 @@ local plugin_telescope_generic = function()
 end
 run_cb_if_has(plugin_telescope_generic, 'telescope')
 
-
+-- Nvim Tree
 local plugin_nvim_tree = function()
   local api = require('nvim-tree.api')
   vim.keymap.set('n', '<leader>`', api.tree.toggle, {noremap = true})
 end
 run_cb_if_has(plugin_nvim_tree, 'nvim-tree.api')
 
+local plugin_nvim_tree_attach = function()
+  local api = require('nvim-tree.api')
+  vim.keymap.set('n', '=', api.tree.change_root_to_node, {noremap = true})
+end
+M.nvim_tree_keymap = plugin_nvim_tree_attach
+
+-- UFO
+local plugin_ufo = function()
+  vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+  vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+end
+run_cb_if_has(plugin_ufo, 'ufo')
 
 -- comment tool
 local plugin_comment = function()

@@ -4,9 +4,6 @@ vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true
 vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
-vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
-
 -- Ref: https://github.com/kevinhwang91/nvim-ufo#customize-fold-text
 local handler = function(virtText, lnum, endLnum, width, truncate)
   local newVirtText = {}
