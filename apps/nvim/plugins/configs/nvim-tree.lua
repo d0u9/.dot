@@ -69,7 +69,7 @@ require('nvim-tree').setup {
 
   git = {
     -- 0 by default
-    ignore = true
+    ignore = false,
   }
 }
 

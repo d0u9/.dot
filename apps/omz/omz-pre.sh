@@ -21,7 +21,8 @@ if hash cargo 2> /dev/null; then
     plugins+=(rust)
 fi
 
-if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+ZSH_AUTOSUGGESTIONS_DIR=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+if [ -d "$ZSH_AUTOSUGGESTIONS_DIR" ]; then
     plugins+=(zsh-autosuggestions)
     bindkey '^o' autosuggest-accept
 fi
