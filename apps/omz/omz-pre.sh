@@ -21,6 +21,11 @@ if hash cargo 2> /dev/null; then
     plugins+=(rust)
 fi
 
+if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    plugins+=(zsh-autosuggestions)
+    bindkey '^o' autosuggest-accept
+fi
+
 # Pyenv
 if hash pyenv 2> /dev/null; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process

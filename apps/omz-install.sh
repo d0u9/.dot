@@ -24,4 +24,8 @@ cd $HOME/.oh-my-zsh/themes
 rm -f $THEME_NAME
 ln -s "$OMZ_THEME_FILE" .
 
+info "Installing zsh-autosuggestions"
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+
 info "Finished"
