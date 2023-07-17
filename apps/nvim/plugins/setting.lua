@@ -39,6 +39,12 @@ require_if_has('plugins.configs.vim-illuminate', 'illuminate')
 -- https://github.com/catppuccin/nvim
 require_if_has('plugins.configs.catppuccin', 'catppuccin')
 
+-- https://github.com/sindrets/diffview.nvim
+require_if_has('plugins.configs.diffview', 'diffview')
+
+-- https://github.com/NeogitOrg/neogit
+require_if_has('plugins.configs.neogit', 'neogit')
+
 ------------------------ LSP things ------------------------
 
 -- https://github.com/simrat39/rust-tools.nvim

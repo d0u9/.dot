@@ -9,6 +9,7 @@ packer.init({
 
 return packer.startup(function()
   -- Enhancement
+  use 'nvim-tree/nvim-web-devicons'
   use 'nvim-lua/plenary.nvim'
 
   -- Theme
@@ -71,15 +72,7 @@ return packer.startup(function()
     requires = 'kevinhwang91/promise-async'
   }
   use 'szw/vim-maximizer'
-  use {
-    'kosayoda/nvim-lightbulb',
-    config = function()
-      require("nvim-lightbulb").setup({
-        autocmd = { enabled = true }
-      })
-    end,
-    -- cmd = 'CodeActionMenu',
-  }
+  use 'sindrets/diffview.nvim'
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
@@ -88,7 +81,9 @@ return packer.startup(function()
   -- nvim-tree
   use {
     'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
+    requires = {
+      'nvim-tree/nvim-web-devicons',
+    }
   }
 
   -- telescope
@@ -100,6 +95,13 @@ return packer.startup(function()
   -- Git
   use 'lewis6991/gitsigns.nvim'
   use 'tpope/vim-fugitive'
+  use {
+    'NeogitOrg/neogit',
+    requires = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+    }
+  }
 
   -- comment
   use 'numToStr/Comment.nvim'
