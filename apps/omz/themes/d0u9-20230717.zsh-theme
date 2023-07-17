@@ -5,7 +5,7 @@ SEGMENT_SEPARATOR_R='›'
 custom_git() {
     ZSH_THEME_GIT_PROMPT_PREFIX=" $(echo '\uf126'):(%{%F{red}%}"
     ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-    ZSH_THEME_GIT_PROMPT_DIRTY="%{%F{blue}%})%{%F{yellow}%}●%{$reset_color%}"
+    ZSH_THEME_GIT_PROMPT_DIRTY="%{%F{blue}%})%{%F{yellow}%} ●%{$reset_color%} "
     ZSH_THEME_GIT_PROMPT_CLEAN="%{%F{blue}%})"
 
     ZSH_THEME_HG_PROMPT_PREFIX="$ZSH_THEME_GIT_PROMPT_PREFIX"
@@ -33,7 +33,7 @@ function space() {
 }
 
 function segment() {
-    [[ -n $3 ]] && echo -n "$SEGMENT_SEPARATOR_L $3%f%b%k $SEGMENT_SEPARATOR_R"
+    [[ -n $3 ]] && echo -n "$SEGMENT_SEPARATOR_L$3%f%b%k$SEGMENT_SEPARATOR_R"
 }
 
 function segment_nowrap() {
@@ -142,5 +142,6 @@ build_second_prompt() {
     prompt_user_symbol
 }
 
-PROMPT='%{%f%b%k%}╭─ $(build_prompt) ─╮
+#  ─╮
+PROMPT='%{%f%b%k%}╭─ $(build_prompt)
 ╰─  $(build_second_prompt) '

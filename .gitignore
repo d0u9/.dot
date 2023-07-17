@@ -15,6 +15,8 @@ apps/neomutt/cache
 # Files and dirs to be ommited
 conf/
 conf_pub/
+conf_cloud_cn/
+conf_cloud_global/
 private
 scripts
 
