@@ -6,7 +6,10 @@ export DOT_OMZ_DIR=$HOME/.dot/apps/omz
 source "$DOT_DIR/apps/omz/lib.sh"
 
 env_check_and_setup() {
-    set_gnu_realpath
+    if ! set_gnu_realpath; then
+        error "Cannot find GNU realpath, please install via `brew install coreutils`"
+        exit 1
+    fi
 }
 
 # $1: an empty array. On return, this array will be initialized as app names
