@@ -24,7 +24,7 @@ fi
 ZSH_AUTOSUGGESTIONS_DIR=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 if [ -d "$ZSH_AUTOSUGGESTIONS_DIR" ]; then
     plugins+=(zsh-autosuggestions)
-    bindkey '^[p' autosuggest-accept
+    bindkey '^\' autosuggest-accept
 fi
 
 # Pyenv
