@@ -72,8 +72,8 @@ while getopts ":hli:" opt; do
             ;;
         i)
             name="$OPTARG"
-            install_script=$(realpath -e "$APP_DIR/$name-install.sh" 2>/dev/null)
-            if [ $? -ne 0 ]; then
+            install_script=$(realpath "$APP_DIR/$name-install.sh" 2>/dev/null)
+            if [ ! -f "$install_script" ]; then
                 error "no [$name] app is found in $APP_DIR"
                 exit 1
             fi
