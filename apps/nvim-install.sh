@@ -14,10 +14,12 @@ TARGET_NVIM_DIR=$(realpath "$CONFIG_DIR/nvim")
 
 mkdir -p "$CONFIG_DIR"
 cd $CONFIG_DIR
-ln -s $NVIM_APP_DIR . 2> /dev/null
+ln -fs $NVIM_APP_DIR . 2> /dev/null
 
 info "Install nvim plugin manage -- Packer"
-git clone https://github.com/wbthomason/packer.nvim $(realpath -m "$NVIM_APP_DIR/runtime/plugins/pack/packer/start/packer.nvim")
+PACKER_DIR="$NVIM_APP_DIR/runtime/plugins/pack/packer/start/"
+mkdir -p "$PACKER_DIR"
+git clone https://github.com/wbthomason/packer.nvim $(realpath "${PACKER_DIR}/packer.nvim")
 
 warn 'install finished, you have to execute `:PackerInstall` in nvim to install plugins'
 warn 'Run command below to install code highlights'
