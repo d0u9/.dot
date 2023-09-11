@@ -26,6 +26,7 @@ find_install_scripts() {
 
 print_help() {
     printf -- "-h: %-s\n" "Print this help"
+    printf -- "-i [app]: %-s\n" "install this app"
     printf -- "-l: %-s\n" "List available apps to install"
 }
 
