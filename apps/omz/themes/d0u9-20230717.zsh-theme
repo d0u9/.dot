@@ -110,7 +110,8 @@ prompt_rvm_ruby() {
 
 prompt_userhost() {
     local -a symbols
-    symbols+="%B%(!.%{%F{red}%}.%{%F{cyan}%})%n@%m"
+    local hostname="${HOSTALIAS:=%m}"
+    symbols+="%B%(!.%{%F{red}%}.%{%F{cyan}%})%n@$hostname"
     if [[ -n "$symbols" ]]; then
         # space 3 '='
         segment_nowrap default default "$symbols"
