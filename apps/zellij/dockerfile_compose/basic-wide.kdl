@@ -1,0 +1,13 @@
+layout {
+    pane split_direction="horizontal" {
+        pane split_direction="vertical" size="70%" {
+            pane name="dockerfile"
+            pane name="config-file"
+            pane split_direction="horizontal" {
+                pane name="build"
+                pane name="run"
+            }
+        }
+        pane name="docker cmd"
+    }
+}
