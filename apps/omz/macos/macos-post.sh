@@ -8,6 +8,10 @@ if hash gls 2> /dev/null; then
     alias ls='gls --color=tty'
 fi
 
+if [ -d "$HOME/.docker" ]; then
+    export PATH="$PATH:$HOME/.docker/bin"
+fi
+
 ### Make neomutt happy
 stty discard undef
 
