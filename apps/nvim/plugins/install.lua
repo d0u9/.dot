@@ -107,6 +107,7 @@ return packer.startup(function()
   use 'numToStr/Comment.nvim'
 
   -- Enhancement
+  -- Replace with w!!
   use 'lambdalisue/suda.vim'
 
   -- Deprecated
