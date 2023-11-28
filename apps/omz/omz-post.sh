@@ -35,7 +35,7 @@ fi
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
 POST_HOST_CONF=$DOT_OMZ_DIR/host-conf
-if [ -f $POST_HOST_CONF ]; then
+if [ -d $POST_HOST_CONF ]; then
     for f in $(find $POST_HOST_CONF -name "*-post.sh" | sort); do
         source "$f"
     done
