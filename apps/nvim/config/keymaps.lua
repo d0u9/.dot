@@ -182,6 +182,13 @@ local telescope = function()
 end
 telescope()
 
+-- toggleterm.nvim
+local plugin_toggleterm = function()
+  vim.keymap.set('n', '<C-w><C-w>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>')
+  vim.keymap.set('t', '<C-w><C-w>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>')
+end
+run_cb_if_has(plugin_toggleterm, 'toggleterm')
+
 local vim_maximizer = function()
   vim.keymap.set('n', '<leader>zf', ':MaximizerToggle<CR>')
 end

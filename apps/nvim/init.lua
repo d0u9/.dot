@@ -38,9 +38,9 @@ _G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
 _G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
 _G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
 _G.THEME = function()
-  -- return "catppuccin-frappe"
+  return "catppuccin-frappe"
   -- return "nord"
-  return "catppuccin-macchiato"
+  -- return "catppuccin-macchiato"
 end
 
 -- set up environments preparation for running neovim

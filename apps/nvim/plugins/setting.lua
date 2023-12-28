@@ -45,6 +45,9 @@ require_if_has('plugins.configs.diffview', 'diffview')
 -- https://github.com/NeogitOrg/neogit
 require_if_has('plugins.configs.neogit', 'neogit')
 
+-- https://github.com/akinsho/toggleterm.nvim
+require_if_has('plugins.configs.toggleterm--nvim', 'toggleterm')
+
 ------------------------ LSP things ------------------------
 
 -- https://github.com/simrat39/rust-tools.nvim
@@ -64,3 +67,4 @@ require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig')
 
 -- https://github.com/SmiteshP/nvim-navic
 require_if_has('plugins.configs.nvim-navic', 'symbols-outline', 'lspconfig')
+

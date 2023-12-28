@@ -73,6 +73,7 @@ return packer.startup(function()
   }
   use 'szw/vim-maximizer'
   use 'sindrets/diffview.nvim'
+  use 'akinsho/toggleterm.nvim'
 
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
