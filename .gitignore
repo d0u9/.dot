@@ -21,6 +21,10 @@ conf_cloud_global/
 private
 scripts
 
+# Alaritty
+apps/alacritty/plugins/*
+!apps/alacritty/plugins/README.md
+
 # Other tmp files
 *.swp
 *~
