@@ -2,18 +2,14 @@ M = {}
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 function M.setup()
-  local on_attach = function(client, bufnr)
-    require("nvim-navic").attach(client, bufnr)
-  end
-
-  require('lspconfig').solargraph.setup{
+  require('lspconfig').sorbet.setup{
     capabilities = capabilities,
-    on_attach = on_attach,
     settings = {
       solargraph = {
         diagnostics = false,
       },
-    }
+    },
+    cmd = { "srb", "tc", "--lsp", "--disable-watchman" },
   }
 end
 

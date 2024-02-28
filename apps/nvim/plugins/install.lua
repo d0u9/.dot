@@ -40,6 +40,7 @@ return packer.startup(function()
 
   -- Language specific - Rust
   use 'simrat39/rust-tools.nvim'
+  use 'IndianBoy42/tree-sitter-just'
 
   -- Autocompletion plugin
   use {
@@ -69,7 +70,8 @@ return packer.startup(function()
   use 'simrat39/symbols-outline.nvim'
   use {
     'kevinhwang91/nvim-ufo',
-    requires = 'kevinhwang91/promise-async'
+    requires = 'kevinhwang91/promise-async',
+    ft = { 'rust', 'ruby', 'go', },
   }
   use 'szw/vim-maximizer'
   use 'sindrets/diffview.nvim'

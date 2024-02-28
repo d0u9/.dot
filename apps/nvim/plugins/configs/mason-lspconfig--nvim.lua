@@ -28,6 +28,7 @@ require("mason-lspconfig").setup_handlers {
   ["rust_analyzer"] = require('lsp.rust-analyzer').setup,
   ["gopls"] = require('lsp.gopls').setup,
   ["solargraph"] = require('lsp.solargraph').setup,
+  ["sorbet"] = require('lsp.sorbet').setup,
 }
 
 

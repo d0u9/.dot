@@ -67,3 +67,4 @@ require('config.diagnostic')
 
 -- lua key mappings
 require('config.keymaps')
+

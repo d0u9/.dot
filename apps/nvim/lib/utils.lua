@@ -9,6 +9,7 @@ M.ensure_directory_exists = ensure_directory_exists
 local run_cb_if_has = function(cb, lib, ...)
   local status, _ = pcall(require, lib)
   if (not status) then return end
+
   for i = 1, select('#', ...) do
     local findit = pcall(require, select(i, ...))
     if (not findit) then return end
