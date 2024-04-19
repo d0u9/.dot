@@ -27,7 +27,11 @@ for file in "$OMZ_THEME_DIR"/*.zsh-theme; do
 done
 
 info "Installing zsh-autosuggestions"
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+rm -fr "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
+info "Install My Pure Theme"
+rm -fr "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/pure"
+git clone https://github.com/d0u9/pure.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/pure"
 
 info "Finished"

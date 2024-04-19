@@ -31,6 +31,11 @@ if hash zellij 2> /dev/null; then
     }
 fi
 
+# For Pure theme setup
+fpath+=($HOME/.oh-my-zsh/custom/plugins/pure)
+autoload -U promptinit; promptinit
+prompt pure
+
 
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
