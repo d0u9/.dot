@@ -51,6 +51,10 @@ alias tmux="tmux -2"
 ## For environment variables
 export TERM=xterm-256color
 
+# For zsh-syntax-highlighting
+# Ref: https://github.com/zsh-users/zsh-syntax-highlighting
+plugins+=(zsh-syntax-highlighting)
+
 ##################     Load custom host specific config      ##################
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.

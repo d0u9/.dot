@@ -34,4 +34,8 @@ info "Install My Pure Theme"
 rm -fr "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/pure"
 git clone https://github.com/d0u9/pure.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/pure"
 
+info "Install zsh-syntax-highlighting"
+rm -fr "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+
 info "Finished"
