@@ -53,6 +53,9 @@ require_if_has('plugins.configs.toggleterm--nvim', 'toggleterm')
 -- https://github.com/simrat39/rust-tools.nvim
 require_if_has('plugins.configs.rust-tools--nvim', 'rust-tools', 'lspconfig')
 
+-- https://github.com/ray-x/go.nvim
+require_if_has('plugins.configs.go--nvim', 'go', 'lspconfig')
+
 -- https://github.com/williamboman/mason.nvim
 require_if_has('plugins.configs.mason--nvim', 'mason', 'lspconfig')
 

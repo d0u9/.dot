@@ -42,6 +42,10 @@ return packer.startup(function()
   use 'simrat39/rust-tools.nvim'
   use 'IndianBoy42/tree-sitter-just'
 
+  -- Language specific - Golang
+  use 'ray-x/go.nvim'
+  use 'ray-x/guihua.lua' -- recommended if need floating window support
+
   -- Autocompletion plugin
   use {
     'hrsh7th/nvim-cmp',

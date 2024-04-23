@@ -10,5 +10,5 @@ let g:c_syntax_for_h = 1
 " }
 
 " Golang {
-    autocmd Filetype go setlocal ci pi ts=4 sw=4 sts=0 expandtab
+    autocmd Filetype go setlocal ci pi ts=4 sw=4 sts=4 noexpandtab
 " }
