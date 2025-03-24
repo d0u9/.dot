@@ -12,6 +12,10 @@ if hash fasd 2> /dev/null; then
     plugins+=(fasd)
 fi
 
+if hash jump 2> /dev/null; then
+    eval "$(jump shell zsh --bind=z)"
+fi
+
 if hash tmux 2> /dev/null; then
     plugins+=(tmuxinator)
 fi
