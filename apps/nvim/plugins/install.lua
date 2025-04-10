@@ -33,10 +33,11 @@ return packer.startup(function()
     'SmiteshP/nvim-navic',
     requires = 'neovim/nvim-lspconfig'
   }
-  use {
-    'jose-elias-alvarez/null-ls.nvim',
-    requires = 'nvim-lua/plenary.nvim'
-  }
+  -- This plugin is deprecated
+  -- use {
+  --   'jose-elias-alvarez/null-ls.nvim',
+  --   requires = 'nvim-lua/plenary.nvim'
+  -- }
 
   -- Language specific - Rust
   use 'simrat39/rust-tools.nvim'

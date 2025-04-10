@@ -62,8 +62,9 @@ require_if_has('plugins.configs.mason--nvim', 'mason', 'lspconfig')
 -- https://github.com/williamboman/mason-lspconfig.nvim
 require_if_has('plugins.configs.mason-lspconfig--nvim', 'mason', 'mason-lspconfig', 'lspconfig')
 
+-- null-ls is deprecated --
 -- -- https://github.com/jose-elias-alvarez/null-ls.nvim
-require_if_has('plugins.configs.null-ls--nvim', 'null-ls', 'mason')
+--require_if_has('plugins.configs.null-ls--nvim', 'null-ls', 'mason')
 
 -- https://github.com/neovim/nvim-lspconfig
 require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig')
