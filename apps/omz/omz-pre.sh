@@ -21,15 +21,9 @@ if hash tmux 2> /dev/null; then
 fi
 
 if hash nvim 2> /dev/null; then
-    vi() {
-        nvim "$@"
-    }
-    export -f vi
-    vim() {
-        nvim "$@"
-    }
-    export -f vim
-fi >/dev/null
+    alias vi=nvim
+    alias vim=nvim
+fi
 
 test -f $HOME/.cargo/env && source $HOME/.cargo/env
 if hash cargo 2> /dev/null; then
