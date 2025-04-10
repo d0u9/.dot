@@ -20,6 +20,17 @@ if hash tmux 2> /dev/null; then
     plugins+=(tmuxinator)
 fi
 
+if hash nvim 2> /dev/null; then
+    vi() {
+        nvim "$@"
+    }
+    export -f vi
+    vim() {
+        nvim "$@"
+    }
+    export -f vim
+fi >/dev/null
+
 test -f $HOME/.cargo/env && source $HOME/.cargo/env
 if hash cargo 2> /dev/null; then
     plugins+=(rust)
