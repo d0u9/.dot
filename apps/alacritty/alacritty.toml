@@ -1,7 +1,7 @@
 # Ref: https://alacritty.org/config-alacritty.html
 
+[general]
 live_config_reload = true
-
 import = [
   # uncomment the flavour you want below:
   # "~/.config/alacritty/plugins/catppuccin/catppuccin-latte.toml"
@@ -41,3 +41,4 @@ key = "1"
 mods = "Control"
 mode = "AppKeypad"
 action = "Hide"
+
