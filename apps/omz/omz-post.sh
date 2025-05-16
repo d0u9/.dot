@@ -1,4 +1,4 @@
-info "[POST] Loading OMZ config" $(cur_path_relative "$HOME/.dot" "$0")
+info "[POST] Loading OMZ config " $(cur_path_relative "$HOME/.dot" "$0")
 
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
@@ -8,7 +8,7 @@ else
 fi
 
 ## For zellij command alias
-if hash zellij 2> /dev/null; then
+if command_exist zellij; then
     zr() {
         zellij run -- "$@"
     }
@@ -46,4 +46,4 @@ if [ -d $POST_HOST_CONF ]; then
     done
 fi
 
-info "[POST] Loading OMZ config - DONE" $(cur_path_relative "$HOME/.dot" "$0")
+info "[POST] Loading OMZ config - DONE " $(cur_path_relative "$HOME/.dot" "$0")

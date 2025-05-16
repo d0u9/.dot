@@ -8,25 +8,21 @@ else
 fi
 
 ## For plugins
-if hash fasd 2> /dev/null; then
-    plugins+=(fasd)
-fi
+command_exist fasd && plugins+=(fasd)
+command_exist jump && eval "$(jump shell zsh --bind=z)"
 
-if hash jump 2> /dev/null; then
-    eval "$(jump shell zsh --bind=z)"
-fi
-
-if hash tmux 2> /dev/null; then
+if command_exist tmux; then
     plugins+=(tmuxinator)
+    alias tmux="tmux -2"
 fi
 
-if hash nvim 2> /dev/null; then
+if command_exist nvim; then
     alias vi=nvim
     alias vim=nvim
 fi
 
 test -f $HOME/.cargo/env && source $HOME/.cargo/env
-if hash cargo 2> /dev/null; then
+if command_exist cargo; then
     plugins+=(rust)
 fi
 
@@ -37,7 +33,7 @@ if [ -d "$ZSH_AUTOSUGGESTIONS_DIR" ]; then
 fi
 
 # Pyenv
-if hash pyenv 2> /dev/null; then
+if command_exist pyenv; then
     # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
     # by using the command below
     # eval "$(pyenv init --path)"
@@ -46,16 +42,10 @@ if hash pyenv 2> /dev/null; then
 fi
 
 # Rbenv
-if hash rbenv 2> /dev/null; then
-    eval "$(rbenv init - zsh)"
-fi
+command_exist rbenv && eval "$(rbenv init - zsh)"
 
-if hash docker 2> /dev/null; then
-    plugins+=(docker)
-fi
-
-## For alias
-alias tmux="tmux -2"
+# Docker
+command_exist docker && plugins+=(docker)
 
 ## For environment variables
 export TERM=xterm-256color

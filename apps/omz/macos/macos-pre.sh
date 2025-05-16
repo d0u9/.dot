@@ -16,4 +16,4 @@ elif [ -f /opt/homebrew/bin/brew ]; then
 fi
 
 
-info "[PRE] Loading OMZ config for Macos - DONE" $(cur_path_relative "$HOME/.dot" "$0")
+info "[PRE] Loading OMZ config for Macos - DONE " $(cur_path_relative "$HOME/.dot" "$0")

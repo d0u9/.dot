@@ -79,6 +79,7 @@ plugins=(git)
 ###
 ## Custom variable
 ###
+export DOT_LOG_LEVEL="warn"
 export DOT_OMZ_DIR=$HOME/.dot/apps/omz
 
 source $DOT_OMZ_DIR/lib.sh
@@ -117,3 +118,5 @@ source $DOT_OMZ_DIR/omz-post.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+
+source /Users/dougsu/.config/broot/launcher/bash/br
