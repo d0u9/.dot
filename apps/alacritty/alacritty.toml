@@ -21,16 +21,22 @@ option_as_alt = "OnlyLeft"
 history = 60000
 
 [font]
-size = 13.3
-offset = { x = 0, y = 6}
-glyph_offset = { x = 0, y = 4 }
-normal = { family = "FiraCode Nerd Font", style = "Regular" }
-bold = { family = "FiraCode Nerd Font", style = "Medium" }
+size = 13
+offset = { x = 1, y = 5}
+glyph_offset = { x = 0, y = 0 }
+normal = { family = "Maple Mono NF CN", style = "Regular" }
+bold = { family = "Maple Mono NF CN", style = "Medium" }
+
+#size = 13.3
+#offset = { x = 0, y = 6}
+#glyph_offset = { x = 0, y = 4 }
+#normal = { family = "FiraCode Nerd Font", style = "Regular" }
+#bold = { family = "FiraCode Nerd Font", style = "Medium" }
 
 [bell]
 
 [cursor]
-style = { shape = "Beam", blinking = "Always" }
+style = { shape = "Block", blinking = "Always" }
 blink_interval = 600
 blink_timeout = 0
 unfocused_hollow = false
