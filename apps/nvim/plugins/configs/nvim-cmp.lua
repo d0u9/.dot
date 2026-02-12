@@ -85,9 +85,16 @@ cmp.setup.cmdline(':', {
 
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-require('lspconfig')['rust_analyzer'].setup {
-  capabilities = capabilities
-}
-require('lspconfig')['gopls'].setup {
-  capabilities = capabilities
-}
+
+vim.lsp.config('rust_analyzer', {
+  capabilities = capabilities,
+})
+
+vim.lsp.config('gopls', {
+  capabilities = capabilities,
+})
+
+vim.lsp.enable({
+  'rust_analyzer',
+  'gopls',
+})
