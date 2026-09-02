@@ -2,12 +2,9 @@ local cmp = require('cmp')
 
 local opts = {
   snippet = {
-    -- REQUIRED - you must specify a snippet engine
+    -- REQUIRED - you must specify a snippet engine; neovim ships one since 0.10.
     expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      vim.snippet.expand(args.body)
     end,
   },
   window = {
@@ -38,11 +35,7 @@ local opts = {
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = "nvim_lsp_signature_help" },
-    { name = 'vsnip' }, -- For vsnip users.
     { name = 'path' },
-    -- { name = 'luasnip' }, -- For luasnip users.
-    -- { name = 'ultisnips' }, -- For ultisnips users.
-    -- { name = 'snippy' }, -- For snippy users.
   }, {
     { name = 'buffer',  keyword_length = 3 },
   }),
