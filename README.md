@@ -8,11 +8,78 @@ This repo includes configuration files come from various most common used softew
 ---
 
 # Content
+- [Supported platforms](#supported-platforms)
 - [Prerequisite](#prerequisite)
 - [Private config files](#Private config files)
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
 - [tmux](#tmux)
+
+# Supported platforms
+
+Unless a file says otherwise in an explicit code branch, every configuration
+here is meant to run unchanged on:
+
+- **Linux**, on any architecture
+- **macOS**, on both `x86_64` (Homebrew under `/usr/local`) and `arm64`
+  (Homebrew under `/opt/homebrew`)
+
+Anything that cannot hold to that has to be isolated behind one of the two
+mechanisms below, never inlined into a shared file.
+
+## Where platform differences belong
+
+| Scope | Location | In git |
+| --- | --- | --- |
+| OS-specific | `apps/omz/macos/`, `apps/omz/linux/` | yes |
+| Machine-specific | `apps/omz/host-conf/*-{pre,post}.sh` | no, gitignored |
+
+`omz-pre.sh` and `omz-post.sh` dispatch on `$OSTYPE` into the first, then
+source anything found in the second. A path, prefix or tool that only exists
+on one host belongs in `host-conf`, not in a tracked file.
+
+## Rules for shared files
+
+These follow from portability bugs that have already been fixed here once:
+
+- **Never hardcode a Homebrew prefix.** Use `$HOMEBREW_PREFIX`, which
+  `brew shellenv` exports, or probe `/opt/homebrew` *before* `/usr/local` —
+  a machine can carry both an arm64 Homebrew and a Rosetta one, and probing
+  in the other order silently selects the Rosetta toolchain on Apple Silicon.
+- **Guard every optional tool** with `command_exist`, so a host that lacks it
+  starts a clean shell instead of printing errors. The same applies to
+  optional oh-my-zsh plugins and themes, which need a directory test before
+  they are enabled.
+- **Do not assume one install layout.** `nvm`, for example, ships as
+  `$NVM_DIR/nvm.sh` with completion at `$NVM_DIR/bash_completion` when
+  installed from git, but as `$HOMEBREW_PREFIX/opt/nvm/nvm.sh` with
+  completion under `etc/bash_completion.d/nvm` when installed from Homebrew.
+  Probe for both.
+- **Guard anything that needs a terminal**, such as `stty`, with `[ -t 0 ]`.
+  These files are also sourced by non-interactive shells.
+- **Do not export `TERM`.** Overriding it with `xterm-256color` discards
+  capabilities the real terminal advertises, such as undercurl. For an old
+  remote host that lacks the local terminfo entry, install it there instead:
+  `infocmp "$TERM" | ssh remote 'tic -x -'`.
+
+## Known limitations
+
+- GNU coreutils are assumed by the install scripts, not by the shell config.
+  On macOS `install.sh` requires `grealpath` from `brew install coreutils`
+  and aborts early without it.
+- Homebrew on Linux is only detected at `/home/linuxbrew/.linuxbrew`, the
+  default prefix. A per-user Linuxbrew install needs a `host-conf` entry.
+- `nvm` is loaded lazily: `nvm`, `node`, `npm` and `npx` are stubs that
+  source `nvm.sh` on first use, which keeps shell startup near 0.6s instead
+  of 2s. Other Node-adjacent commands such as `yarn`, `pnpm` and `corepack`
+  are not stubbed, so they only work once one of the four above has run.
+  `.nvmrc` auto-switching on `cd` is not wired up and would conflict with
+  this scheme.
+- Changes are routinely exercised on macOS only. The Linux paths are kept
+  correct by inspection, so treat a first run on a new Linux host as
+  unverified.
+
+---
 
 # Prerequisite
 
