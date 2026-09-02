@@ -1,5 +1,5 @@
 local run_cb_if_has = require('lib.utils').run_cb_if_has
-M={}
+local M = {}
 
 -- Key mapping for neovim's internal functions
 local general_keymap = function()
@@ -157,11 +157,8 @@ end
 M.nvim_tree_keymap = plugin_nvim_tree_attach
 
 -- UFO
-local plugin_ufo = function()
-  vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-  vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
-end
-run_cb_if_has(plugin_ufo, 'ufo')
+-- zR/zM/zK are set in plugins/configs/nvim-ufo.lua, which is loaded for the
+-- filetypes ufo is enabled on. Requiring `ufo` here would load it everywhere.
 
 -- comment tool
 -- Neovim comments lines itself since 0.10: `gcc` for a line, `gc` as an

@@ -30,11 +30,15 @@ return {
   -- },
 
   -- Language specific - Rust
-  'mrcjkb/rustaceanvim',
+  { 'mrcjkb/rustaceanvim', ft = { 'rust' } },
 
   -- Language specific - Golang
-  'ray-x/go.nvim',
-  'ray-x/guihua.lua', -- recommended if need floating window support
+  {
+    'ray-x/go.nvim',
+    -- guihua is what go.nvim uses for floating windows.
+    dependencies = 'ray-x/guihua.lua',
+    ft = { 'go', 'gomod', 'gowork', 'gotmpl' },
+  },
 
   -- Autocompletion plugin
   {

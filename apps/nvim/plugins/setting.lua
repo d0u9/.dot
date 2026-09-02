@@ -1,4 +1,5 @@
 local require_if_has = require('lib.utils').require_if_has
+local require_on_ft = require('lib.utils').require_on_ft
 
 -- https://github.com/onsails/lspkind.nvim
 require_if_has('plugins.configs.lspkind--nvim', 'lspkind')
@@ -16,7 +17,7 @@ require_if_has('plugins.configs.nvim-treesitter', 'nvim-treesitter')
 require_if_has('plugins.configs.telescope--nvim', 'telescope')
 
 -- https://github.com/kevinhwang91/nvim-ufo
-require_if_has('plugins.configs.nvim-ufo', 'ufo', 'nvim-treesitter')
+require_on_ft('plugins.configs.nvim-ufo', { 'rust', 'ruby', 'go' }, 'ufo', 'nvim-treesitter')
 
 -- https://github.com/nvim-lualine/lualine.nvim
 require_if_has('plugins.configs.lualine', 'lualine')
@@ -48,10 +49,12 @@ require_if_has('plugins.configs.toggleterm--nvim', 'toggleterm')
 ------------------------ LSP things ------------------------
 
 -- https://github.com/mrcjkb/rustaceanvim
-require_if_has('plugins.configs.rustaceanvim', 'rustaceanvim')
+-- Only sets `vim.g.rustaceanvim`, which has to be in place before the plugin
+-- loads, so this one is not deferred -- the plugin itself is, by its `ft`.
+require('plugins.configs.rustaceanvim')
 
 -- https://github.com/ray-x/go.nvim
-require_if_has('plugins.configs.go--nvim', 'go', 'lspconfig')
+require_on_ft('plugins.configs.go--nvim', { 'go', 'gomod', 'gowork', 'gotmpl' }, 'go', 'lspconfig')
 
 -- https://github.com/williamboman/mason.nvim
 require_if_has('plugins.configs.mason--nvim', 'mason', 'lspconfig')
