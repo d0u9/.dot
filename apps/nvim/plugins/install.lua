@@ -59,14 +59,12 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
-  'wesQ3/vim-windowswap',
   'hedyhli/outline.nvim',
   {
     'kevinhwang91/nvim-ufo',
     dependencies = 'kevinhwang91/promise-async',
     ft = { 'rust', 'ruby', 'go', },
   },
-  'szw/vim-maximizer',
   'sindrets/diffview.nvim',
   'akinsho/toggleterm.nvim',
 

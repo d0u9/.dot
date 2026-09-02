@@ -184,10 +184,22 @@ local plugin_toggleterm = function()
 end
 run_cb_if_has(plugin_toggleterm, 'toggleterm')
 
-local vim_maximizer = function()
-  vim.keymap.set('n', '<leader>zf', ':MaximizerToggle<CR>')
+-- Maximize the current window, or restore the layout a previous maximize saved.
+-- vim-maximizer did this, but it is a dozen lines of lua and one less plugin.
+local maximize_toggle = function()
+  if vim.t.maximizer_restore then
+    vim.cmd(vim.t.maximizer_restore)
+    vim.t.maximizer_restore = nil
+  elseif vim.fn.winnr('$') > 1 then
+    vim.t.maximizer_restore = vim.fn.winrestcmd()
+    vim.cmd('wincmd _ | wincmd |')
+  end
 end
-vim_maximizer()
+
+local window_maximizer = function()
+  vim.keymap.set('n', '<leader>zf', maximize_toggle, {desc = 'Toggle window maximize'})
+end
+window_maximizer()
 
 ------------------ LSP Server Specified key bindings ------------------
 -- rustaceanvim exposes its extras through `:RustLsp <action>` rather than a
