@@ -10,7 +10,6 @@ info "Installing Alacritty configurations"
 
 CONFIG_DIR=$(realpath "$HOME/.config")
 ALACRITTY_APP_DIR=$(realpath "$APP_DIR/alacritty")
-TARGET_ALACRITTY_DIR=$(realpath "$CONFIG_DIR/alacritty")
 
 mkdir -p "$CONFIG_DIR"
 cd $CONFIG_DIR

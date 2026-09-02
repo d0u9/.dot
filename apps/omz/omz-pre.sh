@@ -52,9 +52,6 @@ command_exist rbenv && eval "$(rbenv init - zsh)"
 # Docker
 command_exist docker && plugins+=(docker)
 
-## For environment variables
-export TERM=xterm-256color
-
 # For zsh-syntax-highlighting
 # Ref: https://github.com/zsh-users/zsh-syntax-highlighting
 plugins+=(zsh-syntax-highlighting)

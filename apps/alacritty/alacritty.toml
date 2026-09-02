@@ -13,7 +13,6 @@ import = [
 [window]
 dynamic_padding = true
 decorations = "Full"
-blur = true
 decorations_theme_variant = "Dark"
 option_as_alt = "OnlyLeft"
 
@@ -27,24 +26,9 @@ glyph_offset = { x = 0, y = 0 }
 normal = { family = "Maple Mono NF CN", style = "Regular" }
 bold = { family = "Maple Mono NF CN", style = "Medium" }
 
-#size = 13.3
-#offset = { x = 0, y = 6}
-#glyph_offset = { x = 0, y = 4 }
-#normal = { family = "FiraCode Nerd Font", style = "Regular" }
-#bold = { family = "FiraCode Nerd Font", style = "Medium" }
-
-[bell]
-
 [cursor]
 style = { shape = "Block", blinking = "Always" }
 blink_interval = 600
 blink_timeout = 0
 unfocused_hollow = false
 thickness = 0.6
-
-[[keyboard.bindings]]
-key = "1"
-mods = "Control"
-mode = "AppKeypad"
-action = "Hide"
-

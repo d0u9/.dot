@@ -1,14 +1,10 @@
 # README
 
-## Install Themes
+Alacritty plugins (themes) live here. This directory is gitignored — its
+contents are fetched at install time.
 
-```
-# https://github.com/catppuccin/alacritty
-# Catppuccin Theme for alacritty
+## Themes
 
-mkdir ~/.config/alacritty/plugins/catppuccin
-curl -LO --output-dir ~/.config/alacritty/plugins/catppuccin/ https://github.com/catppuccin/alacritty/raw/main/catppuccin-latte.toml
-curl -LO --output-dir ~/.config/alacritty/plugins/catppuccin/ https://github.com/catppuccin/alacritty/raw/main/catppuccin-frappe.toml
-curl -LO --output-dir ~/.config/alacritty/plugins/catppuccin/ https://github.com/catppuccin/alacritty/raw/main/catppuccin-macchiato.toml
-curl -LO --output-dir ~/.config/alacritty/plugins/catppuccin/ https://github.com/catppuccin/alacritty/raw/main/catppuccin-mocha.toml
-```
+The [catppuccin](https://github.com/catppuccin/alacritty) flavours are
+downloaded automatically by `apps/alacritty-install.sh`; pick the active one by
+uncommenting it in the `import` list of `alacritty.toml`.
