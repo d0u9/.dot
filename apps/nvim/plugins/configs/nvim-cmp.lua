@@ -86,15 +86,12 @@ cmp.setup.cmdline(':', {
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-vim.lsp.config('rust_analyzer', {
-  capabilities = capabilities,
-})
-
+-- rust_analyzer is deliberately absent: rustaceanvim starts and configures it
+-- itself, and enabling it here as well would run a second server.
 vim.lsp.config('gopls', {
   capabilities = capabilities,
 })
 
 vim.lsp.enable({
-  'rust_analyzer',
   'gopls',
 })

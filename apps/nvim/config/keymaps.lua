@@ -193,16 +193,8 @@ end
 vim_maximizer()
 
 ------------------ LSP Server Specified key bindings ------------------
-local plugin_rust_tools = function()
-  local api = require('rust-tools')
-  -- vim.keymap.del('n', '<leader>lh')
-  -- vim.keymap.set('n', '<leader>lh', api.hover_actions.hover_actions, { buffer = bufnr })
-  -- vim.keymap.set('n', '<leader>lb', api.code_action_group.code_action_group, { buffer = bufnr })
-
-  -- :lua require('rust-tools').hover_actions.hover_actions()
-  -- :lua require('rust-tools').code_action_group.code_action_group()
-end
-M.rust_tools_keymap = plugin_rust_tools
+-- rustaceanvim exposes its extras through `:RustLsp <action>` rather than a
+-- lua API to bind against; see plugins/configs/rustaceanvim.lua.
 
 return M
 

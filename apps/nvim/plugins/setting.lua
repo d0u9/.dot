@@ -47,8 +47,8 @@ require_if_has('plugins.configs.toggleterm--nvim', 'toggleterm')
 
 ------------------------ LSP things ------------------------
 
--- https://github.com/simrat39/rust-tools.nvim
-require_if_has('plugins.configs.rust-tools--nvim', 'rust-tools', 'lspconfig')
+-- https://github.com/mrcjkb/rustaceanvim
+require_if_has('plugins.configs.rustaceanvim', 'rustaceanvim')
 
 -- https://github.com/ray-x/go.nvim
 require_if_has('plugins.configs.go--nvim', 'go', 'lspconfig')

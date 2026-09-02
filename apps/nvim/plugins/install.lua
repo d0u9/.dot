@@ -30,7 +30,7 @@ return {
   -- },
 
   -- Language specific - Rust
-  'simrat39/rust-tools.nvim',
+  'mrcjkb/rustaceanvim',
   'IndianBoy42/tree-sitter-just',
 
   -- Language specific - Golang
