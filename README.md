@@ -146,6 +146,22 @@ be installed by hand.
 Everything a plugin writes lives under `apps/nvim/runtime/`, which is
 gitignored — the clones themselves under `runtime/plugins/lazy/`.
 
+### Plugin manager history
+
+lazy.nvim is the third plugin manager this config has used. Both switches
+rewrote the plugin list, so old commits will not make sense against the
+current layout:
+
+| From | To | Commit | Date |
+| --- | --- | --- | --- |
+| — | [vim-plug](https://github.com/junegunn/vim-plug) | `9535b5c` | 2015-11-26 |
+| vim-plug | [packer.nvim](https://github.com/wbthomason/packer.nvim) | `82933a4` | 2021-08-27 |
+| packer.nvim | [lazy.nvim](https://github.com/folke/lazy.nvim) | `a2c06d4` | 2026-09-02 |
+
+The move to packer came with neovim 0.5.0, in the same commit that replaced
+`init.vim` with `init.lua`. The move to lazy was made because packer is no
+longer maintained.
+
 ---
 
 # oh-my-zsh
