@@ -145,55 +145,38 @@ The version managers are all loaded from `apps/omz/`, each behind a
 
 You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
-## Create configuration directory
-
-Instead of `.vimr` and `.vim/` dir, neovim uses the XDG specification to manage its configuration files.
-
-To use my configurations, all you need is to link the `nvim` dir in my `.dot` to where the XDG specification designates.
+## Install this configuration
 
 ```
-mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
-ln -s .dot/nvim $XDG_CONFIG_HOME/
+./install.sh -i nvim
 ```
 
-[Here](https://neovim.io/doc/user/nvim_from_vim.html) gives more information about the differences between vim and neovim.
+That symlinks `apps/nvim` to `$XDG_CONFIG_HOME/nvim` (neovim uses the XDG
+layout rather than vim's `.vimrc` and `.vim/`) and bootstraps the plugins,
+LSP servers and tree-sitter parsers. Re-running it is safe.
+
+[Here](https://neovim.io/doc/user/nvim_from_vim.html) gives more information
+about the differences between vim and neovim.
 
 
-## Install python support of Neovim
+## Plugins
 
-```
-pip install neovim
-```
+Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which
+`init.lua` clones on the first start; the spec is
+`apps/nvim/plugins/install.lua` and per-plugin settings live in
+`apps/nvim/plugins/configs/`. `:Lazy` opens the manager, `:Lazy sync`
+installs and updates.
 
-or, if you familiar with python3 use `pip3` instead.
+`apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
+tracked in git, so all hosts converge on the same versions -- commit it after
+a `:Lazy sync`. Everything else a plugin writes lives under
+`apps/nvim/runtime/`, which is gitignored and can be deleted to rebuild from
+scratch.
 
-If you are using OSX El capitan, like me, and have failed installing pip, you have to understand the new protect mechanism, i.e. [SIP](https://en.wikipedia.org/wiki/System_Integrity_Protection).
-
-
-## Install the plugins
-
-Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim). It
-bootstraps itself: `init.lua` clones lazy on the first start, and lazy then
-installs everything listed in `apps/nvim/plugins/install.lua`. Nothing has to
-be installed by hand.
-
-- `:Lazy` opens the plugin manager UI, `:Lazy sync` installs and updates.
-- `apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
-  tracked in git, so all hosts converge on the same versions. Commit it after
-  a `:Lazy sync`.
-- LSP servers are installed by `:Mason`.
-- tree-sitter parsers are listed in
-  `apps/nvim/plugins/configs/treesitter-languages.lua` and installed on
-  startup; `:TSUpdate` refreshes them. This needs the tree-sitter CLI in
-  `$PATH` -- on macOS that is the `tree-sitter-cli` formula, **not**
-  `tree-sitter`, which ships only the library.
-
-Everything a plugin writes lives under `apps/nvim/runtime/`, which is
-gitignored — the clones themselves under `runtime/plugins/lazy/`.
-
-`apps/nvim/doc/install.md` has the full picture: what the installer does on
-its own, what has to be on the host before it runs, and where to add a
-plugin, an LSP server or a parser.
+**[`apps/nvim/doc/install.md`](apps/nvim/doc/install.md) is the reference**:
+what the installer does on its own, what has to be on the host first (the
+tree-sitter CLI in particular), and where to add a plugin, an LSP server or a
+parser.
 
 ---
 
