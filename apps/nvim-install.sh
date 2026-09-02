@@ -28,7 +28,16 @@ info "Installing plugins -- lazy.nvim"
 nvim --headless "+Lazy! sync" +qa
 
 info "Installing LSP servers -- Mason"
-nvim --headless "+MasonInstall lua-language-server rust-analyzer gopls" +qa
+# mason-lspconfig's `ensure_installed` is skipped in headless mode, so the
+# bootstrap installs the same list explicitly. The server names live in
+# plugins/configs/lsp-servers.lua; mason knows them under different package
+# names, so translate. MasonInstall blocks when headless.
+nvim --headless \
+    -c 'lua local m = require("mason-lspconfig.mappings").get_mason_map().lspconfig_to_package
+        local pkgs = vim.tbl_map(function(s) return m[s] end, require("plugins.configs.lsp-servers"))
+        vim.cmd("MasonInstall " .. table.concat(pkgs, " "))' \
+    +qa \
+    || warn 'some LSP servers failed to install; see doc/install.md for their toolchain requirements'
 
 info "Installing tree-sitter parsers"
 # The config installs these asynchronously on every start; wait for the first

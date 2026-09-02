@@ -1,13 +1,5 @@
--- Name is different nvim-lspconfig, check this link
--- https://github.com/williamboman/mason-lspconfig.nvim/blob/main/doc/server-mapping.md
-local ensure_installed = {
-  "rust_analyzer",
-  "gopls",
-  "lua_ls",
-}
-
 require("mason-lspconfig").setup({
-  ensure_installed = ensure_installed,
+  ensure_installed = require('plugins.configs.lsp-servers'),
   -- The binary is still installed here, but rustaceanvim is what starts it.
   automatic_enable = {
     exclude = { "rust_analyzer" },

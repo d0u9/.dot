@@ -191,6 +191,10 @@ be installed by hand.
 Everything a plugin writes lives under `apps/nvim/runtime/`, which is
 gitignored — the clones themselves under `runtime/plugins/lazy/`.
 
+`apps/nvim/doc/install.md` has the full picture: what the installer does on
+its own, what has to be on the host before it runs, and where to add a
+plugin, an LSP server or a parser.
+
 ---
 
 # oh-my-zsh
