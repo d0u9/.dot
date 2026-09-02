@@ -15,9 +15,6 @@ require_if_has('plugins.configs.nvim-treesitter', 'nvim-treesitter')
 -- https://github.com/nvim-telescope/telescope.nvim
 require_if_has('plugins.configs.telescope--nvim', 'telescope')
 
--- https://github.com/numToStr/Comment.nvim
-require_if_has('plugins.configs.comment--nvim', 'Comment')
-
 -- https://github.com/kevinhwang91/nvim-ufo
 require_if_has('plugins.configs.nvim-ufo', 'ufo', 'nvim-treesitter')
 

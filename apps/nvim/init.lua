@@ -41,7 +41,6 @@ _G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
 _G.LAZY_DIR = _G.PLUGIN_DIR .. '/lazy'
 _G.THEME = function()
   return "catppuccin-frappe"
-  -- return "nord"
   -- return "catppuccin-macchiato"
 end
 

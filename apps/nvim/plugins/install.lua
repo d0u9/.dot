@@ -7,7 +7,6 @@ return {
   'nvim-lua/plenary.nvim',
 
   -- Theme
-  'arcticicestudio/nord-vim',
   { 'catppuccin/nvim', name = 'catppuccin' },
 
   -- LSP plugins
@@ -54,7 +53,6 @@ return {
 
   -- GUI relative
   'RRethy/vim-illuminate',
-  'ryanoasis/vim-devicons',
   'onsails/lspkind-nvim',
   {
     'nvim-lualine/lualine.nvim',
@@ -102,9 +100,6 @@ return {
       'sindrets/diffview.nvim',
     }
   },
-
-  -- comment
-  'numToStr/Comment.nvim',
 
   -- Enhancement
   -- Replace with w!!

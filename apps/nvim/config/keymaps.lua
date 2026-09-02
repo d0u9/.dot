@@ -164,10 +164,8 @@ end
 run_cb_if_has(plugin_ufo, 'ufo')
 
 -- comment tool
-local plugin_comment = function()
-  -- NOTE: for comment.nvim keybinding, find it in plugin config.
-end
-plugin_comment()
+-- Neovim comments lines itself since 0.10: `gcc` for a line, `gc` as an
+-- operator. Comment.nvim is no longer installed.
 
 -- symbols-outline
 local plugin_symbols_outline = function()
