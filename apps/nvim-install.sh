@@ -16,27 +16,15 @@ mkdir -p "$CONFIG_DIR"
 cd $CONFIG_DIR
 ln -fs $NVIM_APP_DIR . 2> /dev/null
 
-info "Install nvim plugin manage -- Packer"
-PACKER_DIR="$NVIM_APP_DIR/runtime/plugins/pack/packer/start/"
-mkdir -p "$PACKER_DIR"
-git clone https://github.com/wbthomason/packer.nvim $(realpath "${PACKER_DIR}/packer.nvim")
+info "Installing plugins -- lazy.nvim"
+# init.lua clones lazy.nvim itself on first start, so a headless run is enough
+# to bootstrap it and every plugin in the spec.
+nvim --headless "+Lazy! sync" +qa
 
-warn 'install finished, you have to execute `:PackerInstall` in nvim to install plugins'
-warn 'Run command below to install code highlights'
+info "Installing LSP servers -- Mason"
+nvim --headless "+MasonInstall lua-language-server rust-analyzer gopls" +qa
+
+warn 'Run command below in nvim to install code highlights'
 warn '    :TSInstall bash c cpp comment go html css javascript json json5 lua markdown python ruby rust toml yaml kdl'
 
 exit 0
-
-nvim --headless -c "MasonInstall lua-language-server rust-analyzer" -c qall
-
-    mkdir -p $HOME/.config
-    NVIM_CONF=$DOT_DIR/nvim
-    TGT_NVIM_CONF=$HOME/.config/nvim
-
-    back_or_override $TGT_NVIM_CONF
-    ln -s $NVIM_CONF $TGT_NVIM_CONF
-
-    git clone https://github.com/wbthomason/packer.nvim $DOT_DIR/nvim/runtime/plugins/pack/packer/start/packer.nvim
-
-
-

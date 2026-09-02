@@ -105,13 +105,6 @@ If you have any private files(files containe sensitive contents), you may gather
 
 You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
-## Install ag command
-
-Here, we use `ag`([the silver searcher](https://github.com/ggreer/the_silver_searcher)) as the search command of `CtrlP` command, So you need to install it accoradingly. If there is no any `ag` in your system, the default search mechanism of CtrlP is used.
-
-For installation details, check [here](https://github.com/ggreer/the_silver_searcher#installing).
-
-
 ## Create configuration directory
 
 Instead of `.vimr` and `.vim/` dir, neovim uses the XDG specification to manage its configuration files.
@@ -137,33 +130,21 @@ or, if you familiar with python3 use `pip3` instead.
 If you are using OSX El capitan, like me, and have failed installing pip, you have to understand the new protect mechanism, i.e. [SIP](https://en.wikipedia.org/wiki/System_Integrity_Protection).
 
 
-## Install [vim-plug](https://github.com/junegunn/vim-plug).
+## Install the plugins
 
-If you have `curl` installed, you can execute the following command to install `vim-plug`:
+Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim). It
+bootstraps itself: `init.lua` clones lazy on the first start, and lazy then
+installs everything listed in `apps/nvim/plugins/install.lua`. Nothing has to
+be installed by hand.
 
-```
-curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
+- `:Lazy` opens the plugin manager UI, `:Lazy sync` installs and updates.
+- `apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
+  tracked in git, so all hosts converge on the same versions. Commit it after
+  a `:Lazy sync`.
+- LSP servers are installed by `:Mason`, tree-sitter parsers by `:TSInstall`.
 
-Otherwise, you may check [this](https://github.com/junegunn/vim-plug#installation).
-
-## Install all the plugings
-
-- Open your nvim and execute `:PlugInstall`.
-- Compile YCM according to [http://valloric.github.io/YouCompleteMe/#installation](http://valloric.github.io/YouCompleteMe/#installation).
-- Update remote plugins by running `:UpdateRemotePlugins` in nvim.
-
-## Install YCM with a specific version of python.
-
-If you don't want to use the system's default python interpreter, or if you opt with many different versions of python, you can compile YCM with a specific version of python.
-
-For the details, please check this [article](http://www.d0u9.xyz/compile-ycm-with-a-specific-verion-of-python-which-is-installed-via-pyenv).
-
-```
-CONFIGURE_OPTS="--enable-shared --with-system-expat " pyenv install 3.9.3
-```
-
+Everything a plugin writes lives under `apps/nvim/runtime/`, which is
+gitignored — the clones themselves under `runtime/plugins/lazy/`.
 
 ---
 

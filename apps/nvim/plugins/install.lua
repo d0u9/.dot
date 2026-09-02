@@ -1,56 +1,47 @@
-local packer = require('packer')
-local util = require('packer.util')
-
--- Set up directory to store plugins
-packer.init({
-  package_root = util.join_paths(_G.PLUGIN_DIR, 'pack'),
-  compile_path = util.join_paths(_G.PLUGIN_DIR, 'packer_compiled.lua'),
-})
-
-return packer.startup(function()
+-- The plugin spec handed to lazy.nvim by init.lua.
+-- Per-plugin settings live in `plugins/configs/`, and are loaded by
+-- `plugins/setting.lua` after lazy has put the plugins on the runtimepath.
+return {
   -- Enhancement
-  use 'nvim-tree/nvim-web-devicons'
-  use 'nvim-lua/plenary.nvim'
+  'nvim-tree/nvim-web-devicons',
+  'nvim-lua/plenary.nvim',
 
   -- Theme
-  use 'arcticicestudio/nord-vim'
-  use { "catppuccin/nvim", as = "catppuccin" }
-
-  -- Packer can manage itself
-  use 'wbthomason/packer.nvim'
+  'arcticicestudio/nord-vim',
+  { 'catppuccin/nvim', name = 'catppuccin' },
 
   -- LSP plugins
-  use 'neovim/nvim-lspconfig'
-  use 'williamboman/mason.nvim'
-  use {
+  'neovim/nvim-lspconfig',
+  'williamboman/mason.nvim',
+  {
     'williamboman/mason-lspconfig.nvim',
-    requires = {
+    dependencies = {
       'williamboman/mason.nvim',
       'neovim/nvim-lspconfig',
     }
-  }
-  use {
+  },
+  {
     'SmiteshP/nvim-navic',
-    requires = 'neovim/nvim-lspconfig'
-  }
+    dependencies = 'neovim/nvim-lspconfig'
+  },
   -- This plugin is deprecated
-  -- use {
+  -- {
   --   'jose-elias-alvarez/null-ls.nvim',
-  --   requires = 'nvim-lua/plenary.nvim'
-  -- }
+  --   dependencies = 'nvim-lua/plenary.nvim'
+  -- },
 
   -- Language specific - Rust
-  use 'simrat39/rust-tools.nvim'
-  use 'IndianBoy42/tree-sitter-just'
+  'simrat39/rust-tools.nvim',
+  'IndianBoy42/tree-sitter-just',
 
   -- Language specific - Golang
-  use 'ray-x/go.nvim'
-  use 'ray-x/guihua.lua' -- recommended if need floating window support
+  'ray-x/go.nvim',
+  'ray-x/guihua.lua', -- recommended if need floating window support
 
   -- Autocompletion plugin
-  use {
+  {
     'hrsh7th/nvim-cmp',
-    requires = {
+    dependencies = {
       'hrsh7th/vim-vsnip',
       'hrsh7th/cmp-vsnip',
       'hrsh7th/cmp-nvim-lsp',
@@ -59,78 +50,63 @@ return packer.startup(function()
       'hrsh7th/cmp-cmdline',
       'hrsh7th/cmp-nvim-lsp-signature-help',
     }
-  }
+  },
 
   -- GUI relative
-  use 'RRethy/vim-illuminate'
-  use 'ryanoasis/vim-devicons'
-  use 'onsails/lspkind-nvim'
-  use {
+  'RRethy/vim-illuminate',
+  'ryanoasis/vim-devicons',
+  'onsails/lspkind-nvim',
+  {
     'nvim-lualine/lualine.nvim',
-    requires = {
-      'nvim-tree/nvim-web-devicons', opt = true
-    }
-  }
-  use 'wesQ3/vim-windowswap'
-  use 'simrat39/symbols-outline.nvim'
-  use {
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
+  },
+  'wesQ3/vim-windowswap',
+  'simrat39/symbols-outline.nvim',
+  {
     'kevinhwang91/nvim-ufo',
-    requires = 'kevinhwang91/promise-async',
+    dependencies = 'kevinhwang91/promise-async',
     ft = { 'rust', 'ruby', 'go', },
-  }
-  use 'szw/vim-maximizer'
-  use 'sindrets/diffview.nvim'
-  use 'akinsho/toggleterm.nvim'
+  },
+  'szw/vim-maximizer',
+  'sindrets/diffview.nvim',
+  'akinsho/toggleterm.nvim',
 
   -- treesitter
-  use 'nvim-treesitter/nvim-treesitter'
-  -- use 'nvim-treesitter/playground'
+  -- The default branch is the rewritten v1.x, which dropped the
+  -- `nvim-treesitter.configs` module `plugins/configs/nvim-treesitter.lua`
+  -- is written against; stay on the classic branch.
+  { 'nvim-treesitter/nvim-treesitter', branch = 'master' },
+  -- 'nvim-treesitter/playground',
 
   -- nvim-tree
-  use {
+  {
     'kyazdani42/nvim-tree.lua',
-    requires = {
+    dependencies = {
       'nvim-tree/nvim-web-devicons',
     }
-  }
+  },
 
   -- telescope
-  use {
+  {
     'nvim-telescope/telescope.nvim',
-    requires = 'nvim-lua/plenary.nvim'
-  }
+    dependencies = 'nvim-lua/plenary.nvim'
+  },
 
   -- Git
-  use 'lewis6991/gitsigns.nvim'
-  use 'tpope/vim-fugitive'
-  use {
+  'lewis6991/gitsigns.nvim',
+  'tpope/vim-fugitive',
+  {
     'NeogitOrg/neogit',
-    requires = {
+    dependencies = {
       'nvim-lua/plenary.nvim',
       'sindrets/diffview.nvim',
     }
-  }
+  },
 
   -- comment
-  use 'numToStr/Comment.nvim'
+  'numToStr/Comment.nvim',
 
   -- Enhancement
   -- Replace with w!!
-  use 'lambdalisue/suda.vim'
-
-  -- Deprecated
-  -- use 'itchyny/vim-cursorword'
-  -- use {
-  --   'itchyny/lightline.vim',
-  --   requires = {
-  --     'tpope/vim-fugitive',
-  --     'liuchengxu/vista.vim',
-  --   }
-  -- }
-  --
-  -- use 'airblade/vim-gitgutter'
-  -- use 'b3nj5m1n/kommentary'
-  -- use 'liuchengxu/vista.vim'
-
-end)
-
+  'lambdalisue/suda.vim',
+}

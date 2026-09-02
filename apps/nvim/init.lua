@@ -37,6 +37,8 @@ _G.CONFIG_DIR = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
 _G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
 _G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
 _G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
+-- lazy.nvim clones every plugin, itself included, under this directory.
+_G.LAZY_DIR = _G.PLUGIN_DIR .. '/lazy'
 _G.THEME = function()
   return "catppuccin-frappe"
   -- return "nord"
@@ -46,17 +48,33 @@ end
 -- set up environments preparation for running neovim
 env_prepare(_G.CONFIG_DIR, _G.RUNTIME_DIR)
 
-vim.opt.runtimepath:append(_G.PLUGIN_DIR .. '/pack/packer/start/packer.nvim')
+-- The leader key has to be set before lazy.nvim loads any plugin, otherwise
+-- plugin mappings are bound against the previous leader. `config.keymaps`
+-- sets it again so that the two never drift apart.
+vim.g.mapleader = ","
 
--- Used for searching packages (vim plugins)
-vim.opt.packpath:append(_G.PLUGIN_DIR)
+-- Clone lazy.nvim on first start, then put it on the runtimepath.
+local lazy_repo = _G.LAZY_DIR .. '/lazy.nvim'
+if not vim.uv.fs_stat(lazy_repo) then
+  vim.fn.system({
+    'git', 'clone', '--filter=blob:none', '--branch=stable',
+    'https://github.com/folke/lazy.nvim.git', lazy_repo,
+  })
+end
+vim.opt.runtimepath:prepend(lazy_repo)
 
 vim.opt.undodir     = _G.RUNTIME_DIR .. '/undo/'
 vim.opt.backupdir   = _G.RUNTIME_DIR .. '/backup_files/'
 vim.opt.directory   = _G.RUNTIME_DIR .. '/swap_files/'
 
--- nvim plugins to be installed.
-require('plugins.install')
+-- nvim plugins to be installed. `plugins.install` returns the lazy.nvim spec;
+-- `plugins.setting` configures the plugins lazy has just loaded.
+require('lazy').setup(require('plugins.install'), {
+  root = _G.LAZY_DIR,
+  -- Tracked in git next to the spec, so every host installs the same commits.
+  lockfile = _G.CONFIG_DIR .. 'lazy-lock.json',
+  install = { colorscheme = { _G.THEME() } },
+})
 require('plugins.setting')
 
 -- nvim's basic settings
