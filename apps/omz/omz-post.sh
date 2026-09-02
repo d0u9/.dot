@@ -32,9 +32,14 @@ if command_exist zellij; then
 fi
 
 # For Pure theme setup
-fpath+=($HOME/.oh-my-zsh/custom/plugins/pure)
-autoload -U promptinit; promptinit
-prompt pure
+PURE_DIR=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/pure
+if [ -d "$PURE_DIR" ]; then
+    fpath+=($PURE_DIR)
+    autoload -U promptinit; promptinit
+    prompt pure
+else
+    warn "pure prompt not found, skipping" "$PURE_DIR"
+fi
 
 
 ### Load config file specifc to this host

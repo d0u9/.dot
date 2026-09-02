@@ -141,10 +141,6 @@ command_exist() {
     command -v "$1" &> /dev/null
 }
 
-prealpath() {
-    echo "xx"
-}
-
 # find and make realpath a GNU realpath
 # For macos on which `grealpath` is installed, this function will alias `grealpath` as `realpath`
 set_gnu_realpath() {

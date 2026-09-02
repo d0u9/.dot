@@ -42,9 +42,18 @@ if command_exist pyenv; then
 fi
 
 # nvm
+# Look for both layouts: the git install under $NVM_DIR and the homebrew
+# formula under $(brew --prefix)/opt/nvm, which differs per architecture.
 export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+for _nvm_prefix in "$NVM_DIR" "$HOMEBREW_PREFIX/opt/nvm"; do
+    if [ -s "$_nvm_prefix/nvm.sh" ]; then
+        source "$_nvm_prefix/nvm.sh"
+        [ -s "$_nvm_prefix/etc/bash_completion.d/nvm" ] && \
+            source "$_nvm_prefix/etc/bash_completion.d/nvm"
+        break
+    fi
+done
+unset _nvm_prefix
 
 # Rbenv
 command_exist rbenv && eval "$(rbenv init - zsh)"

@@ -7,8 +7,6 @@ info "[PRE] Loading OMZ config for Macos" $(cur_path_relative "$HOME/.dot" "$0")
 plugins+=(macos brew)
 
 ## Homebrew
-export PATH="/opt/homebrew/bin:$PATH"
-
 if [ -f /usr/local/bin/brew ]; then
     eval "$(/usr/local/bin/brew shellenv)"
 elif [ -f /opt/homebrew/bin/brew ]; then

@@ -3,6 +3,6 @@ info "[POST] Loading OMZ config for Linux " $(cur_path_relative "$HOME/.dot" "$0
 # You can set any variables ONLY to linux platform.
 
 ### Make neomutt happy
-stty flush undef
+[ -t 0 ] && stty flush undef
 
 info "[POST] Loading OMZ config for Linux - DONE " $(cur_path_relative "$HOME/.dot" "$0")

@@ -9,6 +9,6 @@ if [ -d "$HOME/.docker" ]; then
 fi
 
 ### Make neomutt happy
-stty discard undef
+[ -t 0 ] && stty discard undef
 
 info "[POST] Loading OMZ config for Macos - DONE " $(cur_path_relative "$HOME/.dot" "$0")
