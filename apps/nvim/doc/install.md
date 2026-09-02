@@ -56,18 +56,24 @@ otherwise.
 
 ### Per language
 
-Mason downloads a prebuilt binary where one exists, and builds from source
-where it does not. Only the second kind needs a toolchain present:
+A server is only requested on a host that has the language it serves, so a
+machine without Go is not asked to install gopls. The check is
+`vim.fn.executable` against the binary in the third column, in
+`plugins/configs/lsp-servers.lua`:
 
-| Server | Language | Needs |
-| --- | --- | --- |
-| `rust_analyzer` | Rust | nothing (prebuilt release) |
-| `lua_ls` | Lua | nothing (prebuilt release) |
-| `gopls` | Go | a Go toolchain — mason runs `go install` |
+| Server | Language | Installed when | Mason needs |
+| --- | --- | --- | --- |
+| `rust_analyzer` | Rust | `cargo` is in `$PATH` | nothing (prebuilt release) |
+| `gopls` | Go | `go` is in `$PATH` | a Go toolchain — it runs `go install` |
+| `lua_ls` | Lua | always | nothing (prebuilt release) |
 
-A server whose toolchain is missing fails on its own without stopping the
-rest of the install; the installer warns and moves on. Install the toolchain
-and re-run, or use `:Mason` in nvim.
+Without this gate mason retries the missing server on every start and
+reports the failure each time. Install the toolchain and restart, and the
+server is picked up on its own; `:MasonInstall` still installs anything by
+hand regardless of the gate.
+
+`lua_ls` has no condition: it ships as a prebuilt binary and this config is
+itself lua, so it is always wanted.
 
 ## Adding to the setup
 
