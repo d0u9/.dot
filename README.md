@@ -11,6 +11,7 @@ This repo includes configuration files come from various most common used softew
 - [Supported platforms](#supported-platforms)
 - [Prerequisite](#prerequisite)
 - [Private config files](#Private config files)
+- [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
 - [oh-my-zsh](#oh-my-zsh)
 - [tmux](#tmux)
@@ -97,6 +98,45 @@ If you have any private files(files containe sensitive contents), you may gather
 
 ---
 
+# Package manager history
+
+Every package, plugin and runtime manager these configs have been through,
+oldest first. The two vim-side rewrites in particular mean old commits will
+not make sense against the current layout.
+
+## Editor plugin managers
+
+| Manager | Adopted | Retired | Commit |
+| --- | --- | --- | --- |
+| [Vundle](https://github.com/VundleVim/Vundle.vim) (vim) | 2015-11-11 | 2015-12-17 | `b3cf3e9` → `7c21121` |
+| [vim-plug](https://github.com/junegunn/vim-plug) | 2015-11-26 | 2017-04-05 | `9535b5c` → `7623005` |
+| [dein.vim](https://github.com/Shougo/dein.vim) | 2017-04-05 | 2021-08-27 | `7623005` → `82933a4` |
+| [packer.nvim](https://github.com/wbthomason/packer.nvim) | 2021-08-27 | 2026-09-02 | `82933a4` → `a2c06d4` |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | 2026-09-02 | in use | `a2c06d4` |
+
+Vundle went with the `.vimrc` when the repo dropped plain vim for neovim.
+The move to packer came with neovim 0.5.0, in the same commit that replaced
+`init.vim` with `init.lua`; the dead vim-plug and dein list survived as
+`plugin_list_deprecated.vim` until `bfe90e9` (2023-05-11). The move to lazy
+was made because packer is no longer maintained.
+
+## Other managers still in use
+
+| Manager | Manages | Adopted | Commit |
+| --- | --- | --- | --- |
+| [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh) | zsh plugins | 2015-11-26 | `9a74de3` |
+| [tpm](https://github.com/tmux-plugins/tpm) | tmux plugins | 2015-12-20 | `ac272b7` |
+| [pyenv](https://github.com/pyenv/pyenv) | python versions | 2016-04-18 | `26e29a3` |
+| [Homebrew](https://brew.sh) | macOS packages | 2021-04-30 | `1ba93ce` |
+| [rbenv](https://github.com/rbenv/rbenv) | ruby versions | 2023-05-09 | `0a7f67e` |
+| [mason.nvim](https://github.com/mason-org/mason.nvim) | LSP servers | 2023-07-12 | `78e18c3` |
+| [nvm](https://github.com/nvm-sh/nvm) | node versions | 2026-08-21 | `3ea7f45` |
+
+The version managers are all loaded from `apps/omz/`, each behind a
+`command_exist` guard, so a host that lacks one still starts a clean shell.
+
+---
+
 # NeoVim
 
 > If you are a man occasionally understands Chinese, you may check this [article](http://www.d0u9.xyz/neovim-pei-zhi-yu-cha-jian-shuo-ming/) which is posted on my blog for more details.
@@ -145,22 +185,6 @@ be installed by hand.
 
 Everything a plugin writes lives under `apps/nvim/runtime/`, which is
 gitignored — the clones themselves under `runtime/plugins/lazy/`.
-
-### Plugin manager history
-
-lazy.nvim is the third plugin manager this config has used. Both switches
-rewrote the plugin list, so old commits will not make sense against the
-current layout:
-
-| From | To | Commit | Date |
-| --- | --- | --- | --- |
-| — | [vim-plug](https://github.com/junegunn/vim-plug) | `9535b5c` | 2015-11-26 |
-| vim-plug | [packer.nvim](https://github.com/wbthomason/packer.nvim) | `82933a4` | 2021-08-27 |
-| packer.nvim | [lazy.nvim](https://github.com/folke/lazy.nvim) | `a2c06d4` | 2026-09-02 |
-
-The move to packer came with neovim 0.5.0, in the same commit that replaced
-`init.vim` with `init.lua`. The move to lazy was made because packer is no
-longer maintained.
 
 ---
 
