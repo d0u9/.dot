@@ -31,7 +31,6 @@ return {
 
   -- Language specific - Rust
   'mrcjkb/rustaceanvim',
-  'IndianBoy42/tree-sitter-just',
 
   -- Language specific - Golang
   'ray-x/go.nvim',
@@ -70,10 +69,7 @@ return {
   'akinsho/toggleterm.nvim',
 
   -- treesitter
-  -- The default branch is the rewritten v1.x, which dropped the
-  -- `nvim-treesitter.configs` module `plugins/configs/nvim-treesitter.lua`
-  -- is written against; stay on the classic branch.
-  { 'nvim-treesitter/nvim-treesitter', branch = 'master' },
+  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
   -- 'nvim-treesitter/playground',
 
   -- nvim-tree

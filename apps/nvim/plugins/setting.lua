@@ -69,7 +69,5 @@ require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig')
 -- https://github.com/SmiteshP/nvim-navic
 require_if_has('plugins.configs.nvim-navic', 'nvim-navic', 'lspconfig')
 
--- https://github.com/IndianBoy42/tree-sitter-just
-require_if_has('plugins.configs.tree-sitter-just', 'tree-sitter-just')
 
 

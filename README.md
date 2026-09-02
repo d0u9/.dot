@@ -181,7 +181,12 @@ be installed by hand.
 - `apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
   tracked in git, so all hosts converge on the same versions. Commit it after
   a `:Lazy sync`.
-- LSP servers are installed by `:Mason`, tree-sitter parsers by `:TSInstall`.
+- LSP servers are installed by `:Mason`.
+- tree-sitter parsers are listed in
+  `apps/nvim/plugins/configs/treesitter-languages.lua` and installed on
+  startup; `:TSUpdate` refreshes them. This needs the tree-sitter CLI in
+  `$PATH` -- on macOS that is the `tree-sitter-cli` formula, **not**
+  `tree-sitter`, which ships only the library.
 
 Everything a plugin writes lives under `apps/nvim/runtime/`, which is
 gitignored — the clones themselves under `runtime/plugins/lazy/`.
