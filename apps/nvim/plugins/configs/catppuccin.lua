@@ -9,6 +9,7 @@ local opts = {
       enabled = true,
       -- style = "nvchad"
     },
+    -- Also styles outline.nvim: the group defines `OutlineCurrent`.
     symbols_outline = true,
     navic = {
       enabled = true,

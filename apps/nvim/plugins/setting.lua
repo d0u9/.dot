@@ -24,8 +24,8 @@ require_if_has('plugins.configs.lualine', 'lualine')
 -- https://github.com/sigstore/gitsign
 require_if_has('plugins.configs.gitsign', 'gitsign')
 
--- https://github.com/simrat39/symbols-outline.nvim
-require_if_has('plugins.configs.symbols-outline--nvim', 'symbols-outline')
+-- https://github.com/hedyhli/outline.nvim
+require_if_has('plugins.configs.outline--nvim', 'outline')
 
 -- https://github.com/lewis6991/gitsigns.nvim
 require_if_has('plugins.configs.gitsigns--nvim', 'gitsigns')
@@ -67,7 +67,7 @@ require_if_has('plugins.configs.mason-lspconfig--nvim', 'mason', 'mason-lspconfi
 require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig')
 
 -- https://github.com/SmiteshP/nvim-navic
-require_if_has('plugins.configs.nvim-navic', 'symbols-outline', 'lspconfig')
+require_if_has('plugins.configs.nvim-navic', 'nvim-navic', 'lspconfig')
 
 -- https://github.com/IndianBoy42/tree-sitter-just
 require_if_has('plugins.configs.tree-sitter-just', 'tree-sitter-just')

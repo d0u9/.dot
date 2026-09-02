@@ -112,6 +112,8 @@ local opts = {
   winbar = winbar,
   tabline = {},
   inactive_winbar = inactive_winbar,
+  -- The `symbols-outline` extension keys off the `Outline` filetype, which
+  -- outline.nvim sets too, so it still applies after the switch.
   extensions = {'nvim-tree', 'symbols-outline', 'quickfix', 'fugitive'}
 }
 

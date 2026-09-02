@@ -59,7 +59,7 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
   'wesQ3/vim-windowswap',
-  'simrat39/symbols-outline.nvim',
+  'hedyhli/outline.nvim',
   {
     'kevinhwang91/nvim-ufo',
     dependencies = 'kevinhwang91/promise-async',

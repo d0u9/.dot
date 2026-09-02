@@ -167,12 +167,12 @@ run_cb_if_has(plugin_ufo, 'ufo')
 -- Neovim comments lines itself since 0.10: `gcc` for a line, `gc` as an
 -- operator. Comment.nvim is no longer installed.
 
--- symbols-outline
-local plugin_symbols_outline = function()
+-- outline.nvim
+local plugin_outline = function()
   -- NOTE: for other keympas, referce plguin config
-  vim.keymap.set('n', '<leader>tt', ':SymbolsOutline<CR>')
+  vim.keymap.set('n', '<leader>tt', ':Outline<CR>')
 end
-run_cb_if_has(plugin_symbols_outline, 'symbols-outline')
+run_cb_if_has(plugin_outline, 'outline')
 
 -- Telescope
 local telescope = function()
