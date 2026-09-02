@@ -69,12 +69,14 @@ These follow from portability bugs that have already been fixed here once:
   and aborts early without it.
 - Homebrew on Linux is only detected at `/home/linuxbrew/.linuxbrew`, the
   default prefix. A per-user Linuxbrew install needs a `host-conf` entry.
-- `nvm` is loaded lazily: `nvm`, `node`, `npm` and `npx` are stubs that
-  source `nvm.sh` on first use, which keeps shell startup near 0.6s instead
-  of 2s. Other Node-adjacent commands such as `yarn`, `pnpm` and `corepack`
-  are not stubbed, so they only work once one of the four above has run.
-  `.nvmrc` auto-switching on `cd` is not wired up and would conflict with
-  this scheme.
+- `nvm.sh` is not sourced at startup, since it costs well over a second.
+  The default version is resolved by walking the alias files under
+  `$NVM_DIR/alias` and its `bin` directory is put on `PATH` directly, so
+  every globally installed binary is available in a fresh shell. Only the
+  `nvm` command itself is a stub that sources the script on first use. If
+  the alias chain cannot be resolved, the config falls back to sourcing
+  `nvm.sh` at startup and takes the slower path. `.nvmrc` auto-switching on
+  `cd` is not wired up.
 - Changes are routinely exercised on macOS only. The Linux paths are kept
   correct by inspection, so treat a first run on a new Linux host as
   unverified.

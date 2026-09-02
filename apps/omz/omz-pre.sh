@@ -50,25 +50,47 @@ for _prefix in "$NVM_DIR" "${HOMEBREW_PREFIX:-/usr/local}/opt/nvm" /opt/homebrew
 done
 unset _prefix
 
-# Sourcing nvm.sh costs well over a second, so defer it: each of the commands
-# below is a stub that loads nvm for real on first use, then re-runs itself.
-if [ -n "$NVM_SH_DIR" ]; then
-    nvm_load() {
-        unset -f nvm node npm npx nvm_load
-        source "$NVM_SH_DIR/nvm.sh"
-        # The git install ships completion as $NVM_DIR/bash_completion; the
-        # homebrew formula puts it under etc/bash_completion.d/nvm.
-        for _c in "$NVM_SH_DIR/bash_completion" \
-                  "$NVM_SH_DIR/etc/bash_completion.d/nvm"; do
-            [ -s "$_c" ] && source "$_c" && break
-        done
-        unset _c
-    }
-
-    for _cmd in nvm node npm npx; do
-        eval "$_cmd() { nvm_load; $_cmd \"\$@\"; }"
+nvm_source() {
+    source "$NVM_SH_DIR/nvm.sh"
+    # The git install ships completion as $NVM_DIR/bash_completion; the
+    # homebrew formula puts it under etc/bash_completion.d/nvm.
+    for _c in "$NVM_SH_DIR/bash_completion" \
+              "$NVM_SH_DIR/etc/bash_completion.d/nvm"; do
+        [ -s "$_c" ] && source "$_c" && break
     done
-    unset _cmd
+    unset _c
+}
+
+if [ -n "$NVM_SH_DIR" ]; then
+    # Sourcing nvm.sh costs well over a second. Resolve the default version by
+    # hand instead: aliases chain on disk (default -> lts/* -> lts/<name> ->
+    # vX.Y.Z), so follow them until a real version directory falls out.
+    _ver=default
+    _hops=0
+    while [ -r "$NVM_DIR/alias/$_ver" ] && [ "$_hops" -lt 10 ]; do
+        read -r _ver < "$NVM_DIR/alias/$_ver"
+        _hops=$((_hops + 1))
+    done
+
+    if [ -d "$NVM_DIR/versions/node/$_ver/bin" ]; then
+        # Put that version on PATH directly. This covers every globally
+        # installed binary -- pnpm, corepack, and anything else npm dropped in
+        # there -- not just node, npm and npx.
+        export PATH="$NVM_DIR/versions/node/$_ver/bin:$PATH"
+
+        # Only `nvm` itself is a shell function, so it is the one command that
+        # still needs the script. Load it on first use.
+        nvm() {
+            unset -f nvm
+            nvm_source
+            nvm "$@"
+        }
+    else
+        # Default version could not be resolved, so pay the cost and let nvm
+        # work it out. Correctness over startup time.
+        nvm_source
+    fi
+    unset _ver _hops
 fi
 
 # Rbenv
