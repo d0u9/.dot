@@ -42,7 +42,8 @@ local ftMap = {
 
 require('ufo').setup({
   fold_virt_text_handler = handler,
-  close_fold_kinds = {'imports', 'comment'},
+  -- Was `close_fold_kinds`, which ufo now maps onto the `default` key here.
+  close_fold_kinds_for_ft = { default = {'imports', 'comment'} },
 
   provider_selector = function(bufnr, filetype, buftype)
     -- if you prefer treesitter provider rather than lsp,
