@@ -19,6 +19,10 @@ fi
 if command_exist nvim; then
     alias vi=nvim
     alias vim=nvim
+    # Also what zellij opens the scrollback with, and what git, crontab and
+    # fc fall back to.
+    export EDITOR=nvim
+    export VISUAL=nvim
 fi
 
 test -f $HOME/.cargo/env && source $HOME/.cargo/env
@@ -98,6 +102,11 @@ command_exist rbenv && eval "$(rbenv init - zsh)"
 
 # Docker
 command_exist docker && plugins+=(docker)
+
+# The pure prompt sets the terminal title on a precmd hook of its own, which
+# runs after oh-my-zsh's. With both enabled every prompt flashes "%n@%m:%~"
+# before pure repaints it as the plain path, so leave the titles to pure.
+DISABLE_AUTO_TITLE="true"
 
 # For zsh-syntax-highlighting
 # Ref: https://github.com/zsh-users/zsh-syntax-highlighting
