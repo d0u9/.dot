@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # DOT_DIR is exported by parent script
 # APP_DIR is exported by parent script
 # DOT_LOG_LEVEL is exported by parent script
@@ -7,12 +9,9 @@ source "$DOT_DIR/apps/omz/lib.sh"
 
 info "Installing zellij configurations"
 
-CONFIG_DIR=$(realpath "$HOME/.config")
-ZELLIJ_DIR=$(realpath "$APP_DIR/zellij")
+CONFIG_DIR=$(abs_path "$HOME/.config")
+ZELLIJ_APP_DIR=$(abs_path "$APP_DIR/zellij")
 
-mkdir -p "$CONFIG_DIR"
-cd "$CONFIG_DIR"
-rm -f zellij
-ln -s $ZELLIJ_DIR .
+link_config "$ZELLIJ_APP_DIR" "$CONFIG_DIR/zellij"
 
 info "Finished"

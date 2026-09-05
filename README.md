@@ -65,9 +65,6 @@ These follow from portability bugs that have already been fixed here once:
 
 ## Known limitations
 
-- GNU coreutils are assumed by the install scripts, not by the shell config.
-  On macOS `install.sh` requires `grealpath` from `brew install coreutils`
-  and aborts early without it.
 - Homebrew on Linux is only detected at `/home/linuxbrew/.linuxbrew`, the
   default prefix. A per-user Linuxbrew install needs a `host-conf` entry.
 - `nvm.sh` is not sourced at startup, since it costs well over a second.

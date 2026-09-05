@@ -1,89 +1,109 @@
 #! /bin/bash
 
-DOT_DIR="$(pwd)/$(dirname "$0")"
+set -euo pipefail
+
+# Resolve the repo root from this script's own location so that the installer
+# works no matter what directory it is invoked from.
+DOT_DIR=$(cd -- "$(dirname -- "$0")" && pwd)
+APP_DIR="$DOT_DIR/apps"
+DOT_LOG_LEVEL="info"
+
 # import auxiliary functions
-export DOT_OMZ_DIR=$HOME/.dot/apps/omz
-source "$DOT_DIR/apps/omz/lib.sh"
+export DOT_OMZ_DIR="$APP_DIR/omz"
+source "$APP_DIR/omz/lib.sh"
 
-env_check_and_setup() {
-    if ! set_gnu_realpath; then
-        error "Cannot find GNU realpath, please install via `brew install coreutils`"
-        exit 1
-    fi
-}
-
-# $1: an empty array. On return, this array will be initialized as app names
+# Echo the installable app names. Anything called test* is scaffolding and is
+# hidden here, though `-i test1` still reaches it.
 find_install_scripts() {
-    apps=()
+    local file app
     for file in "$APP_DIR"/*-install.sh; do
-        file=$(basename $(realpath "$file"))
-        app=$(echo "$file" | sed 's/-install.sh//')
-        apps+=("$app")
+        [ -f "$file" ] || continue
+        app=$(basename "$file")
+        app=${app%-install.sh}
+        case "$app" in
+            test*) continue;;
+        esac
+        echo "$app"
     done
-    echo "${apps[@]}"
 }
-
 
 print_help() {
     printf -- "-h: %-s\n" "Print this help"
-    printf -- "-i [app]: %-s\n" "install this app"
+    printf -- "-i [app]: %-s\n" "Install this app, may be repeated"
+    printf -- "-a: %-s\n" "Install every app"
     printf -- "-l: %-s\n" "List available apps to install"
 }
 
 list_apps() {
-    local apps=("$@")
-    for idx in ${!apps[@]}; do
-        name=${apps[$idx]}
+    local idx=0 name
+    for name in "$@"; do
         printf "%-2s: %-s\n" "$idx" "$name"
+        idx=$((idx + 1))
     done
 }
 
 # $1: app name
-# $2: the path of install script
 install_app() {
-    name="$1"
-    install_script="$2"
-    if ! yes_or_no "Really want to install [$name]"; then
-        info "'N' is pressed, quit"
-        exit 0
+    local name="$1"
+    local install_script="$APP_DIR/$name-install.sh"
+
+    if [ ! -f "$install_script" ]; then
+        error "no [$name] app is found in $APP_DIR"
+        return 1
     fi
 
-    DOT_LOG_LEVEL="$DOT_LOG_LEVEL" \
-    APP_DIR="$APP_DIR" \
-    DOT_DIR="$DOT_DIR" \
-    exec "$install_script"
+    if ! yes_or_no "Really want to install [$name]"; then
+        info "'N' is pressed, skip [$name]"
+        return 0
+    fi
+
+    # A failing installer should not take the rest of the run down with it.
+    if ! DOT_LOG_LEVEL="$DOT_LOG_LEVEL" \
+        APP_DIR="$APP_DIR" \
+        DOT_DIR="$DOT_DIR" \
+        DOT_OMZ_DIR="$DOT_OMZ_DIR" \
+        "$install_script"; then
+        error "[$name] failed to install"
+        return 1
+    fi
 }
 
 ######################### MAIN #########################
-env_check_and_setup
-DOT_DIR=$(realpath "$DOT_DIR")
-APP_DIR=$(realpath "$DOT_DIR/apps")
-DOT_LOG_LEVEL="info"
+apps=()
+while IFS= read -r line; do
+    apps+=("$line")
+done < <(find_install_scripts)
 
-apps=$(find_install_scripts)
+failed=0
 
-while getopts ":hli:" opt; do
+if [ "$#" -eq 0 ]; then
+    print_help
+    exit 0
+fi
+
+while getopts ":hlai:" opt; do
     case $opt in
         h)
             print_help
             ;;
         l)
             printf -- "-------------------------- Apps --------------------------\n"
-            list_apps ${apps[@]}
+            list_apps "${apps[@]}"
+            ;;
+        a)
+            for name in "${apps[@]}"; do
+                install_app "$name" || failed=1
+            done
             ;;
         i)
-            name="$OPTARG"
-            install_script=$(realpath "$APP_DIR/$name-install.sh" 2>/dev/null)
-            if [ ! -f "$install_script" ]; then
-                error "no [$name] app is found in $APP_DIR"
-                exit 1
-            fi
-
-            install_app "$name" "$install_script"
+            install_app "$OPTARG" || failed=1
             ;;
         *)
             error "unknown option: -$OPTARG"
             print_help
+            exit 1
             ;;
     esac
 done
+
+exit "$failed"
