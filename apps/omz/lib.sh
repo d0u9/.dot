@@ -82,6 +82,11 @@ if [ -n "${BASH_VERSION:-}" ]; then
            _DOT_C_LIGHTBLUE _DOT_C_ITALIC_CYAN
 fi
 
+# A wrapper of dlog 'debug'
+debug() {
+    dlog 'debug' "$1" "${2:-}"
+}
+
 # A wrapper of dlog 'info'
 info() {
     dlog 'info' "$1" "${2:-}"

@@ -7,50 +7,67 @@ set -euo pipefail
 # DOT_LOG_LEVEL is exported by parent script
 source "$DOT_DIR/apps/omz/lib.sh"
 
-info "Installing oh-my-zsh configurations"
+info "Installing zsh configuration"
 
-OMZ_APP_DIR=$(abs_path "$APP_DIR/omz")
-OMZ_CONF_FILE="$OMZ_APP_DIR/zshrc"
-OMZ_THEME_DIR="$OMZ_APP_DIR/themes"
+ZSH_APP_DIR=$(abs_path "$APP_DIR/omz")
+ZSH_CONF_FILE="$ZSH_APP_DIR/zshrc"
 
-# Everything below writes inside oh-my-zsh's own tree, so refuse to run rather
-# than scatter themes and plugins across $HOME.
-OMZ_HOME="${ZSH:-$HOME/.oh-my-zsh}"
-if [ ! -d "$OMZ_HOME" ]; then
-    error "oh-my-zsh not found at $OMZ_HOME; install it first"
-    error "see https://github.com/ohmyzsh/ohmyzsh#basic-installation"
-    exit 1
-fi
-OMZ_CUSTOM="${ZSH_CUSTOM:-$OMZ_HOME/custom}"
+# Plugins live under XDG data rather than inside another framework's tree, so
+# that nothing here depends on oh-my-zsh being installed. Kept in step with
+# DOT_ZSH_PLUGIN_DIR in zshrc.
+PLUGIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins"
+mkdir -p "$PLUGIN_DIR"
 
-link_config "$OMZ_CONF_FILE" "$HOME/.zshrc"
+link_config "$ZSH_CONF_FILE" "$HOME/.zshrc"
 
-info "Installing themes"
-# Drop the dead links a previous install left behind, then relink.
-find "$OMZ_HOME/themes" -maxdepth 1 -type l ! -exec test -e {} \; -delete
-
-for file in "$OMZ_THEME_DIR"/*.zsh-theme; do
-    [ -f "$file" ] || continue
-    link_config "$file" "$OMZ_HOME/themes/$(basename "$file")"
-done
-
-# $1: plugin name, $2: repo url
+# $1: name, $2: repo url
 install_plugin() {
     local name="$1"
     local url="$2"
-    local dir="$OMZ_CUSTOM/plugins/$name"
+    local dir="$PLUGIN_DIR/$name"
 
     info "Installing $name"
     if [ -d "$dir/.git" ]; then
-        git -C "$dir" pull --ff-only
+        # Pulling only helps when the checkout came from the same place. A
+        # url that has moved -- switching off a fork, say -- would otherwise
+        # keep fetching from the old remote forever, and the install would
+        # report success while changing nothing.
+        if [ "$(git -C "$dir" remote get-url origin 2>/dev/null)" != "$url" ]; then
+            warn "remote differs, re-cloning" "$dir"
+            rm -fr "$dir"
+            git clone --depth=1 "$url" "$dir"
+        else
+            git -C "$dir" pull --ff-only
+        fi
     else
         rm -fr "$dir"
-        git clone "$url" "$dir"
+        git clone --depth=1 "$url" "$dir"
     fi
 }
 
 install_plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
-install_plugin pure https://github.com/d0u9/pure.git
 install_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+# The prompt is picked at runtime by DOT_PROMPT (see post.zsh), so install
+# both and let each host choose. pure comes from upstream now rather than the
+# d0u9 fork: the two things that fork carried -- angle brackets around the git
+# state and a host alias -- are plain configuration under powerlevel10k, and
+# the fork had drifted five releases behind while carrying them.
+install_plugin pure https://github.com/sindresorhus/pure.git
+install_plugin powerlevel10k https://github.com/romkatv/powerlevel10k.git
+
+# p10k talks to gitstatusd, a per-platform binary it fetches on first use.
+# Doing it here instead means the first new shell is not held up by a
+# download, and that a machine which cannot reach GitHub finds out now rather
+# than by printing an error on every startup. Failure is not fatal: p10k falls
+# back to zsh's own vcs_info, and such a host should set
+# POWERLEVEL9K_DISABLE_GITSTATUS=1 in host-conf to silence the warning.
+GITSTATUS_INSTALL="$PLUGIN_DIR/powerlevel10k/gitstatus/install"
+if [ -x "$GITSTATUS_INSTALL" ]; then
+    info "Fetching gitstatusd"
+    if ! sh "$GITSTATUS_INSTALL" -f; then
+        warn "gitstatusd unavailable; set POWERLEVEL9K_DISABLE_GITSTATUS=1 on this host"
+    fi
+fi
 
 info "Finished"

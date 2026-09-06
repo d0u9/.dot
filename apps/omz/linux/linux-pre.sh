@@ -4,7 +4,8 @@ info "[PRE] Loading OMZ config for Linux " $(cur_path_relative "$HOME/.dot" "$0"
 
 ## Homebrew
 if [ -d /home/linuxbrew/.linuxbrew ]; then
-	plugins+=(brew)
+	# linuxbrew ships its own completion under share/zsh/site-functions,
+	# which brew shellenv adds to FPATH; omz's brew plugin added nothing else.
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 

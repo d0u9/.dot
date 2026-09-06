@@ -1,4 +1,7 @@
-info "[PRE] Loading OMZ config" $(cur_path_relative "$HOME/.dot" "$0")
+info "[PRE] Loading zsh config" $(cur_path_relative "$HOME/.dot" "$0")
+
+# Runs before core.zsh, so anything here can still influence completion: fpath
+# additions and generated completion files have to be in place before compinit.
 
 ##################         For Different Platforms           ##################
 if [[ "$OSTYPE" = darwin* ]]; then
@@ -7,13 +10,54 @@ else
     source $DOT_OMZ_DIR/linux/linux-pre.sh
 fi
 
-## For plugins
-command_exist fasd && plugins+=(fasd)
-command_exist jump && eval "$(jump shell zsh --bind=z)"
+##################              Completions                  ##################
+# Generate a completion script from a tool that ships one, and cache it. This
+# replaces the oh-my-zsh plugins that existed only to run the same command --
+# omz's rust, kubectl, docker and golang plugins were little else.
+#
+# Regenerated only when the binary is newer than the cache, so the usual cost
+# is one stat. Running `tool completion zsh` on every startup instead would be
+# a fork each, which is what made those plugins worth avoiding.
+#
+# $1: completion function name to write (without the leading underscore)
+# $2...: command to run, its stdout becomes the completion script
+dot_gen_completion() {
+    local name="$1"; shift
+    local bin
+    bin=$(command -v "$1" 2>/dev/null) || return 0
+
+    local out="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/_$name"
+    if [[ -s "$out" && "$out" -nt "$bin" ]]; then
+        return 0
+    fi
+
+    debug "generating completion" "_$name"
+    if ! "$@" > "$out.tmp" 2>/dev/null || [ ! -s "$out.tmp" ]; then
+        rm -f "$out.tmp"
+        warn "could not generate completion" "$name"
+        return 1
+    fi
+    mv -f "$out.tmp" "$out"
+}
+
+##################                 Tools                     ##################
+
+# Directory jumping. All three of these bind z, so pick one instead of
+# letting whichever loads last silently win. zoxide first: it is a single
+# static binary, which is the one that actually installs everywhere, and it
+# is the only one still maintained.
+if command_exist zoxide; then
+    eval "$(zoxide init zsh)"
+elif command_exist jump; then
+    eval "$(jump shell zsh --bind=z)"
+elif command_exist fasd; then
+    eval "$(fasd --init auto)"
+fi
 
 if command_exist tmux; then
-    plugins+=(tmuxinator)
     alias tmux="tmux -2"
+    # tmuxinator has no completion of its own; _tmuxinator is checked in under
+    # completions/, taken from the oh-my-zsh plugin of the same name.
 fi
 
 if command_exist nvim; then
@@ -26,19 +70,21 @@ if command_exist nvim; then
 fi
 
 test -f $HOME/.cargo/env && source $HOME/.cargo/env
-if command_exist cargo; then
-    plugins+=(rust)
+if command_exist rustup; then
+    # Writes both _rustup and _cargo; the file is named for the former and
+    # zsh picks the latter out of it by the #compdef tag inside.
+    dot_gen_completion rustup rustup completions zsh
+    dot_gen_completion cargo rustup completions zsh cargo
 fi
 
-ZSH_AUTOSUGGESTIONS_DIR=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-if [ -d "$ZSH_AUTOSUGGESTIONS_DIR" ]; then
-    plugins+=(zsh-autosuggestions)
-    bindkey '^\' autosuggest-accept
-fi
+command_exist kubectl && dot_gen_completion kubectl kubectl completion zsh
+command_exist helm    && dot_gen_completion helm    helm completion zsh
+command_exist docker  && dot_gen_completion docker  docker completion zsh
+command_exist gh      && dot_gen_completion gh      gh completion -s zsh
 
 # Pyenv
 if command_exist pyenv; then
-    # Instead of using `plugins+=(pyenv)`, we speed up the plugin process
+    # Instead of using oh-my-zsh's pyenv plugin, we speed up the process
     # by using the command below
     # eval "$(pyenv init --path)"
     eval "$(pyenv init -)"
@@ -100,18 +146,6 @@ fi
 # Rbenv
 command_exist rbenv && eval "$(rbenv init - zsh)"
 
-# Docker
-command_exist docker && plugins+=(docker)
-
-# The pure prompt sets the terminal title on a precmd hook of its own, which
-# runs after oh-my-zsh's. With both enabled every prompt flashes "%n@%m:%~"
-# before pure repaints it as the plain path, so leave the titles to pure.
-DISABLE_AUTO_TITLE="true"
-
-# For zsh-syntax-highlighting
-# Ref: https://github.com/zsh-users/zsh-syntax-highlighting
-plugins+=(zsh-syntax-highlighting)
-
 ##################     Load custom host specific config      ##################
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
@@ -125,4 +159,4 @@ fi
 ############
 ############
 
-info "[PRE] Loading OMZ config - DONE" $(cur_path_relative "$HOME/.dot" "$0")
+info "[PRE] Loading zsh config - DONE" $(cur_path_relative "$HOME/.dot" "$0")
