@@ -91,17 +91,12 @@
     ## Colours ###############################################################
 
     # GNU ls and eza both read LS_COLORS; GNU dircolors is optional on every
-    # platform. Its output only changes when dircolors itself does, so cache it
-    # rather than forking once per interactive shell. The cache is rebuilt when
-    # it is missing, empty, or older than the executable that produced it.
+    # platform. Its output only changes when dircolors itself does, so it goes
+    # through the same cache as the other tool init scripts rather than forking
+    # once per interactive shell.
     if (( $+commands[dircolors] )); then
-        local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
-        local ls_colors=$cache_dir/dircolors.zsh
-        if [[ ! -s $ls_colors || $commands[dircolors] -nt $ls_colors ]]; then
-            [[ -d $cache_dir ]] || mkdir -p "$cache_dir"
-            dircolors -b > "$ls_colors" 2>/dev/null
-        fi
-        [[ -s $ls_colors ]] && source "$ls_colors"
+        source "$DOT_ZSH_DIR/lib/toolcache.zsh"
+        _dot_source_tool_init dircolors dircolors dircolors -b
     fi
 
     unfunction _dot_alias

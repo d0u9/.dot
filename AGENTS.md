@@ -27,6 +27,7 @@ or a scoped `rg` search.
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
+│   │   ├── lib/toolcache.zsh    shared cache for tool-generated shell init
 │   │   └── doc/completion.md    proposed completion registry (not implemented)
 │   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
 │   ├── alacritty/           TOML config and downloaded themes
@@ -192,8 +193,11 @@ uncompiled.
 
 `bin/zsh-compile` performs the same work explicitly -- `zsh-compile` for what
 is out of date, `force` for everything, `clean` to remove the compiled files,
-`list` to show their state -- and the installer calls it after updating the
-plugin checkouts. `core/shell.zsh` puts `apps/zsh/bin` on `$PATH`, so it is
+`prune` for orphans, `list` to show their state -- and the installer calls it
+after updating the plugin checkouts. Zsh sources a `.zwc` even when its source
+file is gone, and `.zwc` files are untracked, so git never removes one: after
+deleting or renaming a configuration file, or checking out a commit that
+predates it, the shell keeps running the old file until `prune` removes it. `core/shell.zsh` puts `apps/zsh/bin` on `$PATH`, so it is
 reachable by name. All three paths share `lib/compile.zsh`, so the target list
 cannot drift between them; add a target there, not in a caller. The prompt uses an installed gitstatusd
 only when its version satisfies Powerlevel10k's own platform metadata;
@@ -214,11 +218,15 @@ implemented, so do not describe any part of it as current behavior.
 The fzf integration prefers `fzf --zsh` and falls back to package-provided
 `completion.zsh` and `key-bindings.zsh` files for older releases. Zoxide loads
 after `compinit` and explicitly owns the `z` and `zi` commands. Both init
-scripts, and GNU `dircolors` output, are cached as generated files under
-`$XDG_CACHE_HOME/zsh` and re-sourced from there; each is regenerated when its
-executable is newer than the cache, and the tool init caches also record the
-generating command in their first line so changing its flags invalidates them.
-Startup therefore forks none of these three. Zoxide's `chpwd` hook is copied
+scripts, and GNU `dircolors` output, go through `lib/toolcache.zsh`, which
+caches them as generated files under `$XDG_CACHE_HOME/zsh` and re-sources them
+from there, so startup forks none of the three. Each cache's first line records
+the generating command and a fingerprint of the resolved executable -- path,
+size and modification time -- and is regenerated when either changes. Do not
+replace that with a timestamp comparison against the cache: a Homebrew install
+is a symlink into `Cellar/<version>/`, test operators follow it, and the
+bottle's build time is normally older than the cache it would need to
+invalidate. Zoxide's `chpwd` hook is copied
 and replaced by one that runs the original in a disowned background job:
 `zoxide add` takes about 29ms to start against 3.5ms for a plain fork, and
 paying that between Enter and the next prompt made every `cd` visibly slower

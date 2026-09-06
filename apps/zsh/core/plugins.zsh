@@ -18,9 +18,19 @@ DOT_ZSH_PLUGIN_DIR=${DOT_ZSH_PLUGIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/zs
 # never stale. The scan therefore only has to be good enough for the common
 # case, and costs about 2ms of the 15ms it saves.
 () {
-    source "$DOT_ZSH_DIR/lib/compile.zsh"
+    local lib="$DOT_ZSH_DIR/lib/compile.zsh"
+
+    # Without the guard a missing file cascades: the failed source, then a
+    # command-not-found, then one error per unfunction, on every startup.
+    if [[ ! -r $lib ]]; then
+        print -u2 -- "Zsh compile library not found: $lib"
+        return
+    fi
+
+    source "$lib"
     dot_zsh_compile
-    unfunction dot_zsh_compile dot_zsh_compile_targets dot_zsh_compile_clean
+    unfunction dot_zsh_compile dot_zsh_compile_targets dot_zsh_compile_clean \
+               dot_zsh_compile_prune
     unset _dot_zsh_compiled _dot_zsh_skipped _dot_zsh_failed
 }
 

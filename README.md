@@ -136,8 +136,10 @@ then link `apps/zsh/zshrc` to `~/.zshrc`. The installer supports Homebrew,
 apt, dnf, pacman and apk; existing commands and correct plugin checkouts are
 left in place. Powerlevel10k uses an already-installed, version-compatible
 gitstatusd when available and otherwise falls back to Zsh's built-in
-`vcs_info`; shell startup never downloads the binary. Fallback mode skips the
-instant-prompt cache so stale gitstatus initialization cannot leak into it.
+`vcs_info`; shell startup never downloads the binary. Both modes keep the
+instant prompt: a fallback shell discards a prompt cache left behind by a
+gitstatus installation that no longer works on this host, rather than giving
+up the instant prompt on the hosts that benefit from it most.
 
 ---
 

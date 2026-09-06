@@ -83,6 +83,38 @@ dot_zsh_compile() {
     (( ${#_dot_zsh_failed} == 0 ))
 }
 
+# dot_zsh_compile_prune
+#
+# Remove compiled files whose source is gone. Zsh sources X.zwc even when X
+# does not exist, and .zwc files are not tracked, so git never removes one:
+# deleting or renaming a configuration file, or checking out a commit that
+# predates it, otherwise leaves the shell running the old file's code with
+# nothing on disk to show for it. dot_zsh_compile_clean cannot catch these --
+# its list comes from globbing sources that exist.
+#
+# The directories to sweep are the ones the current targets live in, so a
+# directory that lost its last source is not swept; that is the rare case, and
+# widening the sweep to arbitrary directories is worse.
+#
+# Sets: _dot_zsh_pruned
+dot_zsh_compile_prune() {
+    emulate -L zsh
+
+    local d f
+    local -a reply
+    typeset -ga _dot_zsh_pruned=()
+
+    dot_zsh_compile_targets
+
+    for d in ${(u)reply:h}; do
+        [[ -w $d ]] || continue
+        for f in $d/*.zwc(.N); do
+            [[ -e ${f%.zwc} ]] && continue
+            rm -f -- $f 2>/dev/null && _dot_zsh_pruned+=($f)
+        done
+    done
+}
+
 # dot_zsh_compile_clean
 #
 # Remove every target's compiled form. The next shell regenerates them.

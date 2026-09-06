@@ -59,7 +59,9 @@ unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
 # `path` is tied to $PATH and (N) drops an entry whose directory does not
 # exist, so a host that has neither never gets an empty element in the search
 # path. -U keeps a duplicate out when a private hook adds the same directory.
-path=($HOME/.local/bin(N) $DOT_ZSH_DIR/bin(N) $path)
+# `:+` matters: with DOT_ZSH_DIR unset, `$DOT_ZSH_DIR/bin` is `/bin`, which
+# exists, so (N) would keep it and put /bin at the front of the search path.
+path=($HOME/.local/bin(N) ${DOT_ZSH_DIR:+$DOT_ZSH_DIR/bin}(N) $path)
 typeset -gU path PATH
 
 ## Completion #################################################################

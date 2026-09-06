@@ -1,46 +1,10 @@
 # Interactive command-line integrations. These tools are installed separately
 # from the Zsh plugins and remain optional on each host.
 
-# Source what `<tool> <init flags>` prints, from a cache rather than from a
-# fresh process on every startup. `fzf --zsh` and `zoxide init zsh` cost about
-# 9ms and 6ms of forking here, on a ~105ms startup, and their output changes
-# only when the executable does.
-#
-# $1 is the cache name, $2 the executable to watch, and the rest the command to
-# run. The generated file records the exact command in its first line, so
-# changing the flags in a call below invalidates the cache too -- an executable
-# timestamp alone would not notice.
-_dot_source_tool_init() {
-    local name=$1 exe=$2
-    shift 2
-
-    local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
-    local cache=$cache_dir/$name.zsh
-    local header="# generated from: $*"
-    local first out
-
-    if [[ -s $cache && ! $commands[$exe] -nt $cache ]]; then
-        IFS= read -r first < $cache
-        if [[ $first == $header ]]; then
-            source "$cache"
-            return 0
-        fi
-    fi
-
-    out=$("$@" 2>/dev/null) || return 1
-    [[ -n $out ]] || return 1
-
-    # Write through a temporary file so an interrupted or full-disk write
-    # cannot leave a truncated init script that every later shell sources.
-    [[ -d $cache_dir ]] || mkdir -p "$cache_dir"
-    if print -rl -- "$header" "$out" > "$cache.tmp$$" 2>/dev/null &&
-       mv -f "$cache.tmp$$" "$cache" 2>/dev/null; then
-        source "$cache"
-    else
-        rm -f "$cache.tmp$$"
-        eval "$out"
-    fi
-}
+# The tool init caches are shared with core/aliases.zsh, which loads first and
+# has normally sourced this already; sourcing it again is a few hundred
+# microseconds and keeps this file independent of that order.
+source "$DOT_ZSH_DIR/lib/toolcache.zsh"
 
 if (( $+commands[fzf] )); then
     # Recent fzf versions generate the complete integration directly.

@@ -30,12 +30,17 @@ usage() {
 
   (no command)  compile targets whose compiled form is missing or out of date
   force         recompile every target, ignoring timestamps
-  clean         remove every target's compiled form
+  clean         remove every target's compiled form, and prune orphans
+  prune         remove only compiled files whose source no longer exists
   list          show each target and its state, and compile nothing
 
 Targets are the plugin files this configuration sources and its own files.
 Powerlevel10k compiles itself and is not included. Compiled files live beside
-their sources, outside this repository for plugins, and are never committed."
+their sources, outside this repository for plugins, and are never committed.
+
+Zsh sources a .zwc even when its source file is gone, so run `prune` after
+deleting or renaming a configuration file, or after checking out a commit
+that predates one."
 }
 
 # Print one path per line, shortened against $HOME.
@@ -78,7 +83,17 @@ case $command in
 
     clean)
         dot_zsh_compile_clean
+        dot_zsh_compile_prune
         print -r -- "removed ${#_dot_zsh_removed} compiled file(s)"
+        (( ${#_dot_zsh_pruned} )) &&
+            print -r -- "pruned ${#_dot_zsh_pruned} orphan(s)"
+        return 0
+        ;;
+
+    prune)
+        dot_zsh_compile_prune
+        report 'pruned' "${_dot_zsh_pruned[@]}"
+        (( ${#_dot_zsh_pruned} )) || print -r -- 'no orphaned compiled files'
         return 0
         ;;
 
