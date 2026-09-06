@@ -1,6 +1,6 @@
-# Interactive command replacements. Add or replace a key/value pair to prefer
-# another implementation; remove the pair to return to the system command.
-# Values may include default arguments. Missing replacements are ignored.
+# Interactive command replacements. Every replacement is conditional on its
+# executable being present, so this file behaves the same on a machine with
+# none of them installed: the platform commands stay in place.
 () {
     local command_name replacement executable
 
@@ -13,8 +13,67 @@
     fi
     typeset -ga _DOT_ZSH_MANAGED_ALIASES=()
 
+    # Define an alias and remember it, so the cleanup above can find it again.
+    _dot_alias() {
+        alias "$1=$2"
+        _DOT_ZSH_MANAGED_ALIASES+=("$1")
+    }
+
+    ## ls ####################################################################
+
+    # eza first, then GNU coreutils ls, then whatever the platform ships.
+    #
+    # Each variant declares its own l/ll/la rather than chaining them through
+    # the `ls` alias. The flags are not interchangeable: `-h` is
+    # human-readable sizes for both ls implementations but `--header` for eza,
+    # which prints sizes in human units anyway, so a chained `ll='ls -lh'`
+    # would quietly mean something different depending on which binary was
+    # found. `--group-directories-first` exists in eza and GNU ls but not in
+    # the BSD ls that macOS ships.
+    local ls_cmd
+    if (( $+commands[eza] )); then
+        ls_cmd='eza --color=auto --group-directories-first'
+        _dot_alias ls "$ls_cmd"
+        _dot_alias l  "$ls_cmd -1"
+        _dot_alias ll "$ls_cmd -l"
+        _dot_alias la "$ls_cmd -la"
+    elif (( $+commands[gls] )); then
+        ls_cmd='gls --color=auto --group-directories-first'
+        _dot_alias ls "$ls_cmd"
+        _dot_alias l  "$ls_cmd -1"
+        _dot_alias ll "$ls_cmd -lh"
+        _dot_alias la "$ls_cmd -lah"
+    else
+        case "$OSTYPE" in
+            darwin*)
+                # BSD ls colours with -G; CLICOLOR covers the callers that do
+                # not go through the alias.
+                export CLICOLOR=1
+                ls_cmd='ls -G'
+                ;;
+            linux*)
+                # Only --color here: this branch is reached when coreutils is
+                # absent, which on Alpine means busybox ls, and busybox does
+                # not implement --group-directories-first.
+                ls_cmd='ls --color=auto'
+                ;;
+            *)
+                # An ls of unknown provenance: no flags beyond the standard
+                # ones, so nothing here can fail on it.
+                ls_cmd='ls'
+                ;;
+        esac
+        _dot_alias ls "$ls_cmd"
+        _dot_alias l  "$ls_cmd -1"
+        _dot_alias ll "$ls_cmd -lh"
+        _dot_alias la "$ls_cmd -lah"
+    fi
+
+    ## Other GNU replacements ################################################
+
+    # Add or remove a key/value pair to prefer another implementation or to
+    # return to the system command. Values may include default arguments.
     local -A preferred_commands=(
-        ls    'gls --color=auto'
         sed   gsed
         grep  ggrep
         find  gfind
@@ -25,33 +84,25 @@
     for command_name replacement in ${(kv)preferred_commands}; do
         executable=${replacement%% *}
         if (( $+commands[$executable] )); then
-            alias "$command_name=$replacement"
-            _DOT_ZSH_MANAGED_ALIASES+=("$command_name")
+            _dot_alias "$command_name" "$replacement"
         fi
     done
 
-    # Colour the system ls when GNU ls was not selected above.
-    if (( ! $+aliases[ls] )); then
-        case "$OSTYPE" in
-            darwin*)
-                export CLICOLOR=1
-                alias ls='ls -G'
-                _DOT_ZSH_MANAGED_ALIASES+=(ls)
-                ;;
-            linux*)
-                alias ls='ls --color=auto'
-                _DOT_ZSH_MANAGED_ALIASES+=(ls)
-                ;;
-        esac
-    fi
+    ## Colours ###############################################################
 
-    # GNU ls reads LS_COLORS; GNU dircolors is optional on every platform.
+    # GNU ls and eza both read LS_COLORS; GNU dircolors is optional on every
+    # platform. Its output only changes when dircolors itself does, so cache it
+    # rather than forking once per interactive shell. The cache is rebuilt when
+    # it is missing, empty, or older than the executable that produced it.
     if (( $+commands[dircolors] )); then
-        eval "$(dircolors -b)"
+        local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
+        local ls_colors=$cache_dir/dircolors.zsh
+        if [[ ! -s $ls_colors || $commands[dircolors] -nt $ls_colors ]]; then
+            [[ -d $cache_dir ]] || mkdir -p "$cache_dir"
+            dircolors -b > "$ls_colors" 2>/dev/null
+        fi
+        [[ -s $ls_colors ]] && source "$ls_colors"
     fi
 
-    alias l='ls -1'
-    alias ll='ls -lh'
-    alias la='ls -lah'
-    _DOT_ZSH_MANAGED_ALIASES+=(l ll la)
+    unfunction _dot_alias
 }

@@ -5,24 +5,36 @@
 # is still being sourced, which is what takes the first prompt in a large
 # repository from ~300ms to ~25ms.
 #
-export DOT_ZSH_DIR=$HOME/.dot/apps/zsh
-export DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
+# Derived from this file's own location rather than assumed to be ~/.dot, so a
+# checkout anywhere works. `%x` is the file being sourced, which is the
+# ~/.zshrc symlink; `:A` resolves it to the file in the repository, and the
+# three `:h` climb apps/zsh/zshrc back to the root. Everything else in this
+# configuration, public and private, locates itself through these.
+#
+# They are read only by files this shell sources, so they do not need to be
+# exported into every child process. Installers set their own copies.
+typeset -g DOT_DIR=${${(%):-%x}:A:h:h:h}
+typeset -g DOT_ZSH_DIR=$DOT_DIR/apps/zsh
+# The private repository is optional and is not present on every host; this is
+# only where it would be.
+typeset -g DOT_CONF_DIR=$DOT_DIR/conf
+typeset -g DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
 
 # Instant prompt may initialize the VCS backend from its cache, before the
-# regular Powerlevel10k configuration is loaded.
+# regular Powerlevel10k configuration is loaded. This file also discards a
+# cache left behind by a gitstatus installation that no longer works here, so
+# instant prompt stays available on vcs_info hosts.
 source "$DOT_ZSH_DIR/core/prompt-options.zsh"
 
 # Hook tracing intentionally writes to the terminal, so skip instant prompt for
 # that diagnostic shell rather than making Powerlevel10k report console I/O.
-# Also skip it while using vcs_info: an existing cache may contain a gitstatus
-# preinitializer from an earlier compatible installation.
 # The cache only exists once p10k has written one.
 if [[ ${DOT_ZSH_TRACE_HOOKS:-0} != 1 ]] &&
-   [[ $POWERLEVEL9K_DISABLE_GITSTATUS != true ]] &&
    [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Exported: child installers and scripts read it to pick a log level.
 export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
 
 source "$DOT_ZSH_DIR/lib.sh"

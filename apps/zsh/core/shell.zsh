@@ -4,7 +4,17 @@
 
 # HISTSIZE is what a running shell holds, SAVEHIST what reaches the file. Keep
 # enough unique entries to retain more than a month of history.
-HISTFILE=$HOME/.zsh_history
+#
+# The rest of this configuration keeps its state under XDG, and new hosts get
+# the history there too. An existing $HOME/.zsh_history stays where it is:
+# moving it would either strand the old history or rewrite a file this
+# configuration does not own. Delete or move that file to migrate a host.
+if [[ -f $HOME/.zsh_history ]]; then
+    HISTFILE=$HOME/.zsh_history
+else
+    HISTFILE=${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history
+    [[ -d ${HISTFILE:h} ]] || mkdir -p "${HISTFILE:h}"
+fi
 HISTSIZE=200000
 SAVEHIST=100000
 
@@ -35,6 +45,23 @@ setopt always_to_end             # completion leaves the cursor after the word
 setopt complete_in_word          # complete from where the cursor is, not the end
 unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
 
+## Path #######################################################################
+
+# ~/.local is this account's install prefix, the role /usr/local plays for the
+# system: binaries this user installed without root, outside any package
+# manager. It is where rustup, pipx, uv and most `curl | sh` installers put
+# things by default, so putting it on $PATH here means none of them has to be
+# redirected. Its content is per-architecture and per-host and is never part of
+# this repository.
+#
+# This repository's own commands -- `zsh-compile` today -- come next.
+#
+# `path` is tied to $PATH and (N) drops an entry whose directory does not
+# exist, so a host that has neither never gets an empty element in the search
+# path. -U keeps a duplicate out when a private hook adds the same directory.
+path=($HOME/.local/bin(N) $DOT_ZSH_DIR/bin(N) $path)
+typeset -gU path PATH
+
 ## Completion #################################################################
 
 # Keep the dump out of $HOME.
@@ -47,7 +74,15 @@ autoload -Uz compinit
 # expensive half of it. Do the full run when the dump is older than a day and
 # take the cached one otherwise. `-C` skips both the check and the staleness
 # comparison.
-if [[ ! -s "$_dot_zcompdump" || -n $_dot_zcompdump(#qN.mh+24) ]]; then
+#
+# The `(#q...)` glob-qualifier form needs EXTENDED_GLOB, which this
+# configuration does not set globally; without it the test is true for a dump
+# of any age and the cached branch is never taken. `emulate -L` restores the
+# option set on return, so the check runs inside an anonymous function.
+if ! () {
+    emulate -L zsh -o extended_glob
+    [[ -s $_dot_zcompdump && -z $_dot_zcompdump(#qN.mh+24) ]]
+}; then
     compinit -d "$_dot_zcompdump"
     # Compiling the dump saves reading and parsing it next time.
     [[ -f "$_dot_zcompdump.zwc" && "$_dot_zcompdump.zwc" -nt "$_dot_zcompdump" ]] \
@@ -121,3 +156,8 @@ bindkey '^[[1;5D' backward-word         # Ctrl-Left
 bindkey '^[[1;3C' forward-word          # Alt-Right
 bindkey '^[[1;3D' backward-word         # Alt-Left
 bindkey '^[[Z'    reverse-menu-complete # Shift-Tab
+
+# Nothing below this file needs these; leaving them in place would put three
+# more names -- one of them a 9-element map -- in every interactive shell.
+unset _dot_zsh_cache _dot_zcompdump
+unset _dot_keys

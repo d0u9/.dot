@@ -22,7 +22,8 @@ _DOT_C_ITALIC_CYAN=$'\033[3;36m'
 
 # dlog <level> <message> [file]
 # level is one of error, warn, info, debug; anything above $DOT_LOG_LEVEL is
-# dropped. Example:
+# dropped. The fallback below applies only when $DOT_LOG_LEVEL is unset:
+# zshrc and install.sh both set it, to 'warn'. Example:
 # dlog 'info' 'info hello'
 # dlog 'debug' 'debug hello' '/apps/zsh/pre.zsh'
 #
@@ -159,6 +160,9 @@ cur_path_relative() {
 
 # Prmote "YES" or "NO" for choice
 # $1: hint message
+#
+# Bash only. Zsh's `read` reads `-p` as "read from the coprocess" and does not
+# take `-n`, so this must not be called from the interactive shell files.
 yes_or_no()
 {
     while true; do
