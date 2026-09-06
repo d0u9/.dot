@@ -91,12 +91,17 @@ way mason does (`lua-language-server`); the installer translates between the
 two. The mapping is in
 [mason-lspconfig's server list](https://github.com/mason-org/mason-lspconfig.nvim/blob/main/doc/server-mapping.md).
 
-A server that needs settings gets them in `plugins/configs/nvim-cmp.lua`,
+A server that needs settings gets them in `plugins/configs/nvim-lspconfig.lua`,
 next to the existing `vim.lsp.config` calls. Rust is the exception: it is not
 started through lspconfig at all, but by rustaceanvim, and is configured in
 `plugins/configs/rustaceanvim.lua`.
 
 ## Checking the result
+
+Tree-sitter loads at startup as required by upstream, so its management
+commands are available even without opening a file. Command-driven plugins
+keep their entry points in the lazy spec's `cmd` list; update that list when
+an upgrade introduces new commands.
 
 ```
 :Lazy          plugin status

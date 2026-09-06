@@ -1,5 +1,5 @@
 -- init.lua User settings
-function init_lua_package_path(config_dir)
+local function init_lua_package_path(config_dir)
   local dirs = {
     '.',
   }
@@ -9,27 +9,27 @@ function init_lua_package_path(config_dir)
   end
 end
 
-function init_runtime_dirs(runtime_dir)
+local function init_runtime_dirs(runtime_dir)
   local dirs = {
     'undo',
-    'backup',
-    'swap',
+    'backup_files',
+    'swap_files',
     'mason',
   }
 
   for _, dir in ipairs(dirs) do
-    path = runtime_dir .. '/' .. dir
+    local path = runtime_dir .. '/' .. dir
     require('lib.utils').ensure_directory_exists(path)
   end
 
 end
 
-function env_prepare(config_dir, runtime_dir)
+local function env_prepare(config_dir, runtime_dir)
   -- `package.path` is used to search lub modules.
-  init_lua_package_path(_G.CONFIG_DIR)
+  init_lua_package_path(config_dir)
 
   -- set up runtime dirs
-  init_runtime_dirs(_G.RUNTIME_DIR)
+  init_runtime_dirs(runtime_dir)
 end
 
 -- Basic setings
@@ -51,6 +51,9 @@ env_prepare(_G.CONFIG_DIR, _G.RUNTIME_DIR)
 -- plugin mappings are bound against the previous leader. `config.keymaps`
 -- sets it again so that the two never drift apart.
 vim.g.mapleader = ","
+
+require('config.options')
+require('config.autocmds')
 
 -- Clone lazy.nvim on first start, then put it on the runtimepath.
 local lazy_repo = _G.LAZY_DIR .. '/lazy.nvim'
@@ -76,12 +79,10 @@ require('lazy').setup(require('plugins.install'), {
 })
 require('plugins.setting')
 
--- nvim's basic settings
-require('config.vimscripts')
+require('config.colors')
 
 -- nvim's diagostic settings
 require('config.diagnostic')
 
 -- lua key mappings
 require('config.keymaps')
-

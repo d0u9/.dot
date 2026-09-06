@@ -1,4 +1,3 @@
-local run_cb_if_has = require('lib.utils').run_cb_if_has
 local M = {}
 
 -- Key mapping for neovim's internal functions
@@ -69,12 +68,8 @@ local diagnostic = function()
   vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { silent = true })
   vim.keymap.set('n', 'd[', vim.diagnostic.goto_prev)
   vim.keymap.set('n', 'd]', vim.diagnostic.goto_next)
-  -- Lists LSP diagnostics for the current workspace if supported, otherwise searches in all open buffers
-  vim.keymap.set('n', '<leader>da', "<Cmd>lua require('telescope.builtin').diagnostics()<CR>", { noremap = true, silent = true })
-  -- Lists LSP diagnostics for the current buffer
-  vim.keymap.set('n', '<leader>dl', "<Cmd>lua require('telescope.builtin').diagnostics({ bufnr=0, line_width='full' })<CR>", { noremap = true, silent = true })
 end
-run_cb_if_has(diagnostic, 'telescope')
+diagnostic()
 
 -- lsp key bindings
 -- for language related things
@@ -83,72 +78,8 @@ local lsp = function()
   vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, {noremap = true})
   vim.keymap.set('n', '<leader>lh', vim.lsp.buf.hover, {noremap = true})
   vim.keymap.set('n', '<leader>lm', vim.lsp.buf.format, {noremap = true})
-  -- " Goto the definition of the type of the word under the cursor, if there's only one, otherwise show all options in Telescope
-  vim.keymap.set('n', '<leader>ls', require('telescope.builtin').lsp_document_symbols, {noremap = true})
-  -- " Goto the definition of the word under the cursor, if there's only one, otherwise show all options in Telescope
-  vim.keymap.set('n', '<leader>ld', "<Cmd>lua require('telescope.builtin').lsp_definitions({ jump_type='never' })<CR>", {noremap = true})
-  -- " Goto the definition of the type of the word under the cursor, if there's only one, otherwise show all options in Telescope
-  vim.keymap.set('n', '<leader>lp', require('telescope.builtin').lsp_implementations, {noremap = true})
-  -- " Lists LSP references for word under the cursor
-  vim.keymap.set('n', '<leader>lf', require('telescope.builtin').lsp_references, {noremap = true})
-  -- " Lists LSP incoming calls for word under the cursor
-  vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_incoming_calls, {noremap = true})
-  -- " Lists LSP outgoing calls for word under the cursor
-  vim.keymap.set('n', '<leader>lo', require('telescope.builtin').lsp_outgoing_calls, {noremap = true})
 end
-run_cb_if_has(lsp, 'telescope')
-
-local plugin_telescope_file = function()
-  -- " Lists files in your current working directory, respects .gitignore
-  vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {noremap = true})
-  -- " Fuzzy search through the output of git ls-files command, respects .gitignore
-  vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, {noremap = true})
-  -- " Lists open buffers in current neovim instance
-  vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, {noremap = true})
-  -- " Lists vim marks and their value
-end
-run_cb_if_has(plugin_telescope_file, 'telescope')
-
-local plugin_telescope_grep = function()
-  -- " Searches for the string under your cursor in your current working directory
-  vim.keymap.set('n', '<leader>gs', require('telescope.builtin').grep_string, {noremap = true})
-
-  -- " Search for a string in your current working directory and get results live as you type
-  vim.keymap.set('n', '<leader>gg', require('telescope.builtin').live_grep, {noremap = true})
-
-  -- " Searches for the string under your cursor in your current working directory Restrict to currently open files
-  vim.keymap.set('n', '<leader>gc', "<Cmd>lua require('telescope.builtin').grep_string({grep_open_files=true})<CR>", {noremap = true})
-
-  -- " Search for a string in your current working directory and get results live as you type Restrict to currently open files
-  vim.keymap.set('n', '<leader>gl', require('telescope.builtin').current_buffer_fuzzy_find, {noremap = true})
-end
-
-run_cb_if_has(plugin_telescope_grep, 'telescope')
-
-local plugin_telescope_generic = function()
-  vim.keymap.set('n', '<leader>tm', require('telescope.builtin').marks, {noremap = true})
-  -- " Lists Jump List entries
-  vim.keymap.set('n', '<leader>tj', require('telescope.builtin').jumplist, {noremap = true})
-  -- " Lists vim registers, pastes the contents of the register on <cr>
-  vim.keymap.set('n', '<leader>tr', require('telescope.builtin').registers, {noremap = true})
-  -- " Lists items in the quickfix list
-  vim.keymap.set('n', '<leader>tq', require('telescope.builtin').quickfix, {noremap = true})
-  -- " Lists spelling suggestions for the current word under the cursor, replaces word with selected suggestion on <cr>
-  vim.keymap.set('n', '<leader>tp', require('telescope.builtin').spell_suggest, {noremap = true})
-  -- " Lists normal mode keymappings
-  vim.keymap.set('n', '<leader>tk', require('telescope.builtin').keymaps, {noremap = true})
-
-  -- " Lists all available highlights
-  -- vim.keymap.set('n', '<leader>th', require('telescope.builtin').highlights, {noremap = true})
-end
-run_cb_if_has(plugin_telescope_generic, 'telescope')
-
--- Nvim Tree
-local plugin_nvim_tree = function()
-  local api = require('nvim-tree.api')
-  vim.keymap.set('n', '<leader>`', api.tree.toggle, {noremap = true})
-end
-run_cb_if_has(plugin_nvim_tree, 'nvim-tree.api')
+lsp()
 
 local plugin_nvim_tree_attach = function()
   local api = require('nvim-tree.api')
@@ -163,26 +94,6 @@ M.nvim_tree_keymap = plugin_nvim_tree_attach
 -- comment tool
 -- Neovim comments lines itself since 0.10: `gcc` for a line, `gc` as an
 -- operator. Comment.nvim is no longer installed.
-
--- outline.nvim
-local plugin_outline = function()
-  -- NOTE: for other keympas, referce plguin config
-  vim.keymap.set('n', '<leader>tt', ':Outline<CR>')
-end
-run_cb_if_has(plugin_outline, 'outline')
-
--- Telescope
-local telescope = function()
-
-end
-telescope()
-
--- toggleterm.nvim
-local plugin_toggleterm = function()
-  vim.keymap.set('n', '<C-w><C-w>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>')
-  vim.keymap.set('t', '<C-w><C-w>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>')
-end
-run_cb_if_has(plugin_toggleterm, 'toggleterm')
 
 -- Maximize the current window, or restore the layout a previous maximize saved.
 -- vim-maximizer did this, but it is a dozen lines of lua and one less plugin.
@@ -206,4 +117,3 @@ window_maximizer()
 -- lua API to bind against; see plugins/configs/rustaceanvim.lua.
 
 return M
-

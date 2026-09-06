@@ -75,28 +75,3 @@ cmp.setup.cmdline(':', {
   }),
   matching = { disallow_symbol_nonprefix_matching = false }
 })
-
--- Set up lspconfig.
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
--- rust_analyzer is deliberately absent: rustaceanvim starts and configures it
--- itself, and enabling it here as well would run a second server.
-vim.lsp.config('gopls', {
-  capabilities = capabilities,
-  on_attach = function(client, bufnr)
-    require("nvim-navic").attach(client, bufnr)
-  end,
-  cmd = { "gopls", "serve" },
-  settings = {
-    gopls = {
-      analyses = {
-        unusedparams = true,
-      },
-      staticcheck = true,
-    },
-  },
-})
-
-vim.lsp.enable({
-  'gopls',
-})
