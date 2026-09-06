@@ -1,28 +1,7 @@
-This host-conf directory contains files that are specific to a HOST.
+This directory is reserved for optional host-specific Zsh settings. It is
+currently disconnected: neither `pre.zsh` nor `post.zsh` sources files from
+here.
 
-For example, on some test hosts, we want to setup different PATH environment
-variable that is not suitable to be included in git repo.
-
-Files suffixed with `-pre.sh` are loaded before core shell and prompt setup.
-Files suffixed with `-post.sh` are loaded after prompt setup.
-
-Within each of those two groups the files are sourced in filename order, so the
-numeric prefix decides the order. The prefix encodes a TIER, not a sequence:
-files of the same tier share the same number, even when only one of them ever
-gets linked on a given host.
-
-    00-   generic, applies to every host
-    10-   platform specific (10-linux-*.sh and 10-macos-*.sh both use 10)
-    20-   scene: one particular host or project
-
-Host-specific scripts are not tracked by the .dot repo. They are symlinks to
-files in the private conf repo, and each host links only what it needs:
-
-    ln -s ../../../conf/app_conf/pub/zsh/00-zshrc-pre.sh 00-zshrc-pre.sh
-
-Keep the link name identical to the target name so the tier stays visible here.
-
-One conflict to know about: 00-zshrc-pre.sh already sources the matching
-10-{linux,macos}-pre.sh itself, and 00-zshrc-post.sh does the same for the
--post.sh pair. So link either the 00- file or the 10- file for a given stage,
-never both, or the platform file runs twice.
+The files are ignored by the public repository. When host configuration is
+needed again, reconnect the appropriate phase explicitly rather than loading
+everything in this directory implicitly.

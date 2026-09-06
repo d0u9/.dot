@@ -24,7 +24,7 @@ or a scoped `rg` search.
 ├── install.sh                public installer dispatcher
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
-│   ├── zsh/                 shared shell, OS branches, host link entry points
+│   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
 │   ├── alacritty/           TOML config and downloaded themes
 │   ├── zellij/              KDL overrides of upstream defaults
@@ -67,48 +67,68 @@ Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
 prompt flow. Installers can also download themes, clone/update plugins, and
 bootstrap editor tooling. They are not read-only validation commands.
+The Zsh installer also installs fzf and zoxide through the first available
+supported package manager: Homebrew, apt, dnf, pacman, or apk. System package
+managers run through `sudo` when the installer is not already root.
 
 ## Shell loading and configuration placement
 
 The effective order starting at `apps/zsh/zshrc` is:
 
 ```text
-base variables/plugins → lib.sh
-  → pre.zsh
-      → macos/macos-pre.sh OR linux/linux-pre.sh
-      → shared plugin/tool setup
-      → host-conf/*-pre.sh, sorted
-  → core.zsh
-  → plugins.zsh
+base variables → core/prompt-options.zsh → compatible-gitstatus instant prompt → lib.sh
+  → pre.zsh → optional hook-trace start warning
+  → core/shell.zsh
   → post.zsh
-      → matching platform post file
-      → shared functions and Powerlevel10k prompt
-      → host-conf/*-post.sh, sorted
+      → core/prompt.zsh → Powerlevel10k with core/p10k.zsh
+      → core/aliases.zsh for optional GNU replacements and shortcuts
+      → core/integrations.zsh for fzf and zoxide
+      → core/plugins.zsh for autosuggestions, then syntax highlighting last
+      → optional hook-trace completion warning
 ```
+
+Set `DOT_ZSH_TRACE_HOOKS=1` for a diagnostic shell that prints the pre/post
+boundary warnings. This deliberately skips Powerlevel10k instant prompt for
+that shell so the diagnostic output does not trigger its console-I/O warning.
 
 Choose scope first, then execution phase:
 
 | Scope | Placement |
 | --- | --- |
-| Portable public shell behavior | `apps/zsh/{pre,core,plugins,post}.zsh` |
-| Public OS-specific behavior | `apps/zsh/{macos,linux}/` |
+| Pre/post extension points | `apps/zsh/{pre,post}.zsh` |
+| Portable public shell behavior | `apps/zsh/core/shell.zsh` |
+| Interactive aliases and GNU replacements | `apps/zsh/core/aliases.zsh` |
+| Interactive tool integration | `apps/zsh/core/integrations.zsh` |
+| ZLE plugins and load order | `apps/zsh/core/plugins.zsh` |
+| Early and post-reset prompt policy | `apps/zsh/core/prompt-options.zsh` |
+| Prompt loading and backend policy | `apps/zsh/core/prompt.zsh` |
+| Powerlevel10k settings | `apps/zsh/core/p10k.zsh` |
 | Shared personal configuration | `conf/app_conf/pub/zsh/00-zshrc-{pre,post}.sh` |
 | Personal OS-specific configuration | `conf/app_conf/pub/zsh/10-{linux,macos}-{pre,post}.sh` |
 | Host, employer, or project configuration | `conf/app_conf/pub/zsh/scene/20-*.sh` or its subdirectories |
 | Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
 
-The private files become active through selected symlinks in
-`apps/zsh/host-conf/`. Preserve the target basename: `00` means shared,
-`10` means platform, `20` means scene, not unique sequence numbers. Each
-private `00` file sources the matching private `10` file itself; do not link
-both for the same phase. A scene file is selected explicitly; its presence in
-`conf/` does not load it. Read `apps/zsh/host-conf/note.txt` for the link pattern.
-`pub` within `conf` means shared personal scope, not public or secret-free.
+Private Zsh files remain in `conf/`, but `host-conf/` is currently disconnected
+from both startup phases. Do not describe a private file as active merely
+because it exists or is linked. Read `apps/zsh/host-conf/note.txt` before
+reconnecting either phase. `pub` within `conf` means shared personal scope, not
+public or secret-free.
 
-Powerlevel10k is the only prompt and loads in `post.zsh`; its host-specific
-settings must therefore use a `*-pre.sh` file. Check existing definitions and
-hooks when introducing a command such as `z`: `fasd` and `jump` have
-conditional setup in `pre.zsh`, and host configuration may add more.
+Powerlevel10k loads first in `post.zsh`, followed by fzf and zoxide, then
+autosuggestions and syntax highlighting. Syntax highlighting must remain last
+so it sees the final ZLE widget set. The prompt uses an installed gitstatusd
+only when its version satisfies Powerlevel10k's own platform metadata;
+otherwise it uses Zsh's `vcs_info` fallback and never downloads a binary during
+startup. Fallback shells skip instant prompt so a stale cache cannot start a
+previously configured gitstatus daemon. Host config remains disconnected.
+Prefer Zsh's native autoload mechanism for command-specific completion and add
+other integrations individually only when needed.
+
+The fzf integration prefers `fzf --zsh` and falls back to package-provided
+`completion.zsh` and `key-bindings.zsh` files for older releases. Zoxide loads
+after `compinit` and explicitly owns the `z` and `zi` commands. Aliases created
+by `core/aliases.zsh` are tracked so re-sourcing it removes stale managed
+aliases before applying the current table.
 
 ## Application-specific conventions
 
@@ -125,8 +145,8 @@ conditional setup in `pre.zsh`, and host configuration may add more.
   installer downloads the four flavours. Source configuration is tracked,
   downloaded themes are ignored except `plugins/README.md`.
 - Zellij keeps only overrides of default settings in `config.kdl`. Preserve
-  that approach. Its theme matches Alacritty, and shell helpers live in Zsh
-  post configuration; Powerlevel10k emits the prompt markers.
+  that approach. Its theme matches Alacritty; Powerlevel10k emits the prompt
+  markers used by its scrollback integration.
 - tmux's main config sources an OS fragment and invokes TPM under `~/.tmux`.
   The installer bootstraps TPM; plugins are installed through tmux. Keep
   downloaded `apps/tmux/plugins/` out of source edits.
@@ -135,13 +155,9 @@ conditional setup in `pre.zsh`, and host configuration may add more.
 
 ## Portability and verification
 
-Support Linux and macOS, including Intel and Apple Silicon. Guard optional
-tools with `command_exist` and optional plugins/themes with directory checks.
-Use `$HOMEBREW_PREFIX` where available; platform detection probes
-`/opt/homebrew` before `/usr/local`. Keep host paths in the private layer.
-Guard terminal-only operations with `[ -t 0 ]`, do not export `TERM`, and
-preserve lazy runtime-manager loading rather than adding unconditional startup
-cost. README portability rules describe intended behavior, not proof every
+Support Linux and macOS, including Intel and Apple Silicon. Keep host paths in
+the private layer, guard Powerlevel10k with a file check, and do not export
+`TERM`. README portability rules describe intended behavior, not proof every
 existing file already satisfies them.
 
 Check each relevant repository's status before editing and preserve unrelated
@@ -151,7 +167,7 @@ interpreter (`.sh` files sourced by Zsh can contain Zsh syntax):
 ```sh
 bash -n install.sh
 for f in apps/*-install.sh; do bash -n "$f" || break; done
-for f in apps/zsh/zshrc apps/zsh/*.sh apps/zsh/*.zsh apps/zsh/macos/*.sh apps/zsh/linux/*.sh; do
+for f in apps/zsh/zshrc apps/zsh/*.sh apps/zsh/*.zsh apps/zsh/core/*.zsh; do
     zsh -n "$f" || break
 done
 ```

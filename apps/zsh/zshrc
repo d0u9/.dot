@@ -5,35 +5,28 @@
 # is still being sourced, which is what takes the first prompt in a large
 # repository from ~300ms to ~25ms.
 #
+export DOT_ZSH_DIR=$HOME/.dot/apps/zsh
+export DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
+
+# Instant prompt may initialize the VCS backend from its cache, before the
+# regular Powerlevel10k configuration is loaded.
+source "$DOT_ZSH_DIR/core/prompt-options.zsh"
+
+# Hook tracing intentionally writes to the terminal, so skip instant prompt for
+# that diagnostic shell rather than making Powerlevel10k report console I/O.
+# Also skip it while using vcs_info: an existing cache may contain a gitstatus
+# preinitializer from an earlier compatible installation.
 # The cache only exists once p10k has written one.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+if [[ ${DOT_ZSH_TRACE_HOOKS:-0} != 1 ]] &&
+   [[ $POWERLEVEL9K_DISABLE_GITSTATUS != true ]] &&
+   [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-###
-## Custom variable
-###
-# warn and above print; set this to info while working on the startup files to
-# get the progress lines back, or to error to silence the fallback notices too.
-export DOT_LOG_LEVEL="warn"
-export DOT_ZSH_DIR=$HOME/.dot/apps/zsh
+export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
 
-# Where install.sh clones zsh-syntax-highlighting, zsh-autosuggestions and
-# powerlevel10k.
-export DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
+source "$DOT_ZSH_DIR/lib.sh"
 
-source $DOT_ZSH_DIR/lib.sh
-
-# Order is load-bearing:
-#
-#   pre      platform files, tool integration, generated completions. Runs
-#            first because completions must reach fpath before compinit.
-#   core     shell options, compinit, key bindings and base aliases.
-#   plugins  zsh-syntax-highlighting then zsh-autosuggestions. After core,
-#            since highlighting wraps the widgets that exist when it loads.
-#   post     history-independent extras, the Powerlevel10k prompt, and the
-#            per-host post files, which get the last word by design.
-source $DOT_ZSH_DIR/pre.zsh
-source $DOT_ZSH_DIR/core.zsh
-source $DOT_ZSH_DIR/plugins.zsh
-source $DOT_ZSH_DIR/post.zsh
+source "$DOT_ZSH_DIR/pre.zsh"
+source "$DOT_ZSH_DIR/core/shell.zsh"
+source "$DOT_ZSH_DIR/post.zsh"

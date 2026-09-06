@@ -12,12 +12,58 @@ info "Installing zsh configuration"
 ZSH_APP_DIR=$(abs_path "$APP_DIR/zsh")
 ZSH_CONF_FILE="$ZSH_APP_DIR/zshrc"
 
-# Plugins live under XDG data. Keep this in step with DOT_ZSH_PLUGIN_DIR in
-# zshrc.
+# Zsh plugins live under XDG data. Keep this in step with DOT_ZSH_PLUGIN_DIR
+# in zshrc.
 PLUGIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins"
 mkdir -p "$PLUGIN_DIR"
 
-link_config "$ZSH_CONF_FILE" "$HOME/.zshrc"
+# Run a system package manager as root when it requires that. Homebrew is
+# deliberately handled outside this helper and must never run through sudo.
+run_privileged() {
+    if [ "$EUID" -eq 0 ]; then
+        "$@"
+    elif command_exist sudo; then
+        sudo "$@"
+    else
+        error "sudo is required to run $1"
+        return 1
+    fi
+}
+
+# $1: command name, $2: package name
+install_tool() {
+    local command_name="$1"
+    local package_name="$2"
+
+    if command_exist "$command_name"; then
+        info "already installed" "$command_name"
+        return 0
+    fi
+
+    info "Installing $package_name"
+    if command_exist brew; then
+        brew install "$package_name"
+    elif command_exist apt-get; then
+        run_privileged apt-get install -y "$package_name"
+    elif command_exist dnf; then
+        run_privileged dnf install -y "$package_name"
+    elif command_exist pacman; then
+        run_privileged pacman -S --needed --noconfirm "$package_name"
+    elif command_exist apk; then
+        run_privileged apk add "$package_name"
+    else
+        error "no supported package manager for $package_name"
+        return 1
+    fi
+
+    if ! command_exist "$command_name"; then
+        error "$command_name is still unavailable after installing $package_name"
+        return 1
+    fi
+}
+
+install_tool fzf fzf
+install_tool zoxide zoxide
 
 # $1: name, $2: repo url
 install_plugin() {
@@ -44,23 +90,10 @@ install_plugin() {
     fi
 }
 
+install_plugin powerlevel10k https://github.com/romkatv/powerlevel10k.git
 install_plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 install_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
 
-install_plugin powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
-# p10k talks to gitstatusd, a per-platform binary it fetches on first use.
-# Doing it here instead means the first new shell is not held up by a
-# download, and that a machine which cannot reach GitHub finds out now rather
-# than by printing an error on every startup. Failure is not fatal: p10k falls
-# back to zsh's own vcs_info, and such a host should set
-# POWERLEVEL9K_DISABLE_GITSTATUS=1 in host-conf to silence the warning.
-GITSTATUS_INSTALL="$PLUGIN_DIR/powerlevel10k/gitstatus/install"
-if [ -x "$GITSTATUS_INSTALL" ]; then
-    info "Fetching gitstatusd"
-    if ! sh "$GITSTATUS_INSTALL" -f; then
-        warn "gitstatusd unavailable; set POWERLEVEL9K_DISABLE_GITSTATUS=1 on this host"
-    fi
-fi
+link_config "$ZSH_CONF_FILE" "$HOME/.zshrc"
 
 info "Finished"

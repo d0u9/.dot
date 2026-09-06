@@ -110,6 +110,8 @@
 
   # Cyan ahead/behind arrows.
   typeset -g POWERLEVEL9K_VCS_{INCOMING,OUTGOING}_CHANGESFORMAT_FOREGROUND=$cyan
+  # Restore prompt policy after the generated config cleared POWERLEVEL9K_*.
+  source "$DOT_ZSH_DIR/core/prompt-options.zsh"
   # Don't show remote branch, current tag or stashes.
   typeset -g POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-aheadbehind)
   # Don't show the branch icon.

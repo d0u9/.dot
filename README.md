@@ -27,58 +27,16 @@ here is meant to run unchanged on:
 - **macOS**, on both `x86_64` (Homebrew under `/usr/local`) and `arm64`
   (Homebrew under `/opt/homebrew`)
 
-Anything that cannot hold to that has to be isolated behind one of the two
-mechanisms below, never inlined into a shared file.
-
-## Where platform differences belong
-
-| Scope | Location | In git |
-| --- | --- | --- |
-| OS-specific | `apps/zsh/macos/`, `apps/zsh/linux/` | yes |
-| Machine-specific | `apps/zsh/host-conf/*-{pre,post}.sh` | no, gitignored |
-
-`pre.zsh` and `post.zsh` dispatch on `$OSTYPE` into the first, then
-source anything found in the second. A path, prefix or tool that only exists
-on one host belongs in `host-conf`, not in a tracked file.
-
-## Rules for shared files
-
-These follow from portability bugs that have already been fixed here once:
-
-- **Never hardcode a Homebrew prefix.** Use `$HOMEBREW_PREFIX`, which
-  `brew shellenv` exports, or probe `/opt/homebrew` *before* `/usr/local` —
-  a machine can carry both an arm64 Homebrew and a Rosetta one, and probing
-  in the other order silently selects the Rosetta toolchain on Apple Silicon.
-- **Guard every optional tool** with `command_exist`, so a host that lacks it
-  starts a clean shell instead of printing errors. Optional plugins and themes
-  likewise need a directory test before they are enabled.
-- **Do not assume one install layout.** `nvm`, for example, ships as
-  `$NVM_DIR/nvm.sh` with completion at `$NVM_DIR/bash_completion` when
-  installed from git, but as `$HOMEBREW_PREFIX/opt/nvm/nvm.sh` with
-  completion under `etc/bash_completion.d/nvm` when installed from Homebrew.
-  Probe for both.
-- **Guard anything that needs a terminal**, such as `stty`, with `[ -t 0 ]`.
-  These files are also sourced by non-interactive shells.
-- **Do not export `TERM`.** Overriding it with `xterm-256color` discards
-  capabilities the real terminal advertises, such as undercurl. For an old
-  remote host that lacks the local terminfo entry, install it there instead:
-  `infocmp "$TERM" | ssh remote 'tic -x -'`.
-
-## Known limitations
-
-- Homebrew on Linux is only detected at `/home/linuxbrew/.linuxbrew`, the
-  default prefix. A per-user Linuxbrew install needs a `host-conf` entry.
-- `nvm.sh` is not sourced at startup, since it costs well over a second.
-  The default version is resolved by walking the alias files under
-  `$NVM_DIR/alias` and its `bin` directory is put on `PATH` directly, so
-  every globally installed binary is available in a fresh shell. Only the
-  `nvm` command itself is a stub that sources the script on first use. If
-  the alias chain cannot be resolved, the config falls back to sourcing
-  `nvm.sh` at startup and takes the slower path. `.nvmrc` auto-switching on
-  `cd` is not wired up.
-- Changes are routinely exercised on macOS only. The Linux paths are kept
-  correct by inspection, so treat a first run on a new Linux host as
-  unverified.
+The Zsh configuration keeps a small explicit set of interactive additions:
+Powerlevel10k, autosuggestions, syntax highlighting, fzf shell integration and
+zoxide. Top-level pre and post hook phases remain so behavior can be added back
+one piece at a time, while the implementation lives under `apps/zsh/core/`.
+The disconnected `host-conf/` directory remains as the host-local entry point
+for private configuration. Zsh's completion functions, including `_git`,
+retain their native autoload-on-first-use behavior. Interactive aliases prefer
+installed `g`-prefixed GNU tools and otherwise retain the platform commands.
+Zoxide provides `z` and `zi`; fzf shell integration supports both its current
+`--zsh` interface and the separate scripts shipped by older packages.
 
 ---
 
@@ -123,14 +81,8 @@ was made because packer is no longer maintained.
 | Manager | Manages | Adopted | Commit |
 | --- | --- | --- | --- |
 | [tpm](https://github.com/tmux-plugins/tpm) | tmux plugins | 2015-12-20 | `ac272b7` |
-| [pyenv](https://github.com/pyenv/pyenv) | python versions | 2016-04-18 | `26e29a3` |
 | [Homebrew](https://brew.sh) | macOS packages | 2021-04-30 | `1ba93ce` |
-| [rbenv](https://github.com/rbenv/rbenv) | ruby versions | 2023-05-09 | `0a7f67e` |
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | LSP servers | 2023-07-12 | `78e18c3` |
-| [nvm](https://github.com/nvm-sh/nvm) | node versions | 2026-08-21 | `3ea7f45` |
-
-The version managers are all loaded from `apps/zsh/`, each behind a
-`command_exist` guard, so a host that lacks one still starts a clean shell.
 
 ---
 
@@ -179,8 +131,13 @@ parser.
 
 # Zsh
 
-Run `./install.sh -i zsh` to install the configured plugins and link
-`apps/zsh/zshrc` to `~/.zshrc`.
+Run `./install.sh -i zsh` to install fzf, zoxide and the three Zsh plugins,
+then link `apps/zsh/zshrc` to `~/.zshrc`. The installer supports Homebrew,
+apt, dnf, pacman and apk; existing commands and correct plugin checkouts are
+left in place. Powerlevel10k uses an already-installed, version-compatible
+gitstatusd when available and otherwise falls back to Zsh's built-in
+`vcs_info`; shell startup never downloads the binary. Fallback mode skips the
+instant-prompt cache so stale gitstatus initialization cannot leak into it.
 
 ---
 

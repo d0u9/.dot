@@ -22,10 +22,15 @@ setopt auto_cd                   # a bare directory path means cd
 setopt auto_pushd                # cd maintains the directory stack
 setopt pushd_ignore_dups
 setopt pushd_minus               # so that +N and -N read the way people expect
+setopt pushd_silent              # do not print the stack after pushd/popd
+DIRSTACKSIZE=20
 
 setopt interactive_comments      # allow # comments when typing at the prompt
 setopt long_list_jobs            # jobs in long format by default
 setopt prompt_subst              # allow parameter expansion in prompts
+setopt no_beep                   # keep completion failures silent
+setopt no_hist_beep              # keep failed history searches silent
+setopt numeric_glob_sort         # file2 sorts before file10
 setopt always_to_end             # completion leaves the cursor after the word
 setopt complete_in_word          # complete from where the cursor is, not the end
 unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
@@ -34,21 +39,15 @@ unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
 
 # Keep the dump out of $HOME.
 _dot_zsh_cache=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
-[ -d "$_dot_zsh_cache/completions" ] || mkdir -p "$_dot_zsh_cache/completions"
+[ -d "$_dot_zsh_cache" ] || mkdir -p "$_dot_zsh_cache"
 _dot_zcompdump=$_dot_zsh_cache/zcompdump-$ZSH_VERSION
-
-# Two sources of completion functions, both ahead of the system ones so they
-# win: the handful checked into this repo (see completions/), and the ones
-# generated from installed tools by dot_gen_completion in pre.zsh. Both have
-# to be on fpath before compinit runs, which is why that lives above this.
-fpath=("$DOT_ZSH_DIR/completions" "$_dot_zsh_cache/completions" $fpath)
 
 autoload -Uz compinit
 # compinit's security check walks every directory in fpath, which is the
 # expensive half of it. Do the full run when the dump is older than a day and
 # take the cached one otherwise. `-C` skips both the check and the staleness
 # comparison.
-if [[ -n $_dot_zcompdump(#qN.mh+24) ]]; then
+if [[ ! -s "$_dot_zcompdump" || -n $_dot_zcompdump(#qN.mh+24) ]]; then
     compinit -d "$_dot_zcompdump"
     # Compiling the dump saves reading and parsing it next time.
     [[ -f "$_dot_zcompdump.zwc" && "$_dot_zcompdump.zwc" -nt "$_dot_zcompdump" ]] \
@@ -61,13 +60,15 @@ fi
 # finds Downloads and `f.b` finds foo.bar.
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*:*:*:*:*' menu select        # arrow-key selectable menu
+zstyle ':completion:*' group-name ''              # separate matches by tag
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
+zstyle ':completion:*' verbose yes
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$_dot_zsh_cache/zcompcache"
 zstyle ':completion:*' special-dirs true          # offer . and .. where useful
 zstyle ':completion:*' list-colors 'di=1;36' 'ln=35' 'so=32' 'pi=33' 'ex=31' \
     'bd=34;46' 'cd=34;43' 'su=30;41' 'sg=30;46' 'tw=30;42' 'ow=30;43'
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 # Do not offer the current directory back to cd ..
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
@@ -119,28 +120,4 @@ bindkey '^[[1;5C' forward-word          # Ctrl-Right
 bindkey '^[[1;5D' backward-word         # Ctrl-Left
 bindkey '^[[1;3C' forward-word          # Alt-Right
 bindkey '^[[1;3D' backward-word         # Alt-Left
-
-## Aliases ####################################################################
-
-# ls colours. Both spellings: BSD ls reads LSCOLORS, GNU ls LS_COLORS, and a
-# mac with coreutils installed may have either on PATH.
-export LSCOLORS="Gxfxcxdxbxegedabagacad"
-export LS_COLORS="di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
-if ls --color=auto . >/dev/null 2>&1; then
-    alias ls='ls --color=auto'          # GNU
-else
-    alias ls='ls -G'                    # BSD
-fi
-alias ll='ls -lh'
-alias la='ls -lAh'
-
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-# Directory shorthands.
-alias -- -='cd -'
-alias ..='cd ../'
-alias ...='cd ../../'
-alias ....='cd ../../../'
-alias d='dirs -v | head -10'
+bindkey '^[[Z'    reverse-menu-complete # Shift-Tab
