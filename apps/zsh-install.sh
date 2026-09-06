@@ -62,8 +62,11 @@ install_tool() {
     fi
 }
 
-install_tool fzf fzf
-install_tool zoxide zoxide
+# Optional: core/integrations.zsh guards both with a command check, so a host
+# without them gets a working shell. `set -e` would otherwise abort the whole
+# Zsh install on a machine with no supported package manager.
+install_tool fzf fzf || warn "continuing without fzf"
+install_tool zoxide zoxide || warn "continuing without zoxide"
 
 # $1: name, $2: repo url
 install_plugin() {
@@ -93,6 +96,17 @@ install_plugin() {
 install_plugin powerlevel10k https://github.com/romkatv/powerlevel10k.git
 install_plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 install_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+# Compile the freshly cloned or updated plugins now, so the first interactive
+# shell after an install does not pay for it. This is the same command the user
+# can run at any time, and core/plugins.zsh performs the same check at startup,
+# so skipping it here would cost speed once, never correctness.
+if command_exist zsh; then
+    if ! DOT_ZSH_DIR="$ZSH_APP_DIR" DOT_ZSH_PLUGIN_DIR="$PLUGIN_DIR" \
+            "$ZSH_APP_DIR/bin/zsh-compile" > /dev/null; then
+        warn "byte-compilation reported failures, continuing"
+    fi
+fi
 
 link_config "$ZSH_CONF_FILE" "$HOME/.zshrc"
 

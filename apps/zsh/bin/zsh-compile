@@ -1,0 +1,111 @@
+#!/usr/bin/env zsh
+#
+# Maintain the byte-compiled form of the Zsh plugins and of this
+# configuration's own files, without re-running the installer.
+#
+# The same work happens automatically: core/plugins.zsh compiles whatever is
+# out of date when an interactive shell starts. This command exists for the
+# cases that check does not cover -- forcing everything after a Zsh upgrade,
+# clearing the compiled files, or just seeing what the state is.
+
+emulate -L zsh
+set -o no_unset -o pipe_fail
+
+# No err_return: an arithmetic command evaluating to zero -- `(( n++ ))` on the
+# first increment, or a count comparison -- has a non-zero status, and aborting
+# on those would silently truncate the report.
+
+typeset -g self=${0:t}
+
+typeset -g DOT_ZSH_DIR=${DOT_ZSH_DIR:-${${0:A:h}:h}}
+typeset -g DOT_ZSH_PLUGIN_DIR=${DOT_ZSH_PLUGIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins}
+
+source "$DOT_ZSH_DIR/lib/compile.zsh" || {
+    print -ru2 -- "$self: cannot read $DOT_ZSH_DIR/lib/compile.zsh"
+    return 1
+}
+
+usage() {
+    print -r -- "usage: $self [command]
+
+  (no command)  compile targets whose compiled form is missing or out of date
+  force         recompile every target, ignoring timestamps
+  clean         remove every target's compiled form
+  list          show each target and its state, and compile nothing
+
+Targets are the plugin files this configuration sources and its own files.
+Powerlevel10k compiles itself and is not included. Compiled files live beside
+their sources, outside this repository for plugins, and are never committed."
+}
+
+# Print one path per line, shortened against $HOME.
+report() {
+    local label=$1 f
+    shift
+    (( $# )) || return 0
+    print -r -- "$label ($#):"
+    for f in "$@"; do
+        print -r -- "  ${f/#$HOME/~}"
+    done
+}
+
+local command=${1:-compile}
+
+case $command in
+    -h|--help|help)
+        usage
+        return 0
+        ;;
+
+    list)
+        local -a reply
+        dot_zsh_compile_targets
+        local f state current=0 stale=0 missing=0
+        for f in $reply; do
+            if [[ ! -f $f.zwc ]]; then
+                state='not compiled'; missing=$(( missing + 1 ))
+            elif [[ $f.zwc -nt $f ]]; then
+                state='current';      current=$(( current + 1 ))
+            else
+                state='out of date';  stale=$(( stale + 1 ))
+            fi
+            printf '%-14s %s\n' "$state" "${f/#$HOME/~}"
+        done
+        print
+        print -r -- "$#reply target(s): $current current, $stale out of date, $missing not compiled"
+        return 0
+        ;;
+
+    clean)
+        dot_zsh_compile_clean
+        print -r -- "removed ${#_dot_zsh_removed} compiled file(s)"
+        return 0
+        ;;
+
+    compile|force)
+        local -a args=()
+        [[ $command == force ]] && args=(-f)
+
+        # One file failing must not hide the others: dot_zsh_compile reports
+        # through its arrays and its status is read after the report.
+        dot_zsh_compile $args
+
+        report 'compiled' "${_dot_zsh_compiled[@]}"
+        report 'not writable, skipped' "${_dot_zsh_skipped[@]}"
+        report 'failed' "${_dot_zsh_failed[@]}"
+
+        if (( ${#_dot_zsh_compiled} == 0 && ${#_dot_zsh_skipped} == 0 &&
+              ${#_dot_zsh_failed} == 0 )); then
+            print -r -- 'everything already up to date'
+        fi
+
+        (( ${#_dot_zsh_failed} == 0 )) && return 0
+        return 1
+        ;;
+
+    *)
+        print -ru2 -- "$self: unknown command: $command"
+        usage >&2
+        return 2
+        ;;
+esac

@@ -25,6 +25,12 @@ scripts
 apps/alacritty/plugins/*
 !apps/alacritty/plugins/README.md
 
+# Byte-compiled Zsh. These are host-local build output derived from a source
+# file that is either tracked or a plugin checkout; they are regenerated on
+# demand and must never be committed. Nothing currently writes one inside this
+# repository, and this keeps it that way.
+*.zwc
+
 # Other tmp files
 *.swp
 *~
