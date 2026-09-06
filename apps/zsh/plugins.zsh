@@ -1,8 +1,5 @@
-# The two zle plugins that oh-my-zsh's `plugins` array used to load.
-#
-# Nothing about them needed omz -- they are ordinary scripts that get sourced,
-# and omz was only providing the directory they happened to sit in. Order
-# matters here and it is the reason this file is separate from the rest:
+# Load the two configured ZLE plugins directly. Order matters here and is the
+# reason this file is separate from the rest:
 # zsh-syntax-highlighting wraps every zle widget defined before it, and
 # zsh-autosuggestions expects to be loaded after that.
 

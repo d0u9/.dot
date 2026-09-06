@@ -5,10 +5,7 @@
 # is still being sourced, which is what takes the first prompt in a large
 # repository from ~300ms to ~25ms.
 #
-# The cache only exists once p10k has written one. Starting a shell with
-# another prompt after that still replays it, so pure or starship flash a
-# p10k-shaped prompt for a moment before drawing their own. Harmless, and it
-# stops once p10k has not run for long enough for the cache to go stale.
+# The cache only exists once p10k has written one.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -21,8 +18,8 @@ fi
 export DOT_LOG_LEVEL="warn"
 export DOT_ZSH_DIR=$HOME/.dot/apps/zsh
 
-# Where install.sh clones zsh-syntax-highlighting, zsh-autosuggestions,
-# powerlevel10k and pure.
+# Where install.sh clones zsh-syntax-highlighting, zsh-autosuggestions and
+# powerlevel10k.
 export DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
 
 source $DOT_ZSH_DIR/lib.sh
@@ -31,11 +28,10 @@ source $DOT_ZSH_DIR/lib.sh
 #
 #   pre      platform files, tool integration, generated completions. Runs
 #            first because completions must reach fpath before compinit.
-#   core     shell options, compinit, key bindings, base aliases. What
-#            oh-my-zsh's lib/ used to do.
+#   core     shell options, compinit, key bindings and base aliases.
 #   plugins  zsh-syntax-highlighting then zsh-autosuggestions. After core,
 #            since highlighting wraps the widgets that exist when it loads.
-#   post     history-independent extras, the prompt, OSC 133 marks, and the
+#   post     history-independent extras, the Powerlevel10k prompt, and the
 #            per-host post files, which get the last word by design.
 source $DOT_ZSH_DIR/pre.zsh
 source $DOT_ZSH_DIR/core.zsh

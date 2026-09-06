@@ -3,8 +3,8 @@ This host-conf directory contains files that are specific to a HOST.
 For example, on some test hosts, we want to setup different PATH environment
 variable that is not suitable to be included in git repo.
 
-Files suffixed with `-pre.sh` are loaded before invoking oh-my-zsh.
-Files suffixed with `-post.sh` are loaded after invoking oh-my-zsh.
+Files suffixed with `-pre.sh` are loaded before core shell and prompt setup.
+Files suffixed with `-post.sh` are loaded after prompt setup.
 
 Within each of those two groups the files are sourced in filename order, so the
 numeric prefix decides the order. The prefix encodes a TIER, not a sequence:
@@ -15,10 +15,10 @@ gets linked on a given host.
     10-   platform specific (10-linux-*.sh and 10-macos-*.sh both use 10)
     20-   scene: one particular host or project
 
-Nothing here is tracked by the .dot repo. These are symlinks, pointed at the
-real files in the private conf repo, and each host links only what it needs:
+Host-specific scripts are not tracked by the .dot repo. They are symlinks to
+files in the private conf repo, and each host links only what it needs:
 
-    ln -s ../../../conf/app_conf/pub/omz/00-zshrc-pre.sh 00-zshrc-pre.sh
+    ln -s ../../../conf/app_conf/pub/zsh/00-zshrc-pre.sh 00-zshrc-pre.sh
 
 Keep the link name identical to the target name so the tier stays visible here.
 

@@ -33,7 +33,6 @@ or a scoped `rg` search.
 ├── gdb/gdbinit              standalone debugger config
 ├── conf/                    independent private configuration repository
 ├── private/                 separate private repository
-└── install.sh_old           historical installer
 ```
 
 `install.sh` resolves its location into `DOT_DIR`, discovers
@@ -75,16 +74,16 @@ The effective order starting at `apps/zsh/zshrc` is:
 
 ```text
 base variables/plugins → lib.sh
-  → omz-pre.sh
+  → pre.zsh
       → macos/macos-pre.sh OR linux/linux-pre.sh
       → shared plugin/tool setup
       → host-conf/*-pre.sh, sorted
-  → $ZSH/oh-my-zsh.sh
-  → omz-post.sh
+  → core.zsh
+  → plugins.zsh
+  → post.zsh
       → matching platform post file
-      → shared functions, Pure prompt, OSC 133 hooks
+      → shared functions and Powerlevel10k prompt
       → host-conf/*-post.sh, sorted
-  → final initialization in zshrc (currently zoxide)
 ```
 
 Choose scope first, then execution phase:
@@ -93,9 +92,9 @@ Choose scope first, then execution phase:
 | --- | --- |
 | Portable public shell behavior | `apps/zsh/{pre,core,plugins,post}.zsh` |
 | Public OS-specific behavior | `apps/zsh/{macos,linux}/` |
-| Shared personal configuration | `conf/app_conf/pub/omz/00-zshrc-{pre,post}.sh` |
-| Personal OS-specific configuration | `conf/app_conf/pub/omz/10-{linux,macos}-{pre,post}.sh` |
-| Host, employer, or project configuration | `conf/app_conf/pub/omz/scene/20-*.sh` or its subdirectories |
+| Shared personal configuration | `conf/app_conf/pub/zsh/00-zshrc-{pre,post}.sh` |
+| Personal OS-specific configuration | `conf/app_conf/pub/zsh/10-{linux,macos}-{pre,post}.sh` |
+| Host, employer, or project configuration | `conf/app_conf/pub/zsh/scene/20-*.sh` or its subdirectories |
 | Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
 
 The private files become active through selected symlinks in
@@ -106,15 +105,10 @@ both for the same phase. A scene file is selected explicitly; its presence in
 `conf/` does not load it. Read `apps/zsh/host-conf/note.txt` for the link pattern.
 `pub` within `conf` means shared personal scope, not public or secret-free.
 
-As observed on 2026-09-06, `host-conf/` contains only `note.txt`, so that entry
-point enables no private shell files on this host. Recheck links when needed;
-do not turn this observation into a permanent assumption.
-
-Plugin selection belongs before OMZ loads. Pure and OSC 133 hooks live after
-OMZ; preserve the documented order that captures exit status before Pure and
-appends the prompt-end marker after prompt setup. Check existing definitions
-and hooks when introducing a command such as `z`: `fasd` and `jump` have
-conditional setup in `omz-pre.sh`, and host configuration may add more.
+Powerlevel10k is the only prompt and loads in `post.zsh`; its host-specific
+settings must therefore use a `*-pre.sh` file. Check existing definitions and
+hooks when introducing a command such as `z`: `fasd` and `jump` have
+conditional setup in `pre.zsh`, and host configuration may add more.
 
 ## Application-specific conventions
 
@@ -131,8 +125,8 @@ conditional setup in `omz-pre.sh`, and host configuration may add more.
   installer downloads the four flavours. Source configuration is tracked,
   downloaded themes are ignored except `plugins/README.md`.
 - Zellij keeps only overrides of default settings in `config.kdl`. Preserve
-  that approach. Its theme matches Alacritty, and shell helpers/prompt markers
-  are implemented in OMZ post configuration.
+  that approach. Its theme matches Alacritty, and shell helpers live in Zsh
+  post configuration; Powerlevel10k emits the prompt markers.
 - tmux's main config sources an OS fragment and invokes TPM under `~/.tmux`.
   The installer bootstraps TPM; plugins are installed through tmux. Keep
   downloaded `apps/tmux/plugins/` out of source edits.

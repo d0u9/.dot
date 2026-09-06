@@ -3,7 +3,9 @@ The bucket of dot files.
 
 # Description
 
-This repo includes configuration files come from various most common used softewares, such as neovim, oh-my-zsh, tmux or private applications(this private configuration is managed by an independent git repo, and won't be added in this repo to avoid sensitive information leakage). Each application's specific configuration files are contained in one directory which named as the application's name.
+This repository contains configuration for Zsh, Neovim, tmux and other commonly
+used applications. Private configuration lives in an independent repository so
+that sensitive information is not added here.
 
 ---
 
@@ -13,7 +15,7 @@ This repo includes configuration files come from various most common used softew
 - [Private config files](#Private config files)
 - [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
-- [oh-my-zsh](#oh-my-zsh)
+- [Zsh](#zsh)
 - [tmux](#tmux)
 
 # Supported platforms
@@ -35,7 +37,7 @@ mechanisms below, never inlined into a shared file.
 | OS-specific | `apps/zsh/macos/`, `apps/zsh/linux/` | yes |
 | Machine-specific | `apps/zsh/host-conf/*-{pre,post}.sh` | no, gitignored |
 
-`omz-pre.sh` and `omz-post.sh` dispatch on `$OSTYPE` into the first, then
+`pre.zsh` and `post.zsh` dispatch on `$OSTYPE` into the first, then
 source anything found in the second. A path, prefix or tool that only exists
 on one host belongs in `host-conf`, not in a tracked file.
 
@@ -48,9 +50,8 @@ These follow from portability bugs that have already been fixed here once:
   a machine can carry both an arm64 Homebrew and a Rosetta one, and probing
   in the other order silently selects the Rosetta toolchain on Apple Silicon.
 - **Guard every optional tool** with `command_exist`, so a host that lacks it
-  starts a clean shell instead of printing errors. The same applies to
-  optional oh-my-zsh plugins and themes, which need a directory test before
-  they are enabled.
+  starts a clean shell instead of printing errors. Optional plugins and themes
+  likewise need a directory test before they are enabled.
 - **Do not assume one install layout.** `nvm`, for example, ships as
   `$NVM_DIR/nvm.sh` with completion at `$NVM_DIR/bash_completion` when
   installed from git, but as `$HOMEBREW_PREFIX/opt/nvm/nvm.sh` with
@@ -121,7 +122,6 @@ was made because packer is no longer maintained.
 
 | Manager | Manages | Adopted | Commit |
 | --- | --- | --- | --- |
-| [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh) | zsh plugins | 2015-11-26 | `9a74de3` |
 | [tpm](https://github.com/tmux-plugins/tpm) | tmux plugins | 2015-12-20 | `ac272b7` |
 | [pyenv](https://github.com/pyenv/pyenv) | python versions | 2016-04-18 | `26e29a3` |
 | [Homebrew](https://brew.sh) | macOS packages | 2021-04-30 | `1ba93ce` |
@@ -177,10 +177,10 @@ parser.
 
 ---
 
-# oh-my-zsh
+# Zsh
 
-1. Copy theme to your oh-my-zsh configuration directory.
-2. Make a symbol of zshrc to your ~ directory.
+Run `./install.sh -i zsh` to install the configured plugins and link
+`apps/zsh/zshrc` to `~/.zshrc`.
 
 ---
 

@@ -1,4 +1,4 @@
-# oh-my-zsh host config
+# Host-specific Zsh config
 apps/zsh/host-conf/*.sh
 
 # nvim tmp files

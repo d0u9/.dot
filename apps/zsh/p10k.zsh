@@ -1,19 +1,4 @@
-# Config file for Powerlevel10k with the style of Pure (https://github.com/sindresorhus/pure).
-#
-# Differences from Pure:
-#
-#   - Git:
-#     - `@c4d3ec2c` instead of something like `v1.4.0~11` when in detached HEAD state.
-#     - No automatic `git fetch` (the same as in Pure with `PURE_GIT_PULL=0`).
-#
-# Apart from the differences listed above, the replication of Pure prompt is exact. This includes
-# even the questionable parts. For example, just like in Pure, there is no indication of Git status
-# being stale; prompt symbol is the same in command, visual and overwrite vi modes; when prompt
-# doesn't fit on one line, it wraps around with no attempt to shorten it.
-#
-# If you like the general style of Pure but not particularly attached to all its quirks, type
-# `p10k configure` and pick "Lean" style. This will give you slick minimalist prompt while taking
-# advantage of Powerlevel10k features that aren't present in Pure.
+# Powerlevel10k prompt configuration.
 
 # Temporarily change options.
 'builtin' 'local' '-a' 'p10k_config_opts'
@@ -71,8 +56,7 @@
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
   typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=           # no segment icons
 
-  # Add an empty line before each prompt except the first. This doesn't emulate the bug
-  # in Pure that makes prompt drift down whenever you use the Alt-C binding from fzf or similar.
+  # Add an empty line before each prompt except the first.
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 
   # Magenta prompt symbol if the last command succeeded.
@@ -80,7 +64,7 @@
   # Red prompt symbol if the last command failed.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
   # Default prompt symbol.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
   # Prompt symbol in command vi mode.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VICMD_CONTENT_EXPANSION='❮'
   # Prompt symbol in visual vi mode is the same as in command mode.
@@ -193,18 +177,12 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
 'builtin' 'unset' 'p10k_config_opts'
 
 # ---------------------------------------------------------------------------
-# Local changes on top of powerlevel10k's own pure preset. These reproduce the
-# two things the d0u9/pure fork carried, so that the fork can be retired: the
-# angle brackets around git state, and a host alias.
-#
-# Everything below is plain configuration. That is the point -- pure had no
-# hook for either of these, which is why they had to live in a fork that then
-# sat five releases behind upstream.
+# Local prompt customizations: angle brackets around git state and a host
+# alias.
 # ---------------------------------------------------------------------------
 
-# pure colours the dirty marker differently from the branch name (218 against
-# 242); p10k's preset paints the whole segment one colour. Switch back to 242
-# after the marker so the arrows that follow keep the branch colour.
+# Colour the dirty marker differently from the branch name, then switch back
+# so the arrows that follow keep the branch colour.
 typeset -g POWERLEVEL9K_VCS_DIRTY_ICON='%F{218}*%F{242}'
 
 # Wrap git state in ‹ ›. %f drops back to the default foreground so the
@@ -213,17 +191,14 @@ typeset -g POWERLEVEL9K_VCS_DIRTY_ICON='%F{218}*%F{242}'
 # colons into spaces.
 typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='%f‹ %F{242}${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }%f ›'
 
-# The fork patched pure's hostname to read $HOSTALIAS, for hosts whose real
-# name is long and unhelpful. p10k takes an expansion instead, so no patch is
-# needed: set HOSTALIAS in host-conf and it shows up here.
+# Read $HOSTALIAS on hosts whose real name is long and unhelpful.
 #
-# Only the REMOTE variants: pure shows user@host over ssh and nothing locally,
-# and the preset above blanks DEFAULT and SUDO to match. Setting those too
-# would put doug@Yaks-MBP-2018 in front of every local prompt.
+# Only the REMOTE variants show user@host; setting the local variants too would
+# put a hostname in front of every local prompt.
 typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@${HOSTALIAS:-%m}'
 
 # Emit OSC 133 prompt marks. p10k's implementation covers more than the hand
-# written one in omz-post.sh did -- it wraps the sequences for tmux and marks
+# written implementation did -- it wraps the sequences for tmux and marks
 # the right prompt too -- so that block stands down when this prompt is used.
 #
 # The value has to be the string 'true'. p10k's boolean parser is

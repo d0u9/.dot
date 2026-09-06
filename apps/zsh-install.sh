@@ -12,9 +12,8 @@ info "Installing zsh configuration"
 ZSH_APP_DIR=$(abs_path "$APP_DIR/zsh")
 ZSH_CONF_FILE="$ZSH_APP_DIR/zshrc"
 
-# Plugins live under XDG data rather than inside another framework's tree, so
-# that nothing here depends on oh-my-zsh being installed. Kept in step with
-# DOT_ZSH_PLUGIN_DIR in zshrc.
+# Plugins live under XDG data. Keep this in step with DOT_ZSH_PLUGIN_DIR in
+# zshrc.
 PLUGIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins"
 mkdir -p "$PLUGIN_DIR"
 
@@ -48,12 +47,6 @@ install_plugin() {
 install_plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 install_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
 
-# The prompt is picked at runtime by DOT_PROMPT (see post.zsh), so install
-# both and let each host choose. pure comes from upstream now rather than the
-# d0u9 fork: the two things that fork carried -- angle brackets around the git
-# state and a host alias -- are plain configuration under powerlevel10k, and
-# the fork had drifted five releases behind while carrying them.
-install_plugin pure https://github.com/sindresorhus/pure.git
 install_plugin powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
 # p10k talks to gitstatusd, a per-platform binary it fetches on first use.

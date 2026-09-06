@@ -11,9 +11,7 @@ else
 fi
 
 ##################              Completions                  ##################
-# Generate a completion script from a tool that ships one, and cache it. This
-# replaces the oh-my-zsh plugins that existed only to run the same command --
-# omz's rust, kubectl, docker and golang plugins were little else.
+# Generate a completion script from a tool that ships one, and cache it.
 #
 # Regenerated only when the binary is newer than the cache, so the usual cost
 # is one stat. Running `tool completion zsh` on every startup instead would be
@@ -56,8 +54,8 @@ fi
 
 if command_exist tmux; then
     alias tmux="tmux -2"
-    # tmuxinator has no completion of its own; _tmuxinator is checked in under
-    # completions/, taken from the oh-my-zsh plugin of the same name.
+    # tmuxinator has no completion of its own, so _tmuxinator is checked in
+    # under completions/.
 fi
 
 if command_exist nvim; then
@@ -84,8 +82,7 @@ command_exist gh      && dot_gen_completion gh      gh completion -s zsh
 
 # Pyenv
 if command_exist pyenv; then
-    # Instead of using oh-my-zsh's pyenv plugin, we speed up the process
-    # by using the command below
+    # Avoid the slower login-shell initialization.
     # eval "$(pyenv init --path)"
     eval "$(pyenv init -)"
     # eval "$(pyenv virtualenv-init -)"

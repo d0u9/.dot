@@ -1,19 +1,9 @@
-# Shell behaviour that oh-my-zsh's lib/ used to provide.
-#
-# Only what was actually in use. Of omz's 21 lib files this reproduces six;
-# the rest were dead weight here -- cli.zsh's 944 lines exist to serve the
-# `omz` command itself, diagnostics.zsh another 353 for a bug-report dump,
-# and clipboard/spectrum/async_prompt were never reached.
-#
-# Loading omz to get these cost 250ms before the shell would accept a
-# command, and about 8ms on every prompt after that.
+# Core shell behaviour, options, completion and key bindings.
 
 ## Options ###################################################################
 
-# HISTSIZE is what a running shell holds, SAVEHIST what reaches the file. omz
-# capped the file at 10000: at the ~360 commands a day this account runs that
-# is under a month, and two thirds of the entries are duplicates, so what
-# expires first is the rare command worth recalling.
+# HISTSIZE is what a running shell holds, SAVEHIST what reaches the file. Keep
+# enough unique entries to retain more than a month of history.
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=200000
 SAVEHIST=100000
@@ -35,7 +25,7 @@ setopt pushd_minus               # so that +N and -N read the way people expect
 
 setopt interactive_comments      # allow # comments when typing at the prompt
 setopt long_list_jobs            # jobs in long format by default
-setopt prompt_subst              # prompts expand $(...); starship relies on it
+setopt prompt_subst              # allow parameter expansion in prompts
 setopt always_to_end             # completion leaves the cursor after the word
 setopt complete_in_word          # complete from where the cursor is, not the end
 unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
@@ -56,8 +46,8 @@ fpath=("$DOT_ZSH_DIR/completions" "$_dot_zsh_cache/completions" $fpath)
 autoload -Uz compinit
 # compinit's security check walks every directory in fpath, which is the
 # expensive half of it. Do the full run when the dump is older than a day and
-# take the cached one otherwise -- the same bargain omz struck, at 24 hours
-# rather than 20. `-C` skips both the check and the staleness comparison.
+# take the cached one otherwise. `-C` skips both the check and the staleness
+# comparison.
 if [[ -n $_dot_zcompdump(#qN.mh+24) ]]; then
     compinit -d "$_dot_zcompdump"
     # Compiling the dump saves reading and parsing it next time.
@@ -99,9 +89,8 @@ typeset -gA _dot_keys=(
     Backspace "${terminfo[kbs]}"
 )
 
-# up-line-or-beginning-search is the one omz behaviour worth keeping above all
-# the others: with a partial command typed, Up walks only the history entries
-# that start with it, instead of every line ever run.
+# With a partial command typed, Up walks only the history entries that start
+# with it instead of every line ever run.
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
@@ -149,8 +138,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-# Directory shorthands. `-` is the only one of omz's twenty that showed up in
-# the history file, but the rest cost nothing.
+# Directory shorthands.
 alias -- -='cd -'
 alias ..='cd ../'
 alias ...='cd ../../'
