@@ -2,142 +2,99 @@
 
 # This script contains functions that can be used anywhere during custom setup.
 
-# Callers that do not set DOT_OMZ_DIR (the installers run straight from a
-# clone) still need the colour helpers that sit next to this file.
-if [ -z "${DOT_OMZ_DIR:-}" ] && [ -n "${BASH_SOURCE:-}" ]; then
-    DOT_OMZ_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+# Nothing here is POSIX sh: the functions below use `local`, $'...' and
+# [[ ]]. Say so rather than failing in pieces further down.
+if [ -z "${BASH_VERSION:-}" ] && [ -z "${ZSH_VERSION:-}" ]; then
+    echo "unknow shell, neither bash nor zsh" >&2
 fi
 
+# The colours a log line can use are fixed, so the escapes are constants.
+# They used to come from bash_color.sh and zsh_color.sh, a pair of vendored
+# helpers that built the same handful of escapes from scratch on every call.
+# Both emitted identical SGR codes, so one set of constants replaced both and
+# let bash_log/zsh_log collapse into a single dlog().
+_DOT_C_RESET=$'\033[0m'
+_DOT_C_RED=$'\033[0;31m'
+_DOT_C_GREEN=$'\033[0;32m'
+_DOT_C_CYAN=$'\033[0;36m'
+_DOT_C_LIGHTBLUE=$'\033[0;94m'
+_DOT_C_ITALIC_CYAN=$'\033[3;36m'
+
+# dlog <level> <message> [file]
+# level is one of error, warn, info, debug; anything above $DOT_LOG_LEVEL is
+# dropped. Example:
+# dlog 'info' 'info hello'
+# dlog 'debug' 'debug hello' '/apps/omz/omz-pre.sh'
+#
+# Not named log(): macOS ships /usr/bin/log for querying the unified logging
+# system, and a function by that name shadows it in every interactive shell.
+#
+# Writes into _dlog_lvl rather than echoing, so that callers can read the
+# result without a command substitution.
+_dlog_level() {
+    case "$1" in
+        'error') _dlog_lvl=1;;
+        'warn')  _dlog_lvl=2;;
+        'info')  _dlog_lvl=3;;
+        'debug') _dlog_lvl=4;;
+        *)       _dlog_lvl=2;;
+    esac
+}
+
+dlog() {
+    local level="$1"
+    local msg="$2"
+    local file="${3:-}"
+    local _dlog_lvl threshold
+
+    # Decide whether this line is wanted before formatting it. At the default
+    # level most calls are 'info' and get dropped, so everything below would
+    # be thrown away.
+    _dlog_level "${DOT_LOG_LEVEL:-info}"
+    threshold=$_dlog_lvl
+    _dlog_level "$level"
+    [ "$_dlog_lvl" -le "$threshold" ] || return 0
+
+    local head c
+    case "$level" in
+        'debug') head="${_DOT_C_GREEN}[D]${_DOT_C_RESET}"; c="$_DOT_C_LIGHTBLUE";;
+        'info')  head="${_DOT_C_GREEN}[I]${_DOT_C_RESET}"; c="$_DOT_C_CYAN";;
+        'warn')  head="${_DOT_C_GREEN}[W]${_DOT_C_RESET}"; c="$_DOT_C_CYAN";;
+        'error') head="${_DOT_C_RED}[E]${_DOT_C_RESET}";   c="$_DOT_C_CYAN";;
+        *)       head="${_DOT_C_GREEN}[?]${_DOT_C_RESET}"; c="$_DOT_C_RESET";;
+    esac
+
+    if [ -n "$file" ]; then
+        file="[${_DOT_C_ITALIC_CYAN}${file}${_DOT_C_RESET}]"
+    fi
+
+    # Everything variable goes through an argument rather than the format
+    # string, so that a '%' in a message or path cannot corrupt the output.
+    printf '%s: %s%-36s%s%s\n' "$head" "$c" "$msg" "$_DOT_C_RESET" "$file"
+}
+
+# install.sh runs each app installer as a separate process; without this they
+# would lose dlog and have to source this file again. The escapes have to go
+# too, or an exported dlog() prints its levels uncoloured.
 if [ -n "${BASH_VERSION:-}" ]; then
-    source "$DOT_OMZ_DIR/bash_color.sh"
-    function log() {
-        bash_log "$@"
-    }
-    export -f log
-elif [ -n "${ZSH_VERSION:-}" ]; then
-    source "$DOT_OMZ_DIR/zsh_color.sh"
-    function log() {
-        zsh_log "$@"
-    }
-else
-    echo "unknow shell, neither bash nor zsh"
+    export -f dlog _dlog_level
+    export _DOT_C_RESET _DOT_C_RED _DOT_C_GREEN _DOT_C_CYAN \
+           _DOT_C_LIGHTBLUE _DOT_C_ITALIC_CYAN
 fi
 
-# log [level=info] [message] <file>
-# Example:
-# log 'info' 'info hello'
-# log 'debug' 'debug hello'
-bash_log() {
-    level_to_num() {
-        case "$1" in
-            'error') echo 1;;
-            'warn') echo 2;;
-            'info') echo 3;;
-            'debug') echo 4;;
-            *) echo 2;
-        esac
-    }
-
-    local level="$1"
-    local msg="$2"
-    local file="${3:-}"
-    local head_str=""
-    local msg_str=""
-    case "$level" in
-        'debug')
-            msg_str=$(clr_blue "$msg")
-            head_str="$(clr_green [D])"
-            ;;
-        'info')
-            msg_str=$(clr_blue "$msg")
-            head_str="$(clr_green [I])"
-            ;;
-        'warn')
-            msg_str=$(clr_blue "$msg")
-            head_str="$(clr_green [W])"
-            ;;
-        'error')
-            msg_str=$(clr_blue "$msg")
-            head_str="$(clr_red [E])"
-            ;;
-        *) ;;
-    esac
-
-    if [ ! -z "$file" ]; then
-        file="[$(clr_cyan)$file$(clr_reset)]"
-    fi
-
-    tl=$(level_to_num "${DOT_LOG_LEVEL:-info}")
-    l=$(level_to_num "$level")
-    if [ "$l" -le "$tl" ]; then
-        printf "$head_str: %-36s$file\n" "$msg_str"
-    fi
-}
-
-# log [level=info] [message] <file>
-# Example:
-# log 'info' 'info hello'
-# log 'debug' 'debug hello'
-zsh_log() {
-    level_to_num() {
-        case "$1" in
-            'error') echo 1;;
-            'warn') echo 2;;
-            'info') echo 3;;
-            'debug') echo 4;;
-            *) echo 2;
-        esac
-    }
-
-    local level="$1"
-    local msg="$2"
-    local file="${3:-}"
-    local c_reset="$(color reset)"
-    local head_str=""
-    case "$level" in
-        'debug')
-            c=$(color lightblue)
-            head_str="$(color green)[D]$(color reset)"
-            ;;
-        'info')
-            c=$(color cyan)
-            head_str="$(color green)[I]$(color reset)"
-            ;;
-        'warn')
-            c=$(color cyan)
-            head_str="$(color green)[W]$(color reset)"
-            ;;
-        'error')
-            c=$(color cyan)
-            head_str="$(color red)[E]$(color reset)"
-            ;;
-        *) c="$c_reset";;
-    esac
-
-    if [ ! -z "$file" ]; then
-        file="[$(color -i cyan)$file$(color reset)]"
-    fi
-
-    tl=$(level_to_num "${DOT_LOG_LEVEL:-info}")
-    l=$(level_to_num "$level")
-    if [ "$l" -le "$tl" ]; then
-        printf "$head_str: $c%-36s$c_reset$file\n" "$msg"
-    fi
-}
-
-# A wrapper of log 'info'
+# A wrapper of dlog 'info'
 info() {
-    log 'info' "$1" "${2:-}"
+    dlog 'info' "$1" "${2:-}"
 }
 
-# A wrapper of log 'info'
+# A wrapper of dlog 'warn'
 warn() {
-    log 'warn' "$1" "${2:-}"
+    dlog 'warn' "$1" "${2:-}"
 }
 
-# A wrapper of log 'error'
+# A wrapper of dlog 'error'
 error() {
-    log 'error' "$1" "${2:-}"
+    dlog 'error' "$1" "${2:-}"
 }
 
 # Test if command is exist
@@ -168,21 +125,31 @@ abs_path() {
     esac
 }
 
-# Get Current file path
-# Usage:
-# cur_path "$0"
-cur_path() {
-    echo "$(dirname -- "$1")/$(basename -- "$1")"
-}
-
 # Get curent relative file path to another dir
 # Usage:
 # cur_path_relative "/home" "$0"
+#
+# Every caller is a log line in a config file that zshrc sources, passing its
+# own $0, so this runs about twenty times per shell startup. It used to go
+# through abs_path twice, which meant four dirname/basename processes plus a
+# cd/pwd subshell each -- roughly 40ms a call. Prefix stripping needs none of
+# that: $0 is already absolute here because every source site spells out a
+# full path, and the $PWD branch covers anyone who does not.
 cur_path_relative() {
-    local base cur
-    base=$(abs_path "$1")
-    cur=$(abs_path "$(cur_path "$2")")
-    echo "${cur#"$base"}"
+    local base="${1%/}"
+    local cur="$2"
+
+    case "$cur" in
+        /*) ;;
+        *) cur="$PWD/$cur";;
+    esac
+
+    case "$cur" in
+        "$base"/*) printf '%s\n' "${cur#"$base"}";;
+        # Not under $base, so there is no relative form to give; the absolute
+        # path is still the most useful thing to put in the log.
+        *) printf '%s\n' "$cur";;
+    esac
 }
 
 # Prmote "YES" or "NO" for choice
