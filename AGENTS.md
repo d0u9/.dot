@@ -24,7 +24,7 @@ or a scoped `rg` search.
 ├── install.sh                public installer dispatcher
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
-│   ├── omz/                 shared shell, OS branches, host link entry points
+│   ├── zsh/                 shared shell, OS branches, host link entry points
 │   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
 │   ├── alacritty/           TOML config and downloaded themes
 │   ├── zellij/              KDL overrides of upstream defaults
@@ -37,7 +37,7 @@ or a scoped `rg` search.
 ```
 
 `install.sh` resolves its location into `DOT_DIR`, discovers
-`apps/*-install.sh`, and passes `DOT_DIR`, `APP_DIR`, `DOT_OMZ_DIR`, and
+`apps/*-install.sh`, and passes `DOT_DIR`, `APP_DIR`, `DOT_ZSH_DIR`, and
 `DOT_LOG_LEVEL` to child installers. `-l` lists apps, repeatable `-i <app>`
 installs selected apps, and `-a` installs all discovered non-test apps.
 `test*` installers are scaffolding, excluded from listing and `-a` but still
@@ -47,7 +47,7 @@ Current installation targets (link location → repository source):
 
 | Application | Link location | Source |
 | --- | --- | --- |
-| OMZ | `~/.zshrc` | `apps/omz/zshrc` |
+| Zsh | `~/.zshrc` | `apps/zsh/zshrc` |
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
@@ -63,7 +63,7 @@ Symlinked source edits can take effect on the next application launch or
 reload. Inspect links before editing an installed path. A folder being present
 in `apps/` does not mean that app is installed on this host.
 
-App installers use Bash with `set -euo pipefail` and share `apps/omz/lib.sh`.
+App installers use Bash with `set -euo pipefail` and share `apps/zsh/lib.sh`.
 Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
 prompt flow. Installers can also download themes, clone/update plugins, and
@@ -71,7 +71,7 @@ bootstrap editor tooling. They are not read-only validation commands.
 
 ## Shell loading and configuration placement
 
-The effective order starting at `apps/omz/zshrc` is:
+The effective order starting at `apps/zsh/zshrc` is:
 
 ```text
 base variables/plugins → lib.sh
@@ -91,19 +91,19 @@ Choose scope first, then execution phase:
 
 | Scope | Placement |
 | --- | --- |
-| Portable public shell behavior | `apps/omz/omz-{pre,post}.sh` |
-| Public OS-specific behavior | `apps/omz/{macos,linux}/` |
+| Portable public shell behavior | `apps/zsh/{pre,core,plugins,post}.zsh` |
+| Public OS-specific behavior | `apps/zsh/{macos,linux}/` |
 | Shared personal configuration | `conf/app_conf/pub/omz/00-zshrc-{pre,post}.sh` |
 | Personal OS-specific configuration | `conf/app_conf/pub/omz/10-{linux,macos}-{pre,post}.sh` |
 | Host, employer, or project configuration | `conf/app_conf/pub/omz/scene/20-*.sh` or its subdirectories |
-| Initialization requiring final hook ownership | End of executable setup in `apps/omz/zshrc` |
+| Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
 
 The private files become active through selected symlinks in
-`apps/omz/host-conf/`. Preserve the target basename: `00` means shared,
+`apps/zsh/host-conf/`. Preserve the target basename: `00` means shared,
 `10` means platform, `20` means scene, not unique sequence numbers. Each
 private `00` file sources the matching private `10` file itself; do not link
 both for the same phase. A scene file is selected explicitly; its presence in
-`conf/` does not load it. Read `apps/omz/host-conf/note.txt` for the link pattern.
+`conf/` does not load it. Read `apps/zsh/host-conf/note.txt` for the link pattern.
 `pub` within `conf` means shared personal scope, not public or secret-free.
 
 As observed on 2026-09-06, `host-conf/` contains only `note.txt`, so that entry
@@ -157,7 +157,7 @@ interpreter (`.sh` files sourced by Zsh can contain Zsh syntax):
 ```sh
 bash -n install.sh
 for f in apps/*-install.sh; do bash -n "$f" || break; done
-for f in apps/omz/zshrc apps/omz/*.sh apps/omz/macos/*.sh apps/omz/linux/*.sh; do
+for f in apps/zsh/zshrc apps/zsh/*.sh apps/zsh/*.zsh apps/zsh/macos/*.sh apps/zsh/linux/*.sh; do
     zsh -n "$f" || break
 done
 ```

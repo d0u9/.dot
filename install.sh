@@ -9,8 +9,8 @@ APP_DIR="$DOT_DIR/apps"
 DOT_LOG_LEVEL="info"
 
 # import auxiliary functions
-export DOT_OMZ_DIR="$APP_DIR/omz"
-source "$APP_DIR/omz/lib.sh"
+export DOT_ZSH_DIR="$APP_DIR/zsh"
+source "$DOT_ZSH_DIR/lib.sh"
 
 # Echo the installable app names. Anything called test* is scaffolding and is
 # hidden here, though `-i test1` still reaches it.
@@ -61,7 +61,7 @@ install_app() {
     if ! DOT_LOG_LEVEL="$DOT_LOG_LEVEL" \
         APP_DIR="$APP_DIR" \
         DOT_DIR="$DOT_DIR" \
-        DOT_OMZ_DIR="$DOT_OMZ_DIR" \
+        DOT_ZSH_DIR="$DOT_ZSH_DIR" \
         "$install_script"; then
         error "[$name] failed to install"
         return 1

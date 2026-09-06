@@ -5,9 +5,9 @@ info "[PRE] Loading zsh config" $(cur_path_relative "$HOME/.dot" "$0")
 
 ##################         For Different Platforms           ##################
 if [[ "$OSTYPE" = darwin* ]]; then
-    source $DOT_OMZ_DIR/macos/macos-pre.sh
+    source $DOT_ZSH_DIR/macos/macos-pre.sh
 else
-    source $DOT_OMZ_DIR/linux/linux-pre.sh
+    source $DOT_ZSH_DIR/linux/linux-pre.sh
 fi
 
 ##################              Completions                  ##################
@@ -149,7 +149,7 @@ command_exist rbenv && eval "$(rbenv init - zsh)"
 ##################     Load custom host specific config      ##################
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
-PRE_HOST_CONF=$DOT_OMZ_DIR/host-conf
+PRE_HOST_CONF=$DOT_ZSH_DIR/host-conf
 if [ -d $PRE_HOST_CONF ]; then
     for f in $(find $PRE_HOST_CONF -name "*-pre.sh" | sort); do
         source "$f"

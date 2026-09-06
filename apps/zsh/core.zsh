@@ -51,7 +51,7 @@ _dot_zcompdump=$_dot_zsh_cache/zcompdump-$ZSH_VERSION
 # win: the handful checked into this repo (see completions/), and the ones
 # generated from installed tools by dot_gen_completion in pre.zsh. Both have
 # to be on fpath before compinit runs, which is why that lives above this.
-fpath=("$DOT_OMZ_DIR/completions" "$_dot_zsh_cache/completions" $fpath)
+fpath=("$DOT_ZSH_DIR/completions" "$_dot_zsh_cache/completions" $fpath)
 
 autoload -Uz compinit
 # compinit's security check walks every directory in fpath, which is the

@@ -5,11 +5,11 @@ set -euo pipefail
 # DOT_DIR is exported by parent script
 # APP_DIR is exported by parent script
 # DOT_LOG_LEVEL is exported by parent script
-source "$DOT_DIR/apps/omz/lib.sh"
+source "$DOT_DIR/apps/zsh/lib.sh"
 
 info "Installing zsh configuration"
 
-ZSH_APP_DIR=$(abs_path "$APP_DIR/omz")
+ZSH_APP_DIR=$(abs_path "$APP_DIR/zsh")
 ZSH_CONF_FILE="$ZSH_APP_DIR/zshrc"
 
 # Plugins live under XDG data rather than inside another framework's tree, so

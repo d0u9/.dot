@@ -1,5 +1,5 @@
 # oh-my-zsh host config
-apps/omz/host-conf/*.sh
+apps/zsh/host-conf/*.sh
 
 # nvim tmp files
 apps/nvim/runtime/*
@@ -30,4 +30,3 @@ apps/alacritty/plugins/*
 *~
 *.pyc
 .DS_Store
-

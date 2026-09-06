@@ -32,8 +32,8 @@ mechanisms below, never inlined into a shared file.
 
 | Scope | Location | In git |
 | --- | --- | --- |
-| OS-specific | `apps/omz/macos/`, `apps/omz/linux/` | yes |
-| Machine-specific | `apps/omz/host-conf/*-{pre,post}.sh` | no, gitignored |
+| OS-specific | `apps/zsh/macos/`, `apps/zsh/linux/` | yes |
+| Machine-specific | `apps/zsh/host-conf/*-{pre,post}.sh` | no, gitignored |
 
 `omz-pre.sh` and `omz-post.sh` dispatch on `$OSTYPE` into the first, then
 source anything found in the second. A path, prefix or tool that only exists
@@ -129,7 +129,7 @@ was made because packer is no longer maintained.
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | LSP servers | 2023-07-12 | `78e18c3` |
 | [nvm](https://github.com/nvm-sh/nvm) | node versions | 2026-08-21 | `3ea7f45` |
 
-The version managers are all loaded from `apps/omz/`, each behind a
+The version managers are all loaded from `apps/zsh/`, each behind a
 `command_exist` guard, so a host that lacks one still starts a clean shell.
 
 ---

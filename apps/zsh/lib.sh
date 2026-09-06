@@ -24,7 +24,7 @@ _DOT_C_ITALIC_CYAN=$'\033[3;36m'
 # level is one of error, warn, info, debug; anything above $DOT_LOG_LEVEL is
 # dropped. Example:
 # dlog 'info' 'info hello'
-# dlog 'debug' 'debug hello' '/apps/omz/omz-pre.sh'
+# dlog 'debug' 'debug hello' '/apps/zsh/pre.zsh'
 #
 # Not named log(): macOS ships /usr/bin/log for querying the unified logging
 # system, and a function by that name shadows it in every interactive shell.

@@ -2,9 +2,9 @@ info "[POST] Loading zsh config " $(cur_path_relative "$HOME/.dot" "$0")
 
 ## For different platform
 if [[ "$OSTYPE" = darwin* ]]; then
-    source $DOT_OMZ_DIR/macos/macos-post.sh
+    source $DOT_ZSH_DIR/macos/macos-post.sh
 else
-    source $DOT_OMZ_DIR/linux/linux-post.sh
+    source $DOT_ZSH_DIR/linux/linux-post.sh
 fi
 
 ## For zellij command alias
@@ -45,14 +45,14 @@ fi
 case "$DOT_PROMPT" in
     starship)
         # starship reads no zsh state, so its config carries everything.
-        export STARSHIP_CONFIG=$DOT_OMZ_DIR/starship.toml
+        export STARSHIP_CONFIG=$DOT_ZSH_DIR/starship.toml
         eval "$(starship init zsh)"
         ;;
     p10k)
         P10K_DIR=$DOT_ZSH_PLUGIN_DIR/powerlevel10k
         if [ -d "$P10K_DIR" ]; then
             source $P10K_DIR/powerlevel10k.zsh-theme
-            source $DOT_OMZ_DIR/p10k.zsh
+            source $DOT_ZSH_DIR/p10k.zsh
         else
             warn "powerlevel10k not found, skipping" "$P10K_DIR"
         fi
@@ -120,7 +120,7 @@ fi  # DOT_PROMPT != p10k
 
 ### Load config file specifc to this host
 ### These specific configuration isn't included in git.
-POST_HOST_CONF=$DOT_OMZ_DIR/host-conf
+POST_HOST_CONF=$DOT_ZSH_DIR/host-conf
 if [ -d $POST_HOST_CONF ]; then
     for f in $(find $POST_HOST_CONF -name "*-post.sh" | sort); do
         source "$f"
