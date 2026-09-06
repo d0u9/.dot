@@ -88,6 +88,9 @@
   # Don't show context unless root or in SSH.
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
 
+  # Use the optional host alias only for remote sessions.
+  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@${HOSTALIAS:-%m}'
+
   # Show previous command duration only if it's >= 5s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=5
   # Don't show fractional seconds. Thus, 7s rather than 7.3s.
@@ -120,16 +123,16 @@
   typeset -g POWERLEVEL9K_VCS_COMMIT_ICON='@'
   # Don't show staged, unstaged, untracked indicators.
   typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED}_ICON=
-  # Show '*' when there are staged, unstaged or untracked files.
-  typeset -g POWERLEVEL9K_VCS_DIRTY_ICON='*'
+  # Pink dirty marker, then restore the grey branch colour.
+  typeset -g POWERLEVEL9K_VCS_DIRTY_ICON='%F{218}*%F{242}'
   # Show '⇣' if local branch is behind remote.
   typeset -g POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON=':⇣'
   # Show '⇡' if local branch is ahead of remote.
   typeset -g POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON=':⇡'
   # Don't show the number of commits next to the ahead/behind arrows.
   typeset -g POWERLEVEL9K_VCS_{COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=1
-  # Remove space between '⇣' and '⇡' and all trailing spaces.
-  typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }'
+  # Wrap Git state in uncoloured brackets and collapse ahead/behind spacing.
+  typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='%f‹ %F{242}${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }%f ›'
 
   # Grey current time.
   typeset -g POWERLEVEL9K_TIME_FOREGROUND=$grey
@@ -167,9 +170,8 @@
   # really need it.
   typeset -g POWERLEVEL9K_DISABLE_HOT_RELOAD=true
 
-  # If p10k is already loaded, reload configuration.
-  # This works even with POWERLEVEL9K_DISABLE_HOT_RELOAD=true.
-  (( ! $+functions[p10k] )) || p10k reload
+  # Let Powerlevel10k own OSC 133 prompt marks, including tmux wrapping.
+  typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
 }
 
 # Tell `p10k configure` which file it should overwrite.
@@ -178,31 +180,6 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
 (( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
 'builtin' 'unset' 'p10k_config_opts'
 
-# ---------------------------------------------------------------------------
-# Local prompt customizations: angle brackets around git state and a host
-# alias.
-# ---------------------------------------------------------------------------
-
-# Colour the dirty marker differently from the branch name, then switch back
-# so the arrows that follow keep the branch colour.
-typeset -g POWERLEVEL9K_VCS_DIRTY_ICON='%F{218}*%F{242}'
-
-# Wrap git state in ‹ ›. %f drops back to the default foreground so the
-# brackets are uncoloured, matching the fork. The inner expansion is the
-# preset's own, which collapses ':⇣ :⇡' into '⇣⇡' and turns the remaining
-# colons into spaces.
-typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='%f‹ %F{242}${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }%f ›'
-
-# Read $HOSTALIAS on hosts whose real name is long and unhelpful.
-#
-# Only the REMOTE variants show user@host; setting the local variants too would
-# put a hostname in front of every local prompt.
-typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@${HOSTALIAS:-%m}'
-
-# Emit OSC 133 prompt marks. p10k's implementation covers more than the hand
-# written implementation did -- it wraps the sequences for tmux and marks
-# the right prompt too -- so that block stands down when this prompt is used.
-#
-# The value has to be the string 'true'. p10k's boolean parser is
-# `[[ $value == true ]]`, so 1, yes and on all read as false, silently.
-typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+# Apply the complete configuration, including the customizations above.
+# Hot reload is disabled, so settings written after this call are not applied.
+(( ! $+functions[p10k] )) || p10k reload

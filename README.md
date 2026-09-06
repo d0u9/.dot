@@ -34,7 +34,11 @@ one piece at a time, while the implementation lives under `apps/zsh/core/`.
 The disconnected `host-conf/` directory remains as the host-local entry point
 for private configuration. Zsh's completion functions, including `_git`,
 retain their native autoload-on-first-use behavior. Interactive aliases prefer
-installed `g`-prefixed GNU tools and otherwise retain the platform commands.
+modern replacements such as `eza`; on macOS they next try `g`-prefixed GNU
+tools, while Linux falls directly back to default commands. Edit the ordered
+`macos_fallbacks` and `linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`
+to add candidates or change priorities.
+Both `vim` and `vi` use `nvim` when installed, otherwise their default commands.
 Zoxide provides `z` and `zi`; fzf shell integration supports both its current
 `--zsh` interface and the separate scripts shipped by older packages.
 
@@ -140,6 +144,18 @@ gitstatusd when available and otherwise falls back to Zsh's built-in
 instant prompt: a fallback shell discards a prompt cache left behind by a
 gitstatus installation that no longer works on this host, rather than giving
 up the instant prompt on the hosts that benefit from it most.
+
+Tool initialization is cached by executable identity and command arguments.
+Argument boundaries are preserved in the cache key, and cached command paths
+are checked for executability so uninstalling a tool takes effect immediately.
+GNU `dircolors` (including Homebrew's `gdircolors`) also keys its cache on
+`TERM` and `COLORTERM`, so shells using different terminals get the right
+palette. Failed initialization preserves the existing zoxide hook without
+wrapping it again. Powerlevel10k reloads after all local prompt settings have
+been applied.
+
+Run `zsh -f tests/zsh-regression.zsh` for isolated regression checks; these
+use temporary caches and stub tools and do not load private configuration.
 
 ---
 

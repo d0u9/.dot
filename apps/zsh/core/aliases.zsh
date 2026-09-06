@@ -2,7 +2,7 @@
 # executable being present, so this file behaves the same on a machine with
 # none of them installed: the platform commands stay in place.
 () {
-    local command_name replacement executable
+    local command_name executable
 
     # Re-sourcing this file must also remove aliases that were deleted from
     # the table or whose replacement command has disappeared.
@@ -19,84 +19,99 @@
         _DOT_ZSH_MANAGED_ALIASES+=("$1")
     }
 
-    ## ls ####################################################################
+    ## Editable fallback lists ###############################################
 
-    # eza first, then GNU coreutils ls, then whatever the platform ships.
-    #
-    # Each variant declares its own l/ll/la rather than chaining them through
-    # the `ls` alias. The flags are not interchangeable: `-h` is
-    # human-readable sizes for both ls implementations but `--header` for eza,
-    # which prints sizes in human units anyway, so a chained `ll='ls -lh'`
-    # would quietly mean something different depending on which binary was
-    # found. `--group-directories-first` exists in eza and GNU ls but not in
-    # the BSD ls that macOS ships.
-    local ls_cmd
-    if (( $+commands[eza] )); then
-        ls_cmd='eza --color=auto --group-directories-first'
+    # Candidates are executable names, ordered from most preferred to last.
+    # macOS: modern replacement -> GNU tool -> platform default.
+    # Linux: modern replacement -> default command (no g-prefixed detour).
+    # Add a command row or insert a compatible replacement into its list.
+    # Do not substitute tools with incompatible command-line interfaces here.
+    local -A macos_fallbacks=(
+        ls        'eza gls ls'
+        vim       'nvim vim'
+        vi        'nvim vi'
+        sed       'gsed sed'
+        grep      'ggrep grep'
+        find      'gfind find'
+        xargs     'gxargs xargs'
+        tar       'gtar tar'
+        dircolors 'gdircolors dircolors'
+    )
+    local -A linux_fallbacks=(
+        ls        'eza ls'
+        vim       'nvim vim'
+        vi        'nvim vi'
+        sed       'sed'
+        grep      'grep'
+        find      'find'
+        xargs     'xargs'
+        tar       'tar'
+        dircolors 'dircolors'
+    )
+    local -A fallbacks selected
+    case $OSTYPE in
+        darwin*) fallbacks=("${(@kv)macos_fallbacks}");;
+        linux*)  fallbacks=("${(@kv)linux_fallbacks}");;
+        *)       fallbacks=(ls ls);;
+    esac
+
+    local candidates
+    for command_name candidates in "${(@kv)fallbacks}"; do
+        for executable in ${=candidates}; do
+            # An open shell can retain a command hash after an uninstall.
+            if (( $+commands[$executable] )) && [[ -x ${commands[$executable]} ]]; then
+                selected[$command_name]=$executable
+                break
+            fi
+        done
+    done
+
+    ## ls flags and shortcuts ################################################
+
+    # eza's -h means --header, while ls uses it for human-readable sizes.
+    # Keep these presets separate instead of chaining shortcuts through ls.
+    local ls_cmd long_flags=-lh all_flags=-lah
+    case ${selected[ls]:-} in
+        eza)
+            ls_cmd='eza --color=auto --group-directories-first'
+            long_flags=-l all_flags=-la
+            ;;
+        gls) ls_cmd='gls --color=auto --group-directories-first';;
+        ls)
+            case $OSTYPE in
+                darwin*) export CLICOLOR=1; ls_cmd='ls -G';;
+                # BusyBox supports --color but not --group-directories-first.
+                linux*) ls_cmd='ls --color=auto';;
+                *) ls_cmd=ls;;
+            esac
+            ;;
+        # A newly listed implementation gets standard flags by default;
+        # add a preset above if it needs its own flags.
+        *) ls_cmd=${selected[ls]:-};;
+    esac
+    if [[ -n $ls_cmd ]]; then
         _dot_alias ls "$ls_cmd"
         _dot_alias l  "$ls_cmd -1"
-        _dot_alias ll "$ls_cmd -l"
-        _dot_alias la "$ls_cmd -la"
-    elif (( $+commands[gls] )); then
-        ls_cmd='gls --color=auto --group-directories-first'
-        _dot_alias ls "$ls_cmd"
-        _dot_alias l  "$ls_cmd -1"
-        _dot_alias ll "$ls_cmd -lh"
-        _dot_alias la "$ls_cmd -lah"
-    else
-        case "$OSTYPE" in
-            darwin*)
-                # BSD ls colours with -G; CLICOLOR covers the callers that do
-                # not go through the alias.
-                export CLICOLOR=1
-                ls_cmd='ls -G'
-                ;;
-            linux*)
-                # Only --color here: this branch is reached when coreutils is
-                # absent, which on Alpine means busybox ls, and busybox does
-                # not implement --group-directories-first.
-                ls_cmd='ls --color=auto'
-                ;;
-            *)
-                # An ls of unknown provenance: no flags beyond the standard
-                # ones, so nothing here can fail on it.
-                ls_cmd='ls'
-                ;;
-        esac
-        _dot_alias ls "$ls_cmd"
-        _dot_alias l  "$ls_cmd -1"
-        _dot_alias ll "$ls_cmd -lh"
-        _dot_alias la "$ls_cmd -lah"
+        _dot_alias ll "$ls_cmd $long_flags"
+        _dot_alias la "$ls_cmd $all_flags"
     fi
 
-    ## Other GNU replacements ################################################
-
-    # Add or remove a key/value pair to prefer another implementation or to
-    # return to the system command. Values may include default arguments.
-    local -A preferred_commands=(
-        sed   gsed
-        grep  ggrep
-        find  gfind
-        xargs gxargs
-        tar   gtar
-    )
-
-    for command_name replacement in ${(kv)preferred_commands}; do
-        executable=${replacement%% *}
-        if (( $+commands[$executable] )); then
-            _dot_alias "$command_name" "$replacement"
-        fi
+    for command_name executable in "${(@kv)selected}"; do
+        [[ $command_name == (ls|dircolors) ]] && continue
+        [[ $command_name == $executable ]] && continue
+        _dot_alias "$command_name" "$executable"
     done
 
     ## Colours ###############################################################
 
     # GNU ls and eza both read LS_COLORS; GNU dircolors is optional on every
-    # platform. Its output only changes when dircolors itself does, so it goes
+    # platform. Its output depends on the executable and terminal, so it goes
     # through the same cache as the other tool init scripts rather than forking
     # once per interactive shell.
-    if (( $+commands[dircolors] )); then
+    local dircolors_cmd=${selected[dircolors]:-}
+    if [[ -n $dircolors_cmd ]]; then
         source "$DOT_ZSH_DIR/lib/toolcache.zsh"
-        _dot_source_tool_init dircolors dircolors dircolors -b
+        _dot_source_tool_init dircolors "$dircolors_cmd" "$dircolors_cmd" -b
     fi
 
     unfunction _dot_alias

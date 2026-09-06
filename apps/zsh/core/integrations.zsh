@@ -40,8 +40,8 @@ if (( $+commands[fzf] )); then
 fi
 
 # Load eagerly so every visited directory contributes to zoxide's database.
-if (( $+commands[zoxide] )); then
-    _dot_source_tool_init zoxide-init zoxide zoxide init zsh --cmd z
+if (( $+commands[zoxide] )) &&
+   _dot_source_tool_init zoxide-init zoxide zoxide init zsh --cmd z; then
 
     # Record the directory in the background. zoxide's own chpwd hook runs
     # `zoxide add` synchronously, and that binary takes about 29ms to start
@@ -60,6 +60,8 @@ if (( $+commands[zoxide] )); then
     # control silent. Re-sourcing this file is safe: the init script above
     # restores zoxide's own definition first, so the copy is always the real
     # hook and never the wrapper -- the latter would recurse.
+    # Only wrap after successful initialization: on failure a previous wrapper
+    # can still be installed, and copying it would create recursive jobs.
     if (( $+functions[__zoxide_hook] )); then
         functions[_dot_zoxide_add]=$functions[__zoxide_hook]
         __zoxide_hook() { _dot_zoxide_add &! }

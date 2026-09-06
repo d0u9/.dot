@@ -13,3 +13,7 @@ source "$DOT_ZSH_DIR/core/plugins.zsh"
 if [[ ${DOT_ZSH_TRACE_HOOKS:-0} == 1 ]]; then
     warn "Loading Zsh config - DONE"
 fi
+
+_dot_host_post="$DOT_ZSH_DIR/host-conf/00-zshrc-post.sh"
+[[ ! -r $_dot_host_post ]] || source "$_dot_host_post"
+unset _dot_host_post

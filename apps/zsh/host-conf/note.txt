@@ -1,7 +1,6 @@
-This directory is reserved for optional host-specific Zsh settings. It is
-currently disconnected: neither `pre.zsh` nor `post.zsh` sources files from
-here.
+This directory contains optional host-specific Zsh hooks. `pre.zsh` sources
+`00-zshrc-pre.sh` when readable, and `post.zsh` does the same for
+`00-zshrc-post.sh`.
 
-The files are ignored by the public repository. When host configuration is
-needed again, reconnect the appropriate phase explicitly rather than loading
-everything in this directory implicitly.
+The hook links are ignored by the public repository. Only these two explicit
+names are loaded; other files in this directory are not sourced implicitly.

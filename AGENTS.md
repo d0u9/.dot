@@ -130,7 +130,7 @@ hand has no recorded provenance or update path; an installer that fetches by
 
 `core/p10k.zsh` is tracked and hand-edited, but it is also what
 `POWERLEVEL9K_CONFIG_FILE` points at, so running `p10k configure` overwrites a
-tracked file and discards the local customizations at the end of it. Edit it
+tracked file and discards the hand-written customizations. Edit it
 directly instead.
 
 ## Shell loading and configuration placement
@@ -234,6 +234,34 @@ paying that between Enter and the next prompt made every `cd` visibly slower
 after the `cd` instead of during it. Aliases created
 by `core/aliases.zsh` are tracked so re-sourcing it removes stale managed
 aliases before applying the current table.
+
+### Optional tool initialization and explicit fallback lists
+
+Before running any tool-generated initialization such as
+`eval "$(xxx init zsh)"`, check that the executable exists with
+`(( $+commands[xxx] ))`. This applies to cached initialization too: never
+source a stale init script for a missing tool. Keep the check visible at the
+integration call site, and retain the shared guard in `lib/toolcache.zsh`.
+Also verify the resolved path is executable: Zsh's command hash can survive
+an uninstall. Fallback selection must likewise skip these stale entries.
+Missing optional tools must be skipped without command-not-found errors.
+
+Command replacement priority is platform-specific:
+
+- macOS: preferred modern replacement (for example `eza`) -> GNU command
+  (for example `gls`) -> platform default (`ls`).
+- Linux: preferred modern replacement (for example `eza`) -> default command
+  (`ls`), without trying a separate `g`-prefixed GNU command first.
+
+Declare candidates in the clearly labeled `macos_fallbacks` and
+`linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`, ordered from left to
+right. Add or change priorities there, not in scattered executable checks.
+Each row maps a command to candidate executable names; the first installed
+candidate wins. Tools without a modern replacement start at the next tier.
+Optional helpers such as dircolors use the same lists and are skipped if no
+candidate exists. Keep implementation-specific flags in separate presets
+(notably eza versus ls), and only alias replacements with compatible command
+interfaces. Re-sourcing must remove stale managed aliases before selection.
 
 ## Application-specific conventions
 

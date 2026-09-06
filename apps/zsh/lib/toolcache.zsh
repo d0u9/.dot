@@ -1,9 +1,9 @@
 # Cache the shell init that a tool prints for itself.
 #
 # `fzf --zsh`, `zoxide init zsh` and `dircolors -b` cost about 22ms of forking
-# per interactive shell between them, for output that changes only when the
-# executable does. Their result is cached under $XDG_CACHE_HOME/zsh and sourced
-# from there instead.
+# per interactive shell between them. Their result is cached under
+# $XDG_CACHE_HOME/zsh and sourced from there, with executable, command and
+# (for dircolors) terminal changes invalidating the cache.
 #
 # Shared by core/aliases.zsh and core/integrations.zsh so that one
 # implementation decides when a cache is stale.
@@ -18,6 +18,10 @@ _dot_source_tool_init() {
 
     local name=$1 exe=$2
     shift 2
+    # Also guard the shared entry point: never generate or source cached init
+    # for an optional executable that is no longer installed.
+    (( $+commands[$exe] )) || return 1
+    [[ -x ${commands[$exe]} ]] || return 1
 
     local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
     local cache=$cache_dir/$name.zsh
@@ -43,13 +47,20 @@ _dot_source_tool_init() {
 
     # The command line is part of the key too, so changing a flag at the call
     # site invalidates the cache that was generated without it.
-    local header="# generated from: $* | ${target}:${st[mtime]-}:${st[size]-}"
+    # Preserve argument boundaries: one argument 'a b' differs from 'a' 'b'.
+    local -a quoted_args=("${(@qqqq)@}")
+    local header="# generated from: ${(j: :)quoted_args} | ${target}:${st[mtime]-}:${st[size]-}"
+    # dircolors selects its palette from the terminal environment, even when
+    # the executable has not changed. Quote values to keep a one-line header.
+    if [[ $exe == (dircolors|gdircolors) ]]; then
+        header+=" | TERM=${(qqqq)TERM} COLORTERM=${(qqqq)COLORTERM}"
+    fi
 
     if [[ -s $cache ]]; then
         IFS= read -r first < $cache
         if [[ $first == $header ]]; then
             source "$cache"
-            return 0
+            return $?
         fi
     fi
 
