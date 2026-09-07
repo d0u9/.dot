@@ -81,9 +81,9 @@ local lsp = function()
 end
 lsp()
 
-local plugin_nvim_tree_attach = function()
+local plugin_nvim_tree_attach = function(bufnr)
   local api = require('nvim-tree.api')
-  vim.keymap.set('n', '=', api.tree.change_root_to_node, {noremap = true})
+  vim.keymap.set('n', '=', api.tree.change_root_to_node, {noremap = true, buffer = bufnr})
 end
 M.nvim_tree_keymap = plugin_nvim_tree_attach
 

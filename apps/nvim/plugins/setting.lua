@@ -11,20 +11,19 @@ require_if_has('plugins.configs.catppuccin', 'catppuccin')
 require('plugins.configs.rustaceanvim')
 
 -- https://github.com/williamboman/mason.nvim
-require_if_has('plugins.configs.mason--nvim', 'mason', 'lspconfig')
+require_if_has('plugins.configs.mason--nvim', 'mason')
 
 -- Configure shared LSP capabilities and server-specific settings before
 -- mason-lspconfig automatically enables the wanted servers.
-require_if_has('plugins.configs.nvim-lspconfig', 'lspconfig', 'cmp_nvim_lsp')
+require_if_has('plugins.configs.nvim-lspconfig', 'blink.cmp')
 
 -- https://github.com/williamboman/mason-lspconfig.nvim
-require_if_has('plugins.configs.mason-lspconfig--nvim', 'mason', 'mason-lspconfig', 'lspconfig')
+require_if_has('plugins.configs.mason-lspconfig--nvim', 'mason', 'mason-lspconfig')
 
 -- null-ls is deprecated --
 -- -- https://github.com/jose-elias-alvarez/null-ls.nvim
 --require_if_has('plugins.configs.null-ls--nvim', 'null-ls', 'mason')
 
 -- https://github.com/SmiteshP/nvim-navic
-require_if_has('plugins.configs.nvim-navic', 'nvim-navic', 'lspconfig')
-
+require_if_has('plugins.configs.nvim-navic', 'nvim-navic')
 

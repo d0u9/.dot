@@ -3,14 +3,14 @@
 --
 -- Unlike rust-tools it starts rust-analyzer itself rather than going through
 -- lspconfig, so `rust_analyzer` must not also be enabled elsewhere -- see
--- plugins/configs/nvim-cmp.lua and mason-lspconfig--nvim.lua.
+-- plugins/configs/mason-lspconfig--nvim.lua.
 --
 -- Everything is driven by the `:RustLsp` command, e.g.
 --   :RustLsp hover actions
 --   :RustLsp codeAction
 --   :RustLsp runnables
 --   :RustLsp expandMacro
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 local on_attach = function(client, bufnr)
   require("nvim-navic").attach(client, bufnr)

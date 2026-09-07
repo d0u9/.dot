@@ -1,7 +1,10 @@
+local wanted = require('plugins.configs.lsp-servers')
+local enabled = vim.tbl_filter(function(server)
+  -- Mason installs Rust, but rustaceanvim owns its client.
+  return server ~= 'rust_analyzer'
+end, wanted)
+
 require("mason-lspconfig").setup({
-  ensure_installed = require('plugins.configs.lsp-servers'),
-  -- The binary is still installed here, but rustaceanvim is what starts it.
-  automatic_enable = {
-    exclude = { "rust_analyzer" },
-  },
+  ensure_installed = wanted,
+  automatic_enable = enabled,
 })

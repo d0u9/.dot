@@ -46,7 +46,7 @@ installer does them explicitly:
 | downloading parsers and servers | `curl`, `tar` (preinstalled) | `curl tar` |
 | building parsers | Xcode command line tools | `build-essential` |
 | building parsers | `brew install tree-sitter-cli` | `cargo install tree-sitter-cli` |
-| telescope's live grep | `brew install ripgrep` | `apt install ripgrep` |
+| fzf-lua's live grep | `brew install ripgrep` | `apt install ripgrep` |
 
 The tree-sitter one is the easy mistake: the formula called **`tree-sitter`
 is the library only** and leaves no binary in `$PATH`. The CLI is
@@ -72,6 +72,11 @@ reports the failure each time. Install the toolchain and restart, and the
 server is picked up on its own; `:MasonInstall` still installs anything by
 hand regardless of the gate.
 
+Automatic enabling uses the same gated list, excluding `rust_analyzer`
+because rustaceanvim starts that client. Other servers installed manually
+through Mason are not automatically enabled; add them to the shared list or
+configure and enable them explicitly with `vim.lsp.config` / `vim.lsp.enable`.
+
 `lua_ls` has no condition: it ships as a prebuilt binary and this config is
 itself lua, so it is always wanted.
 
@@ -85,6 +90,10 @@ installer. Add the entry, restart nvim, and commit the lockfile if it moved.
 | a plugin | `plugins/install.lua` | `:Lazy sync` |
 | an LSP server | `plugins/configs/lsp-servers.lua` | restart, or `:MasonInstall` |
 | a parser | `plugins/configs/treesitter-languages.lua` | restart, or `:TSInstall` |
+
+Completion is provided by Blink's stable v1 release. Its configuration lives
+in `plugins/configs/blink--cmp.lua`; the Lua fuzzy matcher is selected so a
+normal startup never downloads or builds a host-specific matcher binary.
 
 LSP servers are named the way nvim-lspconfig names them (`lua_ls`), not the
 way mason does (`lua-language-server`); the installer translates between the
@@ -108,3 +117,6 @@ an upgrade introduces new commands.
 :Mason         LSP server status
 :checkhealth   neovim's own diagnosis, including treesitter and lsp
 ```
+
+See [the plugin maintenance review](plugin-review-2026-09.md) for the
+2026-09-06 upstream status snapshot and migration candidates.

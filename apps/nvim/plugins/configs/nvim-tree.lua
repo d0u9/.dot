@@ -38,9 +38,8 @@ local on_attach = function (bufnr)
   local api = require('nvim-tree.api')
 
   api.config.mappings.default_on_attach(bufnr)
-  require("config.keymaps").nvim_tree_keymap()
+  require("config.keymaps").nvim_tree_keymap(bufnr)
 end
 
 opts.on_attach = on_attach
 require('nvim-tree').setup(opts)
-

@@ -1,14 +1,11 @@
 local opts = {
   integrations = {
-    cmp = true,
+    blink_cmp = true,
     gitsigns = true,
     nvimtree = true,
     treesitter = true,
     illuminate = true,
-    telescope = {
-      enabled = true,
-      -- style = "nvchad"
-    },
+    fzf = true,
     -- Also styles outline.nvim: the group defines `OutlineCurrent`.
     symbols_outline = true,
     navic = {

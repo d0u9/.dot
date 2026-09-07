@@ -8,10 +8,26 @@ local config = function(module)
   end
 end
 
+local fzf = function(picker, opts)
+  return function()
+    require('fzf-lua')[picker](opts)
+  end
+end
+
+local open_buffer_files = function()
+  local files = {}
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(bufnr) then
+      local filename = vim.api.nvim_buf_get_name(bufnr)
+      if filename ~= '' then table.insert(files, filename) end
+    end
+  end
+  return files
+end
+
 return {
   -- Enhancement
   { 'nvim-tree/nvim-web-devicons', lazy = true },
-  { 'nvim-lua/plenary.nvim', lazy = true },
 
   -- Theme
   { 'catppuccin/nvim', name = 'catppuccin' },
@@ -19,7 +35,7 @@ return {
   -- LSP plugins
   {
     'neovim/nvim-lspconfig',
-    dependencies = 'hrsh7th/cmp-nvim-lsp',
+    dependencies = 'saghen/blink.cmp',
   },
   'williamboman/mason.nvim',
   {
@@ -30,12 +46,6 @@ return {
     }
   },
   { 'SmiteshP/nvim-navic', dependencies = 'neovim/nvim-lspconfig' },
-  -- This plugin is deprecated
-  -- {
-  --   'jose-elias-alvarez/null-ls.nvim',
-  --   dependencies = 'nvim-lua/plenary.nvim'
-  -- },
-
   -- Language specific - Rust
   { 'mrcjkb/rustaceanvim', ft = { 'rust' } },
 
@@ -50,17 +60,9 @@ return {
 
   -- Autocompletion plugin
   {
-    'hrsh7th/nvim-cmp',
-    event = { 'InsertEnter', 'CmdlineEnter' },
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-cmdline',
-      'hrsh7th/cmp-nvim-lsp-signature-help',
-      { 'onsails/lspkind-nvim', config = config('lspkind--nvim') },
-    },
-    config = config('nvim-cmp'),
+    'saghen/blink.cmp',
+    version = '1.*',
+    config = config('blink--cmp'),
   },
 
   -- GUI relative
@@ -108,7 +110,12 @@ return {
       'ToggleTermSendVisualSelection', 'TermExec', 'TermNew', 'TermSelect',
     },
     keys = {
-      { '<C-w><C-w>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>', mode = { 'n', 't' }, desc = 'Toggle terminal' },
+      -- `<C-w><C-w>` used to live here, but it shadowed the most-used window
+      -- command there is (cycle to the next window) in both normal and
+      -- terminal mode. `<C-\>` is toggleterm's own default and collides with
+      -- nothing in the `<C-w>` family. Counts still work: `2<C-\>` opens the
+      -- second terminal.
+      { [[<C-\>]], '<Cmd>exe v:count1 . "ToggleTerm"<CR>', mode = { 'n', 't' }, desc = 'Toggle terminal' },
     },
     config = config('toggleterm--nvim'),
   },
@@ -142,35 +149,54 @@ return {
     config = config('nvim-tree'),
   },
 
-  -- telescope
+  -- Fuzzy finder
   {
-    'nvim-telescope/telescope.nvim',
-    cmd = 'Telescope',
+    'ibhagwan/fzf-lua',
+    cmd = 'FzfLua',
     keys = {
-      { '<leader>da', function() require('telescope.builtin').diagnostics() end, desc = 'All diagnostics' },
-      { '<leader>dl', function() require('telescope.builtin').diagnostics({ bufnr = 0, line_width = 'full' }) end, desc = 'Buffer diagnostics (full)' },
-      { '<leader>ls', function() require('telescope.builtin').lsp_document_symbols() end, desc = 'Document symbols' },
-      { '<leader>ld', function() require('telescope.builtin').lsp_definitions({ jump_type = 'never' }) end, desc = 'Definitions' },
-      { '<leader>lp', function() require('telescope.builtin').lsp_implementations() end, desc = 'Implementations' },
-      { '<leader>lf', function() require('telescope.builtin').lsp_references() end, desc = 'References' },
-      { '<leader>li', function() require('telescope.builtin').lsp_incoming_calls() end, desc = 'Incoming calls' },
-      { '<leader>lo', function() require('telescope.builtin').lsp_outgoing_calls() end, desc = 'Outgoing calls' },
-      { '<leader>ff', function() require('telescope.builtin').find_files() end, desc = 'Find files' },
-      { '<leader>fg', function() require('telescope.builtin').git_files() end, desc = 'Git files' },
-      { '<leader>fb', function() require('telescope.builtin').buffers() end, desc = 'Buffers' },
-      { '<leader>gs', function() require('telescope.builtin').grep_string() end, desc = 'Grep cursor word' },
-      { '<leader>gg', function() require('telescope.builtin').live_grep() end, desc = 'Live grep' },
-      { '<leader>gc', function() require('telescope.builtin').grep_string({ grep_open_files = true }) end, desc = 'Grep open files' },
-      { '<leader>gl', function() require('telescope.builtin').current_buffer_fuzzy_find() end, desc = 'Search current buffer' },
-      { '<leader>tm', function() require('telescope.builtin').marks() end, desc = 'Marks' },
-      { '<leader>tj', function() require('telescope.builtin').jumplist() end, desc = 'Jump list' },
-      { '<leader>tr', function() require('telescope.builtin').registers() end, desc = 'Registers' },
-      { '<leader>tq', function() require('telescope.builtin').quickfix() end, desc = 'Quickfix list' },
-      { '<leader>tp', function() require('telescope.builtin').spell_suggest() end, desc = 'Spelling suggestions' },
-      { '<leader>tk', function() require('telescope.builtin').keymaps() end, desc = 'Keymaps' },
+      { '<leader>da', fzf('diagnostics_workspace'), desc = 'All diagnostics' },
+      { '<leader>dl', fzf('diagnostics_document'), desc = 'Buffer diagnostics' },
+      { '<leader>ls', fzf('lsp_document_symbols'), desc = 'Document symbols' },
+      { '<leader>ld', fzf('lsp_definitions', { jump1 = false }), desc = 'Definitions' },
+      { '<leader>lp', fzf('lsp_implementations'), desc = 'Implementations' },
+      -- Neovim's built-in `grt` does this too, but through the quickfix list;
+      -- keep it in the picker like the rest of <leader>l*.
+      { '<leader>lt', fzf('lsp_typedefs'), desc = 'Type definitions' },
+      { '<leader>lf', fzf('lsp_references'), desc = 'References' },
+      { '<leader>li', fzf('lsp_incoming_calls'), desc = 'Incoming calls' },
+      { '<leader>lo', fzf('lsp_outgoing_calls'), desc = 'Outgoing calls' },
+      { '<leader>ff', fzf('files'), desc = 'Find files' },
+      { '<leader>fg', fzf('git_files'), desc = 'Git files' },
+      { '<leader>fb', fzf('buffers'), desc = 'Buffers' },
+      { '<leader>gs', fzf('grep_cword'), desc = 'Grep cursor word' },
+      { '<leader>gg', fzf('live_grep'), desc = 'Live grep' },
+      {
+        '<leader>gc',
+        function()
+          require('fzf-lua').grep_cword({ search_paths = open_buffer_files() })
+        end,
+        desc = 'Grep cursor word in open buffers',
+      },
+      { '<leader>gl', fzf('blines'), desc = 'Search current buffer' },
+      { '<leader>tm', fzf('marks'), desc = 'Marks' },
+      { '<leader>tj', fzf('jumps'), desc = 'Jump list' },
+      { '<leader>tr', fzf('registers'), desc = 'Registers' },
+      { '<leader>tq', fzf('quickfix'), desc = 'Quickfix list' },
+      { '<leader>tp', fzf('spell_suggest'), desc = 'Spelling suggestions' },
+      { '<leader>tk', fzf('keymaps'), desc = 'Keymaps' },
     },
-    dependencies = 'nvim-lua/plenary.nvim',
-    config = config('telescope--nvim'),
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    -- `vim.ui.select` has to be claimed before fzf-lua loads, or the first
+    -- code action still gets Neovim's built-in numbered prompt -- by the time
+    -- `config` runs it is already too late. The shim loads fzf-lua on the
+    -- first call and hands straight over to the real picker.
+    init = function()
+      vim.ui.select = function(...)
+        require('fzf-lua').register_ui_select()
+        return vim.ui.select(...)
+      end
+    end,
+    config = config('fzf--lua'),
   },
 
   -- Git
@@ -195,8 +221,8 @@ return {
     'NeogitOrg/neogit',
     cmd = 'Neogit',
     dependencies = {
-      'nvim-lua/plenary.nvim',
       'sindrets/diffview.nvim',
+      'ibhagwan/fzf-lua',
     },
     config = config('neogit'),
   },
