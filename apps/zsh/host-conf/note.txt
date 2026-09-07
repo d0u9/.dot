@@ -1,6 +1,7 @@
 This directory contains optional host-specific Zsh hooks. `pre.zsh` sources
-`00-zshrc-pre.sh` when readable, and `post.zsh` does the same for
-`00-zshrc-post.sh`.
+every readable regular file or symlink ending in `-pre.sh` or `-pre.zsh`;
+`post.zsh` does the same for `-post.sh` and `-post.zsh`.
 
-The hook links are ignored by the public repository. Only these two explicit
-names are loaded; other files in this directory are not sourced implicitly.
+The hook links are ignored by the public repository. The prefix is not an
+enablement condition; use it only to describe hooks and control their lexical
+load order. Files without one of the four recognized suffixes are not sourced.

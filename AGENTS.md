@@ -147,7 +147,8 @@ The effective order starting at `apps/zsh/zshrc` is:
 
 ```text
 base variables → core/prompt-options.zsh → instant prompt → lib.sh
-  → pre.zsh → optional hook-trace start warning
+  → pre.zsh → readable host-conf/*-pre.{sh,zsh} hooks in lexical order
+  → optional hook-trace start warning
   → core/shell.zsh for options, $PATH, completion and key bindings
   → post.zsh
       → core/prompt.zsh → Powerlevel10k with core/p10k.zsh
@@ -156,6 +157,7 @@ base variables → core/prompt-options.zsh → instant prompt → lib.sh
       → core/plugins.zsh: byte-compile, then autosuggestions, then syntax
         highlighting last
       → optional hook-trace completion warning
+      → readable host-conf/*-post.{sh,zsh} hooks in lexical order
 ```
 
 Set `DOT_ZSH_TRACE_HOOKS=1` for a diagnostic shell that prints the pre/post
@@ -167,6 +169,7 @@ Choose scope first, then execution phase:
 | Scope | Placement |
 | --- | --- |
 | Pre/post extension points | `apps/zsh/{pre,post}.zsh` |
+| Optional per-host pre/post hooks | `apps/zsh/host-conf/*-{pre,post}.{sh,zsh}` |
 | Portable public shell behavior | `apps/zsh/core/shell.zsh` |
 | Interactive aliases and GNU replacements | `apps/zsh/core/aliases.zsh` |
 | Interactive tool integration | `apps/zsh/core/integrations.zsh` |
@@ -181,10 +184,14 @@ Choose scope first, then execution phase:
 | Host, employer, or project configuration | `conf/app_conf/pub/zsh/scene/20-*.sh` or its subdirectories |
 | Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
 
-Private Zsh files remain in `conf/`, but `host-conf/` is currently disconnected
-from both startup phases. Do not describe a private file as active merely
-because it exists or is linked. Read `apps/zsh/host-conf/note.txt` before
-reconnecting either phase. `pub` within `conf` means shared personal scope, not
+Private Zsh files remain in `conf/`, but that directory is not scanned or
+sourced directly by the public startup path. `host-conf/` loads every readable
+regular file or symlink whose name ends in `-pre.sh` or `-pre.zsh` before
+`core/shell.zsh`, and every `-post.sh` or `-post.zsh` hook after syntax
+highlighting. Prefixes do not enable or select a hook; they only determine the
+lexical order within each phase. Other suffixes are ignored. A hook may be an
+ignored symlink into `conf/`; verify the link target and readability before
+describing it as active. `pub` within `conf` means shared personal scope, not
 public or secret-free.
 
 Powerlevel10k loads first in `post.zsh`, followed by fzf and zoxide, then
@@ -215,8 +222,8 @@ keyed on the sizes and modification times of Powerlevel10k's gitstatus
 installer and of the daemon it resolved, so the probe forks only after one of
 them changes. Fallback shells keep instant prompt and instead delete an instant
 prompt cache that still carries a `_p9k_preinit` function, which is the only
-part of that cache able to start a daemon this host has rejected. Host config
-remains disconnected.
+part of that cache able to start a daemon this host has rejected. The readable
+post host hook runs only after this core setup has completed.
 
 Prefer Zsh's native autoload mechanism for command-specific completion and add
 other integrations individually only when needed. `apps/zsh/doc/completion.md`

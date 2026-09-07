@@ -28,6 +28,7 @@
     # Do not substitute tools with incompatible command-line interfaces here.
     local -A macos_fallbacks=(
         ls        'eza gls ls'
+        tree      'eza tree'
         vim       'nvim vim'
         vi        'nvim vi'
         sed       'gsed sed'
@@ -39,6 +40,7 @@
     )
     local -A linux_fallbacks=(
         ls        'eza ls'
+        tree      'eza tree'
         vim       'nvim vim'
         vi        'nvim vi'
         sed       'sed'
@@ -96,8 +98,15 @@
         _dot_alias la "$ls_cmd $all_flags"
     fi
 
+    # eza needs an explicit flag to produce a tree. When the standalone tree
+    # command wins the fallback selection it already has the requested name,
+    # so leave it unaliased.
+    if [[ ${selected[tree]:-} == eza ]]; then
+        _dot_alias tree 'eza --tree'
+    fi
+
     for command_name executable in "${(@kv)selected}"; do
-        [[ $command_name == (ls|dircolors) ]] && continue
+        [[ $command_name == (ls|tree|dircolors) ]] && continue
         [[ $command_name == $executable ]] && continue
         _dot_alias "$command_name" "$executable"
     done

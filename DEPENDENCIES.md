@@ -36,6 +36,7 @@ For the main shell and editor setup, install all of the following:
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
 | eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. |
+| tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
 | Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim and tmux. |

@@ -13,6 +13,32 @@ export PATH=$scratch/bin:/usr/bin:/bin
 DOT_ZSH_DIR=$repo/apps/zsh
 DOT_ZSH_PLUGIN_DIR=$scratch/plugins
 
+hook_root=$scratch/hook-root
+mkdir -p "$hook_root/host-conf"
+for spec in \
+    '30-third-pre.zsh:third' \
+    '10-first-pre.sh:first' \
+    '20-second-pre.zsh:second' \
+    '40-fourth-post.sh:fourth' \
+    'ignored.sh:ignored'; do
+    file=${spec%%:*}
+    value=${spec#*:}
+    print -r -- "hook_order+=($value)" > "$hook_root/host-conf/$file"
+done
+source "$repo/apps/zsh/lib/host-hooks.zsh"
+DOT_ZSH_DIR=$hook_root
+hook_order=()
+_dot_source_host_hooks pre
+[[ ${(j: :)hook_order} == 'first second third' ]]
+_dot_source_host_hooks post
+[[ ${(j: :)hook_order} == 'first second third fourth' ]]
+if _dot_source_host_hooks middle; then
+    print -u2 'FAIL: invalid host hook phase was accepted'; exit 1
+fi
+unfunction _dot_source_host_hooks
+DOT_ZSH_DIR=$repo/apps/zsh
+print 'PASS: host hooks match suffixes and load in lexical order'
+
 cat > "$scratch/bin/gdircolors" <<'EOF'
 #!/bin/sh
 printf "export LS_COLORS='%s:%s'\n" "$TERM" "$COLORTERM"
@@ -34,17 +60,19 @@ source "$DOT_ZSH_DIR/core/aliases.zsh"
 [[ $LS_COLORS == xterm-256color:truecolor ]]
 print 'PASS: gdircolors discovery and terminal cache invalidation'
 
-for tool in eza gls gsed nvim; do
+for tool in eza gls gsed nvim tree; do
     print '#!/bin/sh' > "$scratch/bin/$tool"
     chmod +x "$scratch/bin/$tool"
 done
 rehash
 source "$DOT_ZSH_DIR/core/aliases.zsh"
 [[ $aliases[ls] == 'eza '* && $aliases[sed] == gsed ]]
+[[ $aliases[tree] == 'eza --tree' ]]
 [[ $aliases[vim] == nvim && $aliases[vi] == nvim ]]
 OSTYPE=linux-gnu
 source "$DOT_ZSH_DIR/core/aliases.zsh"
 [[ $aliases[ls] == 'eza '* && ${+aliases[sed]} == 0 ]]
+[[ $aliases[tree] == 'eza --tree' ]]
 [[ $aliases[vim] == nvim && $aliases[vi] == nvim ]]
 rm "$scratch/bin/nvim"
 source "$DOT_ZSH_DIR/core/aliases.zsh"
@@ -52,7 +80,10 @@ source "$DOT_ZSH_DIR/core/aliases.zsh"
 print 'PASS: vim/vi prefer nvim and restore defaults after removal'
 rm "$scratch/bin/eza"
 source "$DOT_ZSH_DIR/core/aliases.zsh"
-[[ $aliases[ls] == 'ls --color=auto' ]]
+[[ $aliases[ls] == 'ls --color=auto' && ${+aliases[tree]} == 0 ]]
+rm "$scratch/bin/tree"
+source "$DOT_ZSH_DIR/core/aliases.zsh"
+[[ ${+aliases[tree]} == 0 ]]
 OSTYPE=darwin
 source "$DOT_ZSH_DIR/core/aliases.zsh"
 [[ $aliases[ls] == 'gls '* ]]

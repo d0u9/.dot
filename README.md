@@ -34,13 +34,18 @@ The Zsh configuration keeps a small explicit set of interactive additions:
 Powerlevel10k, autosuggestions, syntax highlighting, fzf shell integration and
 zoxide. Top-level pre and post hook phases remain so behavior can be added back
 one piece at a time, while the implementation lives under `apps/zsh/core/`.
-The disconnected `host-conf/` directory remains as the host-local entry point
-for private configuration. Zsh's completion functions, including `_git`,
-retain their native autoload-on-first-use behavior. Interactive aliases prefer
+Optional readable files or symlinks in `host-conf/` are loaded when they end
+in `-pre.sh`, `-pre.zsh`, `-post.sh` or `-post.zsh`. Their prefixes only
+control lexical load order; files with other suffixes are ignored. Zsh's
+completion functions, including `_git`, retain their native autoload-on-first-use
+behavior. Interactive aliases prefer
 modern replacements such as `eza`; on macOS they next try `g`-prefixed GNU
 tools, while Linux falls directly back to default commands. Edit the ordered
 `macos_fallbacks` and `linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`
 to add candidates or change priorities.
+When `eza` is available, `tree` maps to `eza --tree`; otherwise an installed
+standalone `tree` remains untouched, and no alias is created when both are
+missing.
 Both `vim` and `vi` use `nvim` when installed, otherwise their default commands.
 Zoxide provides `z` and `zi`; fzf shell integration supports both its current
 `--zsh` interface and the separate scripts shipped by older packages.
