@@ -7,11 +7,14 @@ This repository contains configuration for Zsh, Neovim, tmux and other commonly
 used applications. Private configuration lives in an independent repository so
 that sensitive information is not added here.
 
+**Setting up a new machine? Start with [DEPENDENCIES.md](DEPENDENCIES.md)** for
+the required, strongly recommended and optional tools on macOS and Linux.
+
 ---
 
 # Content
 - [Supported platforms](#supported-platforms)
-- [Prerequisite](#prerequisite)
+- [Dependencies](#dependencies)
 - [Private config files](#Private config files)
 - [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
@@ -44,11 +47,16 @@ Zoxide provides `z` and `zi`; fzf shell integration supports both its current
 
 ---
 
-# Prerequisite
+# Dependencies
 
-To obtain the full features of this configuration, you have to install NERD fonts which are patched lots of icons.
+See **[DEPENDENCIES.md](DEPENDENCIES.md)** before provisioning a new macOS or
+Linux machine. It separates hard prerequisites from strongly recommended shell
+and editor tools, language-specific toolchains, and optional application
+profiles.
 
-You can find more details of NERD fonts here: [https://github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
+For the intended visual experience, install Maple Mono NF CN. It includes the
+Nerd Font glyphs used by the configured prompt, editor and terminal status
+lines.
 
 ---
 

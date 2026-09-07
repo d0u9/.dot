@@ -78,6 +78,14 @@ Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
 prompt flow. Installers can also download themes, clone/update plugins, and
 bootstrap editor tooling. They are not read-only validation commands.
+
+`DEPENDENCIES.md` is the canonical new-host dependency inventory. Whenever a
+change introduces, removes, renames, or materially changes the use of an
+external executable, application, font, language toolchain, build tool, or
+package-manager package, update that document in the same change. Keep each
+entry in the correct required, strongly recommended, optional, or
+repository-managed category, and cover macOS/Linux differences when relevant.
+
 The Zsh installer also installs fzf and zoxide through the first available
 supported package manager: Homebrew, apt, dnf, pacman, or apk. System package
 managers run through `sudo` when the installer is not already root. Both tools
