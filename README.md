@@ -104,7 +104,7 @@ You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 ./install.sh -i nvim
 ```
 
-That symlinks `apps/nvim` to `$XDG_CONFIG_HOME/nvim` (neovim uses the XDG
+That symlinks `apps/nvim` to `$HOME/.config/nvim` (neovim uses the XDG-style
 layout rather than vim's `.vimrc` and `.vim/`) and bootstraps the plugins,
 LSP servers and tree-sitter parsers. Re-running it is safe.
 

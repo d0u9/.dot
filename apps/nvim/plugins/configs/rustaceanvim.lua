@@ -10,11 +10,10 @@
 --   :RustLsp codeAction
 --   :RustLsp runnables
 --   :RustLsp expandMacro
+--
+-- navic is attached by the shared `LspAttach` handler in
+-- plugins/configs/nvim-navic.lua, so no `on_attach` is needed here.
 local capabilities = require('blink.cmp').get_lsp_capabilities()
-
-local on_attach = function(client, bufnr)
-  require("nvim-navic").attach(client, bufnr)
-end
 
 -- Read once, when the first rust buffer opens.
 vim.g.rustaceanvim = {
@@ -26,7 +25,6 @@ vim.g.rustaceanvim = {
   },
   server = {
     capabilities = capabilities,
-    on_attach = on_attach,
     default_settings = {
       ["rust-analyzer"] = {
         assist = {

@@ -56,15 +56,14 @@ otherwise.
 
 ### Per language
 
-A server is only requested on a host that has the language it serves, so a
-machine without Go is not asked to install gopls. The check is
-`vim.fn.executable` against the binary in the third column, in
-`plugins/configs/lsp-servers.lua`:
+A server is only requested on a host that has a working toolchain for the
+language it serves, so a machine without Go is not asked to install gopls.
+The checks live in `plugins/configs/lsp-servers.lua`:
 
 | Server | Language | Installed when | Mason needs |
 | --- | --- | --- | --- |
 | `rust_analyzer` | Rust | `cargo` is in `$PATH` | nothing (prebuilt release) |
-| `gopls` | Go | `go` is in `$PATH` | a Go toolchain — it runs `go install` |
+| `gopls` | Go | `go env GOROOT` succeeds | a Go toolchain — it runs `go install` |
 | `lua_ls` | Lua | always | nothing (prebuilt release) |
 
 Without this gate mason retries the missing server on every start and

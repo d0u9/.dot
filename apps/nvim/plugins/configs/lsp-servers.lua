@@ -8,9 +8,16 @@
 -- Without this, mason retries the install on every start and reports the
 -- failure each time -- gopls in particular is built with `go install`, so it
 -- cannot even be fetched without a Go toolchain.
+local function go_toolchain_works()
+  if vim.fn.executable('go') ~= 1 then return false end
+
+  local result = vim.system({ 'go', 'env', 'GOROOT' }, { text = true }):wait()
+  return result.code == 0 and result.stdout:match('%S') ~= nil
+end
+
 local servers = {
-  { name = 'rust_analyzer', requires = 'cargo' },
-  { name = 'gopls', requires = 'go' },
+  { name = 'rust_analyzer', available = function() return vim.fn.executable('cargo') == 1 end },
+  { name = 'gopls', available = go_toolchain_works },
   -- Lua needs no toolchain: the server ships as a prebuilt binary, and this
   -- config is itself lua, so it is always wanted.
   { name = 'lua_ls' },
@@ -18,7 +25,7 @@ local servers = {
 
 local wanted = {}
 for _, server in ipairs(servers) do
-  if not server.requires or vim.fn.executable(server.requires) == 1 then
+  if not server.available or server.available() then
     table.insert(wanted, server.name)
   end
 end

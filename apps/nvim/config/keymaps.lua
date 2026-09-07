@@ -30,9 +30,10 @@ local general_keymap = function()
   vim.keymap.set('v', '.', ':normal .<CR>', {noremap = true})
 
   -- For when you forget to sudo.. Really Write the file.
-  -- Not working anymore, use suda function instead
+  -- `w !sudo tee %` stopped working, so route the same keystrokes through
+  -- suda.vim, which is installed for exactly this.
   -- https://github.com/lambdalisue/suda.vim
-  vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null', {noremap = true})
+  vim.keymap.set('c', 'w!!', 'SudaWrite', {noremap = true})
 
 
   -- Easier horizontal scrolling
@@ -65,9 +66,14 @@ window_and_panel()
 
 -- diagnostic key bindings
 local diagnostic = function()
-  vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { silent = true })
-  vim.keymap.set('n', 'd[', vim.diagnostic.goto_prev)
-  vim.keymap.set('n', 'd]', vim.diagnostic.goto_next)
+  -- Called through a closure, not by value: config.diagnostic wraps
+  -- `open_float`, and capturing it here would pin whichever version happened
+  -- to exist when this file was required.
+  vim.keymap.set('n', '<leader>df', function() vim.diagnostic.open_float() end, { silent = true })
+  -- Diagnostic jumping is `[d`/`]d`, which Neovim maps globally itself. The
+  -- old `d[`/`d]` shadowed the `d` operator's `d[[`, `d[(` and `d[{` motions,
+  -- and the float they opened now comes from `jump.on_jump` in
+  -- config.diagnostic, which the built-in mappings pick up too.
 end
 diagnostic()
 

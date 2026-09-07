@@ -15,9 +15,6 @@ end
 if wanted.gopls then
   vim.lsp.config('gopls', {
     cmd = { 'gopls', 'serve' },
-    on_attach = function(client, bufnr)
-      require('nvim-navic').attach(client, bufnr)
-    end,
     settings = {
       gopls = {
         analyses = {

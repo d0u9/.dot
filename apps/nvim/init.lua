@@ -33,8 +33,9 @@ local function env_prepare(config_dir, runtime_dir)
 end
 
 -- Basic setings
+-- `CONFIG_DIR` keeps its trailing slash, so paths below append to it directly.
 _G.CONFIG_DIR = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
-_G.RUNTIME_DIR = _G.CONFIG_DIR .. '/runtime'
+_G.RUNTIME_DIR = _G.CONFIG_DIR .. 'runtime'
 _G.PLUGIN_DIR = _G.RUNTIME_DIR .. '/plugins'
 _G.MASON_DIR = _G.RUNTIME_DIR .. '/mason'
 -- lazy.nvim clones every plugin, itself included, under this directory.
