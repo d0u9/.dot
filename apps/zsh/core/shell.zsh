@@ -47,6 +47,8 @@ unsetopt flow_control            # free ^S and ^Q, nothing here wants XON/XOFF
 
 ## Path #######################################################################
 
+source "$DOT_ZSH_DIR/core/homebrew.zsh"
+
 # ~/.local is this account's install prefix, the role /usr/local plays for the
 # system: binaries this user installed without root, outside any package
 # manager. It is where rustup, pipx, uv and most `curl | sh` installers put

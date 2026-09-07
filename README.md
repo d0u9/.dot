@@ -145,7 +145,16 @@ instant prompt: a fallback shell discards a prompt cache left behind by a
 gitstatus installation that no longer works on this host, rather than giving
 up the instant prompt on the hosts that benefit from it most.
 
-Tool initialization is cached by executable identity and command arguments.
+Before completion and tool setup, `core/shell.zsh` loads `core/homebrew.zsh`
+to initialize an executable Homebrew using
+`brew shellenv zsh`: `/opt/homebrew` for macOS ARM, `/usr/local` for macOS
+Intel (including Rosetta shells), and `/home/linuxbrew/.linuxbrew` for Linux
+on Intel or ARM. Linux also checks the older `~/.linuxbrew` prefix; all platforms
+fall back to an executable `brew` on PATH for custom installations. Missing or
+non-executable installations are skipped. Homebrew initialization is not cached
+because its output depends on the incoming shell environment.
+
+Other tool initialization is cached by executable identity and command arguments.
 Argument boundaries are preserved in the cache key, and cached command paths
 are checked for executability so uninstalling a tool takes effect immediately.
 GNU `dircolors` (including Homebrew's `gdircolors`) also keys its cache on
