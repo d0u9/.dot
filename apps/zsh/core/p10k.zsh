@@ -115,8 +115,22 @@
   typeset -g POWERLEVEL9K_VCS_{INCOMING,OUTGOING}_CHANGESFORMAT_FOREGROUND=$cyan
   # Restore prompt policy after the generated config cleared POWERLEVEL9K_*.
   source "$DOT_ZSH_DIR/core/prompt-options.zsh"
-  # Don't show remote branch, current tag or stashes.
-  typeset -g POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-aheadbehind)
+  # The gitstatus backend renders VCS_DIRTY_ICON itself. The vcs_info fallback
+  # only uses the staged, unstaged and untracked icons, which are empty below,
+  # so add the same single dirty marker after its change-detection hooks run.
+  function +vi-dot-dirty-marker() {
+    if [[ $VCS_WORKDIR_DIRTY == true || $VCS_WORKDIR_HALF_DIRTY == true ]]; then
+      hook_com[misc]+=" $(print_icon VCS_DIRTY_ICON)"
+    fi
+  }
+  # Don't show remote branch, current tag or stashes. Run git-untracked first so
+  # the common dirty-marker hook sees untracked-only repositories too.
+  typeset -g POWERLEVEL9K_VCS_GIT_HOOKS=(
+    git-untracked
+    vcs-detect-changes
+    dot-dirty-marker
+    git-aheadbehind
+  )
   # Don't show the branch icon.
   typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=
   # When in detached HEAD state, show @commit where branch normally goes.
