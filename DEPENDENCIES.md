@@ -73,6 +73,7 @@ Install these only on hosts that develop the corresponding language:
 | Go | Makes the configuration request `gopls` and enables the Go-specific editor workflow. |
 | Python | Supports Python development and the virtual-environment prompt segment. |
 | Ruby | Supports Ruby development; the parser and editor settings themselves do not require a local Ruby runtime. |
+| mise | Optional development-tool version manager. When installed, the Zsh configuration activates it so project tool versions switch automatically on directory changes. |
 | Node.js/npm | Needed for JavaScript/TypeScript development, but not for the base editor bootstrap. |
 
 Mason installs the configured language servers after the relevant toolchain
