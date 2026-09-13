@@ -66,6 +66,14 @@ source "$DOT_ZSH_DIR/core/homebrew.zsh"
 path=($HOME/.local/bin(N) $path)
 typeset -gU path PATH
 
+# The same prefix's counterpart of /usr/local/share/zsh/site-functions: completion
+# functions and autoloadable functions this user installed, following the
+# XDG data directory the plugins already use. It goes in front so a user copy
+# wins over the system's, and must be set before compinit below reads fpath.
+# (N) and -U behave as they do for path.
+fpath=(${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions(N) $fpath)
+typeset -gU fpath
+
 ## Completion #################################################################
 
 # Keep the dump out of $HOME.
