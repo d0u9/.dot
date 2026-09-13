@@ -25,7 +25,7 @@ or a scoped `rg` search.
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
-│   │   ├── bin/zsh-compile      byte-compilation command, on $PATH
+│   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
 │   │   ├── lib/toolcache.zsh    shared cache for tool-generated shell init
 │   │   └── doc/completion.md    proposed completion registry (not implemented)
@@ -175,7 +175,7 @@ Choose scope first, then execution phase:
 | Interactive tool integration | `apps/zsh/core/integrations.zsh` |
 | ZLE plugins and load order | `apps/zsh/core/plugins.zsh` |
 | Logic shared by startup and commands | `apps/zsh/lib/*.zsh` |
-| A command the user runs by name | `apps/zsh/bin/*` |
+| A repository command, run by full path | `apps/zsh/bin/*` |
 | Early and post-reset prompt policy | `apps/zsh/core/prompt-options.zsh` |
 | Prompt loading and backend policy | `apps/zsh/core/prompt.zsh` |
 | Powerlevel10k settings | `apps/zsh/core/p10k.zsh` |
@@ -212,8 +212,8 @@ is out of date, `force` for everything, `clean` to remove the compiled files,
 after updating the plugin checkouts. Zsh sources a `.zwc` even when its source
 file is gone, and `.zwc` files are untracked, so git never removes one: after
 deleting or renaming a configuration file, or checking out a commit that
-predates it, the shell keeps running the old file until `prune` removes it. `core/shell.zsh` puts `apps/zsh/bin` on `$PATH`, so it is
-reachable by name. All three paths share `lib/compile.zsh`, so the target list
+predates it, the shell keeps running the old file until `prune` removes it. Nothing in this repository is put on `$PATH`; run it as
+`$DOT_ZSH_DIR/bin/zsh-compile`. All three paths share `lib/compile.zsh`, so the target list
 cannot drift between them; add a target there, not in a caller. The prompt uses an installed gitstatusd
 only when its version satisfies Powerlevel10k's own platform metadata;
 otherwise it uses Zsh's `vcs_info` fallback and never downloads a binary during
