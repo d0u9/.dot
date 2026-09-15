@@ -1,29 +1,30 @@
+# Whitelist: ignore everything at the top level, then re-include what we manage
+/*
+!/.gitignore
+!/01-apps/
+!/AGENTS.md
+!/DEPENDENCIES.md
+!/install.sh
+!/LICENSE
+!/README.md
+
 # Host-specific Zsh config
-apps/zsh/host-conf/*.sh
+01-apps/zsh/host-conf/*.sh
 
 # nvim tmp files
-apps/nvim/runtime/*
-!apps/nvim/runtime/*.md
+01-apps/nvim/runtime/*
+!01-apps/nvim/runtime/*.md
 
 # tmux
-apps/tmux/plugins
+01-apps/tmux/plugins
 
 # mutt
-apps/neomutt/*.info
-apps/neomutt/cache
-
-# Files and dirs to be ommited
-conf/
-conf_pub/
-conf_host/
-conf_cloud_cn/
-conf_cloud_global/
-private
-scripts
+01-apps/neomutt/*.info
+01-apps/neomutt/cache
 
 # Alaritty
-apps/alacritty/plugins/*
-!apps/alacritty/plugins/README.md
+01-apps/alacritty/plugins/*
+!01-apps/alacritty/plugins/README.md
 
 # Byte-compiled Zsh. These are host-local build output derived from a source
 # file that is either tracked or a plugin checkout; they are regenerated on
@@ -32,7 +33,38 @@ apps/alacritty/plugins/*
 *.zwc
 
 # Other tmp files
+# Vim / Emacs
 *.swp
+*.swo
+*.swn
 *~
+\#*#
+.#*
+Session.vim
+.netrwhist
+
+# Python
 *.pyc
+__pycache__/
+
+# macOS
 .DS_Store
+._*
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows / Linux
+Thumbs.db
+desktop.ini
+.directory
+.fuse_hidden*
+.nfs*
+
+# Generic
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.log
