@@ -2,13 +2,13 @@
 
 ## Repository boundaries
 
-`.dot` owns the public application configuration and its installers. `conf/`
+`.dot` owns the public application configuration and its installers. `51-conf/`
 is an ignored, independent Git repository containing private configuration.
-It can be read and modified when relevant to the task; read `conf/AGENTS.md`
-before working there. From this root, use `git -C conf status`,
-`git -C conf diff`, and other `git -C conf ...` commands for its changes.
+It can be read and modified when relevant to the task; read `51-conf/AGENTS.md`
+before working there. From this root, use `git -C 51-conf status`,
+`git -C 51-conf diff`, and other `git -C 51-conf ...` commands for its changes.
 Parent Git operations do not include that repository. Keep reviews and any
-requested commits separate, and never force-add `conf/` to the public repo.
+requested commits separate, and never force-add `51-conf/` to the public repo.
 
 `private/` is another local independent repository. The parent also ignores
 `conf_pub/`, `conf_host/`, `conf_cloud_cn/`, `conf_cloud_global/`, and `scripts`;
@@ -22,7 +22,7 @@ or a scoped `rg` search.
 ```text
 .dot/
 ├── install.sh                public installer dispatcher
-├── apps/
+├── 01-apps/
 │   ├── <app>-install.sh      per-application installation
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
@@ -34,13 +34,12 @@ or a scoped `rg` search.
 │   ├── zellij/              KDL overrides of upstream defaults
 │   ├── tmux/                shared config, OS fragments, downloaded plugins
 │   └── neomutt/             mail UI config; private account files excluded
-├── gdb/gdbinit              standalone debugger config
-├── conf/                    independent private configuration repository
+├── 51-conf/                 independent private configuration repository
 ├── private/                 separate private repository
 ```
 
 `install.sh` resolves its location into `DOT_DIR`, discovers
-`apps/*-install.sh`, and passes `DOT_DIR`, `APP_DIR`, `DOT_ZSH_DIR`, and
+`01-apps/*-install.sh`, and passes `DOT_DIR`, `APP_DIR`, `DOT_ZSH_DIR`, and
 `DOT_LOG_LEVEL` to child installers. `-l` lists apps, repeatable `-i <app>`
 installs selected apps, and `-a` installs all discovered non-test apps.
 `test*` installers are scaffolding, excluded from listing and `-a` but still
@@ -50,30 +49,30 @@ Current installation targets (link location → repository source):
 
 | Application | Link location | Source |
 | --- | --- | --- |
-| Zsh | `~/.zshrc` | `apps/zsh/zshrc` |
-| Neovim | `~/.config/nvim` | `apps/nvim/` |
-| Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
-| Zellij | `~/.config/zellij` | `apps/zellij/` |
-| tmux | `~/.tmux`, `~/.tmux.conf` | `apps/tmux/`, `apps/tmux/tmux.conf` |
+| Zsh | `~/.zshrc` | `01-apps/zsh/zshrc` |
+| Neovim | `~/.config/nvim` | `01-apps/nvim/` |
+| Alacritty | `~/.config/alacritty` | `01-apps/alacritty/` |
+| Zellij | `~/.config/zellij` | `01-apps/zellij/` |
+| tmux | `~/.tmux`, `~/.tmux.conf` | `01-apps/tmux/`, `01-apps/tmux/tmux.conf` |
 
 The current installers use `$HOME/.config` explicitly, not `$XDG_CONFIG_HOME`.
 Do not claim XDG support without tracing these consumers.
 
 Checkout location is not assumed. `install.sh` resolves `DOT_DIR` from its own
-path, and `apps/zsh/zshrc` derives the same value from the location of the file
+path, and `01-apps/zsh/zshrc` derives the same value from the location of the file
 being sourced (`${${(%):-%x}:A:h:h:h}`, which resolves the `~/.zshrc` symlink),
 then defines `DOT_ZSH_DIR` and `DOT_CONF_DIR` from it. Public and private shell
 files locate everything through those three variables; `bin/zsh-compile`
 resolves its own path the same way. Do not reintroduce a literal `~/.dot`, and
 do not add a `~/.dot` fallback for them -- guessing would silently act on the
 wrong tree on a host that keeps the checkout elsewhere.
-There are no current dispatcher installers for `neomutt/` or `gdb/`.
+There are no current dispatcher installer for `neomutt/`.
 
 Symlinked source edits can take effect on the next application launch or
 reload. Inspect links before editing an installed path. A folder being present
-in `apps/` does not mean that app is installed on this host.
+in `01-apps/` does not mean that app is installed on this host.
 
-App installers use Bash with `set -euo pipefail` and share `apps/zsh/lib.sh`.
+App installers use Bash with `set -euo pipefail` and share `01-apps/zsh/lib.sh`.
 Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
 prompt flow. Installers can also download themes, clone/update plugins, and
@@ -98,12 +97,12 @@ This repository is shared between machines, so the dividing line is what a
 different machine could not reproduce for itself:
 
 - Tracked: hand-written configuration and pinned versions. Everything under
-  `apps/zsh/` except `host-conf/*.sh`, the Neovim configuration including
-  `lazy-lock.json`, the Alacritty/Zellij/tmux/Neomutt sources, `gdb/gdbinit`,
-  the installers, and the documentation.
-- Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins,
-  Mason, parsers, undo/backup/swap), `apps/tmux/plugins`, downloaded Alacritty
-  themes under `apps/alacritty/plugins/*`, and `apps/zsh/host-conf/*.sh`.
+  `01-apps/zsh/` except `host-conf/*.sh`, the Neovim configuration including
+  `lazy-lock.json`, the Alacritty/Zellij/tmux/Neomutt sources, the
+  installers, and the documentation.
+- Generated inside the repository, ignored: `01-apps/nvim/runtime/*` (plugins,
+  Mason, parsers, undo/backup/swap), `01-apps/tmux/plugins`, downloaded Alacritty
+  themes under `01-apps/alacritty/plugins/*`, and `01-apps/zsh/host-conf/*.sh`.
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its
@@ -143,7 +142,7 @@ directly instead.
 
 ## Shell loading and configuration placement
 
-The effective order starting at `apps/zsh/zshrc` is:
+The effective order starting at `01-apps/zsh/zshrc` is:
 
 ```text
 base variables → core/prompt-options.zsh → instant prompt → lib.sh
@@ -168,29 +167,29 @@ Choose scope first, then execution phase:
 
 | Scope | Placement |
 | --- | --- |
-| Pre/post extension points | `apps/zsh/{pre,post}.zsh` |
-| Optional per-host pre/post hooks | `apps/zsh/host-conf/*-{pre,post}.{sh,zsh}` |
-| Portable public shell behavior | `apps/zsh/core/shell.zsh` |
-| Interactive aliases and GNU replacements | `apps/zsh/core/aliases.zsh` |
-| Interactive tool integration | `apps/zsh/core/integrations.zsh` |
-| ZLE plugins and load order | `apps/zsh/core/plugins.zsh` |
-| Logic shared by startup and commands | `apps/zsh/lib/*.zsh` |
-| A repository command, run by full path | `apps/zsh/bin/*` |
-| Early and post-reset prompt policy | `apps/zsh/core/prompt-options.zsh` |
-| Prompt loading and backend policy | `apps/zsh/core/prompt.zsh` |
-| Powerlevel10k settings | `apps/zsh/core/p10k.zsh` |
-| Shared personal configuration | `conf/app_conf/pub/zsh/00-zshrc-{pre,post}.sh` |
-| Personal OS-specific configuration | `conf/app_conf/pub/zsh/10-{linux,macos}-{pre,post}.sh` |
-| Host, employer, or project configuration | `conf/app_conf/pub/zsh/scene/20-*.sh` or its subdirectories |
-| Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
+| Pre/post extension points | `01-apps/zsh/{pre,post}.zsh` |
+| Optional per-host pre/post hooks | `01-apps/zsh/host-conf/*-{pre,post}.{sh,zsh}` |
+| Portable public shell behavior | `01-apps/zsh/core/shell.zsh` |
+| Interactive aliases and GNU replacements | `01-apps/zsh/core/aliases.zsh` |
+| Interactive tool integration | `01-apps/zsh/core/integrations.zsh` |
+| ZLE plugins and load order | `01-apps/zsh/core/plugins.zsh` |
+| Logic shared by startup and commands | `01-apps/zsh/lib/*.zsh` |
+| A repository command, run by full path | `01-apps/zsh/bin/*` |
+| Early and post-reset prompt policy | `01-apps/zsh/core/prompt-options.zsh` |
+| Prompt loading and backend policy | `01-apps/zsh/core/prompt.zsh` |
+| Powerlevel10k settings | `01-apps/zsh/core/p10k.zsh` |
+| Shared personal configuration | `51-conf/01-apps/zsh/00-zshrc-{pre,post}.sh` |
+| Personal OS-specific configuration | `51-conf/01-apps/zsh/10-{linux,macos}-{pre,post}.sh` |
+| Host, employer, or project configuration | `51-conf/01-apps/zsh/scene/20-*.sh` or its subdirectories |
+| Initialization requiring final hook ownership | End of executable setup in `01-apps/zsh/zshrc` |
 
-Private Zsh files remain in `conf/`, but that directory is not scanned or
+Private Zsh files remain in `51-conf/`, but that directory is not scanned or
 sourced directly by the public startup path. `host-conf/` loads every readable
 regular file or symlink whose name ends in `-pre.sh` or `-pre.zsh` before
 `core/shell.zsh`, and every `-post.sh` or `-post.zsh` hook after syntax
 highlighting. Prefixes do not enable or select a hook; they only determine the
 lexical order within each phase. Other suffixes are ignored. A hook may be an
-ignored symlink into `conf/`; verify the link target and readability before
+ignored symlink into `51-conf/`; verify the link target and readability before
 describing it as active. `pub` within `conf` means shared personal scope, not
 public or secret-free.
 
@@ -226,7 +225,7 @@ part of that cache able to start a daemon this host has rejected. The readable
 post host hook runs only after this core setup has completed.
 
 Prefer Zsh's native autoload mechanism for command-specific completion and add
-other integrations individually only when needed. `apps/zsh/doc/completion.md`
+other integrations individually only when needed. `01-apps/zsh/doc/completion.md`
 is a design proposal for a completion registry and refresh command; it is not
 implemented, so do not describe any part of it as current behavior.
 
@@ -269,7 +268,7 @@ Command replacement priority is platform-specific:
   (`ls`), without trying a separate `g`-prefixed GNU command first.
 
 Declare candidates in the clearly labeled `macos_fallbacks` and
-`linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`, ordered from left to
+`linux_fallbacks` lists in `01-apps/zsh/core/aliases.zsh`, ordered from left to
 right. Add or change priorities there, not in scattered executable checks.
 Each row maps a command to candidate executable names; the first installed
 candidate wins. Tools without a modern replacement start at the next tier.
@@ -285,7 +284,7 @@ interfaces. Re-sourcing must remove stale managed aliases before selection.
   Per-plugin settings live in `plugins/configs/`; common Lua settings live in
   `config/`, with language-local overrides in `after/ftplugin/`. LSP and parser
   lists are shared with the installer through
-  `lsp-servers.lua` and `treesitter-languages.lua`. Read `apps/nvim/doc/install.md`
+  `lsp-servers.lua` and `treesitter-languages.lua`. Read `01-apps/nvim/doc/install.md`
   before changes. `lazy-lock.json` is tracked; runtime plugins, Mason, parsers,
   undo, backup, and swap data live under ignored `runtime/`. Old plugin-manager
   directories there are not authoritative configuration and may contain
@@ -298,7 +297,7 @@ interfaces. Re-sourcing must remove stale managed aliases before selection.
   markers used by its scrollback integration.
 - tmux's main config sources an OS fragment and invokes TPM under `~/.tmux`.
   The installer bootstraps TPM; plugins are installed through tmux. Keep
-  downloaded `apps/tmux/plugins/` out of source edits.
+  downloaded `01-apps/tmux/plugins/` out of source edits.
 - Neomutt references account configuration under `~/.mutt`; `*.info` and
   cache data are ignored. Do not copy private account values into public files.
 
@@ -315,8 +314,8 @@ interpreter (`.sh` files sourced by Zsh can contain Zsh syntax):
 
 ```sh
 bash -n install.sh
-for f in apps/*-install.sh; do bash -n "$f" || break; done
-for f in apps/zsh/zshrc apps/zsh/*.sh apps/zsh/*.zsh apps/zsh/core/*.zsh; do
+for f in 01-apps/*-install.sh; do bash -n "$f" || break; done
+for f in 01-apps/zsh/zshrc 01-apps/zsh/*.sh 01-apps/zsh/*.zsh 01-apps/zsh/core/*.zsh; do
     zsh -n "$f" || break
 done
 ```

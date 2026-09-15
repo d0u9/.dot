@@ -5,7 +5,7 @@ set -euo pipefail
 # Resolve the repo root from this script's own location so that the installer
 # works no matter what directory it is invoked from.
 DOT_DIR=$(cd -- "$(dirname -- "$0")" && pwd)
-APP_DIR="$DOT_DIR/apps"
+APP_DIR="$DOT_DIR/01-apps"
 DOT_LOG_LEVEL="info"
 
 # import auxiliary functions

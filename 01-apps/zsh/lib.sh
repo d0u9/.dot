@@ -25,7 +25,7 @@ _DOT_C_ITALIC_CYAN=$'\033[3;36m'
 # dropped. The fallback below applies only when $DOT_LOG_LEVEL is unset:
 # zshrc and install.sh both set it, to 'warn'. Example:
 # dlog 'info' 'info hello'
-# dlog 'debug' 'debug hello' '/apps/zsh/pre.zsh'
+# dlog 'debug' 'debug hello' '/01-apps/zsh/pre.zsh'
 #
 # Not named log(): macOS ships /usr/bin/log for querying the unified logging
 # system, and a function by that name shadows it in every interactive shell.

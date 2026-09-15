@@ -14,7 +14,7 @@ These are required by the repository itself or by its installers:
 
 | Tool | Why it is required |
 | --- | --- |
-| Bash | Runs `install.sh` and every `apps/*-install.sh` installer. |
+| Bash | Runs `install.sh` and every `01-apps/*-install.sh` installer. |
 | Git | Clones Zsh, Neovim and tmux plugin repositories. |
 | curl | Downloads Alacritty themes and resources used by editor tooling. |
 | tar | Extracts downloaded tools and archives. |
@@ -51,7 +51,7 @@ the host provisioner's responsibility.
 
 These packages are optional. The shell safely falls back to the macOS system
 commands, but installing them makes command behaviour more consistent with
-Linux. Candidate selection is defined in `apps/zsh/core/aliases.zsh`.
+Linux. Candidate selection is defined in `01-apps/zsh/core/aliases.zsh`.
 
 | Package | Commands used by the configuration |
 | --- | --- |
@@ -98,7 +98,6 @@ prebuilt binary and the configuration itself is Lua.
 | --- | --- | --- |
 | Neomutt | Optional | The repository has configuration but no dispatcher installer for it. |
 | w3m | Recommended with Neomutt | Renders HTML mail as text. The current mailcap references `/usr/local/bin/w3m`, so that path must be adjusted on hosts where the executable lives elsewhere. |
-| GDB | Optional | The repository has a standalone `gdb/gdbinit` but no dispatcher installer. |
 
 ## Installed automatically
 

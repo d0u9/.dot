@@ -33,7 +33,7 @@ here is meant to run unchanged on:
 The Zsh configuration keeps a small explicit set of interactive additions:
 Powerlevel10k, autosuggestions, syntax highlighting, fzf shell integration and
 zoxide. Top-level pre and post hook phases remain so behavior can be added back
-one piece at a time, while the implementation lives under `apps/zsh/core/`.
+one piece at a time, while the implementation lives under `01-apps/zsh/core/`.
 Optional readable files or symlinks in `host-conf/` are loaded when they end
 in `-pre.sh`, `-pre.zsh`, `-post.sh` or `-post.zsh`. Their prefixes only
 control lexical load order; files with other suffixes are ignored. Zsh's
@@ -41,7 +41,7 @@ completion functions, including `_git`, retain their native autoload-on-first-us
 behavior. Interactive aliases prefer
 modern replacements such as `eza`; on macOS they next try `g`-prefixed GNU
 tools, while Linux falls directly back to default commands. Edit the ordered
-`macos_fallbacks` and `linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`
+`macos_fallbacks` and `linux_fallbacks` lists in `01-apps/zsh/core/aliases.zsh`
 to add candidates or change priorities.
 When `eza` is available, `tree` maps to `eza --tree`; otherwise an installed
 standalone `tree` remains untouched, and no alias is created when both are
@@ -117,7 +117,7 @@ You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 ./install.sh -i nvim
 ```
 
-That symlinks `apps/nvim` to `$HOME/.config/nvim` (neovim uses the XDG-style
+That symlinks `01-apps/nvim` to `$HOME/.config/nvim` (neovim uses the XDG-style
 layout rather than vim's `.vimrc` and `.vim/`) and bootstraps the plugins,
 LSP servers and tree-sitter parsers. Re-running it is safe.
 
@@ -129,17 +129,17 @@ about the differences between vim and neovim.
 
 Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which
 `init.lua` clones on the first start; the spec is
-`apps/nvim/plugins/install.lua` and per-plugin settings live in
-`apps/nvim/plugins/configs/`. `:Lazy` opens the manager, `:Lazy sync`
+`01-apps/nvim/plugins/install.lua` and per-plugin settings live in
+`01-apps/nvim/plugins/configs/`. `:Lazy` opens the manager, `:Lazy sync`
 installs and updates.
 
-`apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
+`01-apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
 tracked in git, so all hosts converge on the same versions -- commit it after
 a `:Lazy sync`. Everything else a plugin writes lives under
-`apps/nvim/runtime/`, which is gitignored and can be deleted to rebuild from
+`01-apps/nvim/runtime/`, which is gitignored and can be deleted to rebuild from
 scratch.
 
-**[`apps/nvim/doc/install.md`](apps/nvim/doc/install.md) is the reference**:
+**[`01-apps/nvim/doc/install.md`](01-apps/nvim/doc/install.md) is the reference**:
 what the installer does on its own, what has to be on the host first (the
 tree-sitter CLI in particular), and where to add a plugin, an LSP server or a
 parser.
@@ -149,7 +149,7 @@ parser.
 # Zsh
 
 Run `./install.sh -i zsh` to install fzf, zoxide and the three Zsh plugins,
-then link `apps/zsh/zshrc` to `~/.zshrc`. The installer supports Homebrew,
+then link `01-apps/zsh/zshrc` to `~/.zshrc`. The installer supports Homebrew,
 apt, dnf, pacman and apk; existing commands and correct plugin checkouts are
 left in place. Powerlevel10k uses an already-installed, version-compatible
 gitstatusd when available and otherwise falls back to Zsh's built-in
