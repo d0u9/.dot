@@ -113,7 +113,7 @@ command.
 Tracked public configuration:
 
 ```text
-01-apps/zsh/
+apps/zsh/
 ├── doc/completion.md
 ├── bin/zsh-completion
 └── core/
@@ -143,7 +143,7 @@ Responsibilities:
   and maintain cached completion files.
 - `core/integrations.zsh` continues to own tools that modify the interactive
   shell beyond completion.
-- `01-apps/zsh-install.sh` invokes a non-interactive completion refresh after the
+- `apps/zsh-install.sh` invokes a non-interactive completion refresh after the
   rest of the Zsh installation has succeeded.
 
 The generated completion directory must be added to `fpath` before `compinit`.
@@ -330,7 +330,7 @@ completion alone is not enough reason to add one.
 4. Implement `bin/zsh-completion` with `refresh` and `remove`, including dump
    invalidation and `zsh -n` validation.
 5. Register Docker and kubectl as the first two generated completions.
-6. Update `01-apps/zsh-install.sh` to refresh installed registered commands.
+6. Update `apps/zsh-install.sh` to refresh installed registered commands.
 7. Add `list`, `doctor`, and alias mappings only when they are needed.
 
 ## Acceptance criteria

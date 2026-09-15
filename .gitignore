@@ -1,7 +1,7 @@
 # Whitelist: ignore everything at the top level, then re-include what we manage
 /*
 !/.gitignore
-!/01-apps/
+!/apps/
 !/AGENTS.md
 !/DEPENDENCIES.md
 !/install.sh
@@ -9,22 +9,22 @@
 !/README.md
 
 # Host-specific Zsh config
-01-apps/zsh/host-conf/*.sh
+apps/zsh/host-conf/*.sh
 
 # nvim tmp files
-01-apps/nvim/runtime/*
-!01-apps/nvim/runtime/*.md
+apps/nvim/runtime/*
+!apps/nvim/runtime/*.md
 
 # tmux
-01-apps/tmux/plugins
+apps/tmux/plugins
 
 # mutt
-01-apps/neomutt/*.info
-01-apps/neomutt/cache
+apps/neomutt/*.info
+apps/neomutt/cache
 
 # Alaritty
-01-apps/alacritty/plugins/*
-!01-apps/alacritty/plugins/README.md
+apps/alacritty/plugins/*
+!apps/alacritty/plugins/README.md
 
 # Byte-compiled Zsh. These are host-local build output derived from a source
 # file that is either tracked or a plugin checkout; they are regenerated on

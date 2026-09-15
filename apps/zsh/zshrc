@@ -8,16 +8,16 @@
 # Derived from this file's own location rather than assumed to be ~/.dot, so a
 # checkout anywhere works. `%x` is the file being sourced, which is the
 # ~/.zshrc symlink; `:A` resolves it to the file in the repository, and the
-# three `:h` climb 01-apps/zsh/zshrc back to the root. Everything else in this
+# three `:h` climb apps/zsh/zshrc back to the root. Everything else in this
 # configuration, public and private, locates itself through these.
 #
 # They are read only by files this shell sources, so they do not need to be
 # exported into every child process. Installers set their own copies.
 typeset -g DOT_DIR=${${(%):-%x}:A:h:h:h}
-typeset -g DOT_ZSH_DIR=$DOT_DIR/01-apps/zsh
+typeset -g DOT_ZSH_DIR=$DOT_DIR/apps/zsh
 # The private repository is optional and is not present on every host; this is
 # only where it would be.
-typeset -g DOT_CONF_DIR=$DOT_DIR/51-conf
+typeset -g DOT_CONF_DIR=$DOT_DIR/conf
 typeset -g DOT_ZSH_PLUGIN_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
 
 # Instant prompt may initialize the VCS backend from its cache, before the
