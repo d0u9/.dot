@@ -3,7 +3,7 @@ The bucket of dot files.
 
 # Description
 
-This repository contains configuration for Zsh, Neovim, tmux and other commonly
+This repository contains configuration for Bash, Zsh, Neovim, tmux and other commonly
 used applications. Private configuration lives in an independent repository so
 that sensitive information is not added here.
 
@@ -19,6 +19,7 @@ the required, strongly recommended and optional tools on macOS and Linux.
 - [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
 - [Zsh](#zsh)
+- [Bash](#bash)
 - [tmux](#tmux)
 
 # Supported platforms
@@ -178,6 +179,18 @@ been applied.
 
 Run `zsh -f tests/zsh-regression.zsh` for isolated regression checks; these
 use temporary caches and stub tools and do not load private configuration.
+
+---
+
+# Bash
+
+Run `./install.sh -i bash` for the lightweight server shell profile. It links
+`apps/bash/bashrc` and `apps/bash/bash_profile` into the home directory, tries
+to install `bash-completion`, and enables case-insensitive menu completion and
+prefix history search. The single-line prompt highlights `user@host`, the current
+directory and failed exit statuses, while deliberately remaining distinct from
+the Powerlevel10k workstation prompt. It uses plain text when the terminal does
+not support colour.
 
 ---
 

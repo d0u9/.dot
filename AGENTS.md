@@ -29,6 +29,7 @@ or a scoped `rg` search.
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
 │   │   ├── lib/toolcache.zsh    shared cache for tool-generated shell init
 │   │   └── doc/completion.md    proposed completion registry (not implemented)
+│   ├── bash/                lightweight server shell, completion, and prompt
 │   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
 │   ├── alacritty/           TOML config and downloaded themes
 │   ├── zellij/              KDL overrides of upstream defaults
@@ -50,6 +51,7 @@ Current installation targets (link location → repository source):
 
 | Application | Link location | Source |
 | --- | --- | --- |
+| Bash | `~/.bashrc`, `~/.bash_profile` | `apps/bash/bashrc`, `apps/bash/bash_profile` |
 | Zsh | `~/.zshrc` | `apps/zsh/zshrc` |
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |

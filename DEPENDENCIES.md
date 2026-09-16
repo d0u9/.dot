@@ -19,9 +19,16 @@ These are required by the repository itself or by its installers:
 | curl | Downloads Alacritty themes and resources used by editor tooling. |
 | tar | Extracts downloaded tools and archives. |
 
-Install the application whose configuration you plan to use. Zsh, Neovim,
+Install the application whose configuration you plan to use. Bash, Zsh, Neovim,
 Alacritty, Zellij and tmux are independent targets; installing one does not
 require installing all of the others.
+
+## Lightweight Bash server profile
+
+| Tool | Level | What it enables |
+| --- | --- | --- |
+| Bash | Required for Bash | The server-oriented shell configuration and prompt. |
+| bash-completion | Strongly recommended | Adds programmable completion for Git, SSH, package managers and other installed commands. The Bash installer tries to install it through the first supported package manager. |
 
 ## Core Zsh and Neovim workstation
 

@@ -1,0 +1,24 @@
+# This file is only useful to interactive shells. Keep non-interactive uses of
+# BASH_ENV quiet and free of aliases, completion setup and prompt changes.
+case $- in
+    *i*) ;;
+    *) return ;;
+esac
+
+# Resolve this file's symlink without readlink -f, which macOS does not ship.
+# The installer creates an absolute link, but the loop also handles relative
+# links so the configuration remains relocatable.
+_dot_bash_source=${BASH_SOURCE[0]}
+while [ -L "$_dot_bash_source" ]; do
+    _dot_bash_dir=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
+    _dot_bash_source=$(readlink "$_dot_bash_source")
+    case $_dot_bash_source in
+        /*) ;;
+        *) _dot_bash_source=$_dot_bash_dir/$_dot_bash_source ;;
+    esac
+done
+DOT_BASH_DIR=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
+unset _dot_bash_source _dot_bash_dir
+
+source "$DOT_BASH_DIR/completion.bash"
+source "$DOT_BASH_DIR/prompt.bash"

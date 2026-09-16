@@ -1,0 +1,5 @@
+# Bash reads ~/.bash_profile instead of ~/.bashrc for a login shell. Servers
+# commonly start login shells over SSH, so join the two startup paths here.
+if [ -r "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
