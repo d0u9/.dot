@@ -20,5 +20,22 @@ done
 DOT_BASH_DIR=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
 unset _dot_bash_source _dot_bash_dir
 
+if [ -d "$HOME/.local/bin" ]; then
+    case :$PATH: in
+        *:"$HOME/.local/bin":*) ;;
+        *) PATH="$HOME/.local/bin:$PATH" ;;
+    esac
+fi
+if [ -r "$HOME/.cargo/env" ]; then
+    source "$HOME/.cargo/env"
+fi
+
+HISTSIZE=200000
+HISTFILESIZE=200000
+shopt -s histappend checkwinsize
+HISTCONTROL=ignoreboth:erasedups
+
+source "$DOT_BASH_DIR/aliases.bash"
 source "$DOT_BASH_DIR/completion.bash"
+source "$DOT_BASH_DIR/integrations.bash"
 source "$DOT_BASH_DIR/prompt.bash"

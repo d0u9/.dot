@@ -193,9 +193,10 @@ use temporary caches and stub tools and do not load private configuration.
 
 Run `./install.sh -i bash` for the lightweight server shell profile. It links
 `apps/bash/bashrc` and `apps/bash/bash_profile` into the home directory, tries
-to install `bash-completion`, and enables case-insensitive menu completion and
-prefix history search. The single-line prompt highlights `user@host`, the current
-directory and failed exit statuses, while deliberately remaining distinct from
+to install `bash-completion`, adds listing and navigation aliases, activates
+mise, zoxide and fzf when installed, and enables case-insensitive menu
+completion and prefix history search. The single-line prompt highlights
+`user@host`, the current directory and failed exit statuses, while remaining distinct from
 the Powerlevel10k workstation prompt. It uses plain text when the terminal does
 not support colour.
 
