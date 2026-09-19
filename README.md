@@ -159,6 +159,13 @@ instant prompt: a fallback shell discards a prompt cache left behind by a
 gitstatus installation that no longer works on this host, rather than giving
 up the instant prompt on the hosts that benefit from it most.
 
+The shell fetches the current branch's upstream remote in the background at
+most once every five minutes per worktree. Set `DOT_GIT_AUTOFETCH_INTERVAL=0`
+before loading Zsh to disable this, or set another interval in seconds.
+Background fetch updates remote-tracking refs. When force-pushing with
+`--force-with-lease`, also use `--force-if-includes` (or configure
+`push.useForceIfIncludes=true`) to protect commits fetched in the background.
+
 Before completion and tool setup, `core/shell.zsh` loads `core/homebrew.zsh`
 to initialize an executable Homebrew using
 `brew shellenv zsh`: `/opt/homebrew` for macOS ARM, `/usr/local` for macOS

@@ -1,5 +1,6 @@
 source "$DOT_ZSH_DIR/core/prompt.zsh"
 
+source "$DOT_ZSH_DIR/core/git-autofetch.zsh"
 # No interactive test here: Zsh reads .zshrc only for interactive shells, and
 # core/shell.zsh below the same entry point already relies on that. A guard on
 # some of the files and not others only suggests a distinction that does not
