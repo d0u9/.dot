@@ -195,10 +195,13 @@ Run `./install.sh -i bash` for the lightweight server shell profile. It links
 `apps/bash/bashrc` and `apps/bash/bash_profile` into the home directory, tries
 to install `bash-completion`, adds listing and navigation aliases, activates
 mise, zoxide and fzf when installed, and enables case-insensitive menu
-completion and prefix history search. The single-line prompt highlights
-`user@host`, the current directory and failed exit statuses, while remaining distinct from
-the Powerlevel10k workstation prompt. It uses plain text when the terminal does
-not support colour.
+completion and prefix history search. Existing `~/.local/bin` and
+`~/.local/bin/scripts` directories join `PATH`; `~/.local/share/man` joins
+`MANPATH`, and `~/.local/lib` joins `LD_LIBRARY_PATH` on Linux. The single-line
+prompt highlights `user@host`, the current directory and failed exit statuses. In Git repositories,
+it also shows the branch (or detached commit), `*` for changes, and `⇡` / `⇣`
+when ahead of or behind the upstream branch. It uses plain text when the
+terminal does not support colour.
 
 ---
 

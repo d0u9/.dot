@@ -20,11 +20,38 @@ done
 DOT_BASH_DIR=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
 unset _dot_bash_source _dot_bash_dir
 
+if [ -d "$HOME/.local/bin/scripts" ]; then
+    case :$PATH: in
+        *:"$HOME/.local/bin/scripts":*) ;;
+        *) PATH="$HOME/.local/bin/scripts:$PATH" ;;
+    esac
+fi
 if [ -d "$HOME/.local/bin" ]; then
     case :$PATH: in
         *:"$HOME/.local/bin":*) ;;
         *) PATH="$HOME/.local/bin:$PATH" ;;
     esac
+fi
+export PATH
+
+if [ -d "$HOME/.local/share/man" ]; then
+    case :${MANPATH:-}: in
+        *:"$HOME/.local/share/man":*) ;;
+        # A trailing colon keeps the system's default manpath when unset.
+        *) if [ -n "${MANPATH:-}" ]; then
+               MANPATH="$MANPATH:$HOME/.local/share/man"
+           else
+               MANPATH="$HOME/.local/share/man:"
+           fi ;;
+    esac
+    export MANPATH
+fi
+if [[ $OSTYPE == linux* && -d $HOME/.local/lib ]]; then
+    case :${LD_LIBRARY_PATH:-}: in
+        *:"$HOME/.local/lib":*) ;;
+        *) LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$HOME/.local/lib" ;;
+    esac
+    export LD_LIBRARY_PATH
 fi
 if [ -r "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"

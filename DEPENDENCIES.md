@@ -15,7 +15,7 @@ These are required by the repository itself or by its installers:
 | Tool | Why it is required |
 | --- | --- |
 | Bash | Runs `install.sh` and every `apps/*-install.sh` installer. |
-| Git | Clones Zsh, Neovim and tmux plugin repositories. |
+| Git | Clones Zsh, Neovim and tmux plugin repositories and supplies the Bash prompt's repository status. |
 | curl | Downloads Alacritty themes and resources used by editor tooling. |
 | tar | Extracts downloaded tools and archives. |
 
