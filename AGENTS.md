@@ -139,6 +139,55 @@ hand has no recorded provenance or update path; an installer that fetches by
 tracked file and discards the hand-written customizations. Edit it
 directly instead.
 
+## Shell priority
+
+Zsh is the daily interactive shell on the workstation; Bash is the minimal
+configuration on servers. When the two conflict, Zsh wins, and Zsh startup
+latency and responsiveness are the binding constraint.
+
+Two consequences for shared code:
+
+- Never make Zsh pay for Bash. Do not lower a Zsh implementation into a
+  Bash/Zsh common subset when that costs startup time or gives up a native
+  mechanism: `(( $+commands[x] ))` is a builtin table lookup while
+  `$(command -v x)` forks a subshell, and associative arrays, `emulate -L zsh`
+  and glob qualifiers have no portable equivalent. Shared runtime helpers in
+  `apps/shell/` are written in the common subset because both shells source
+  them; that is a property of those files, not a target for the Zsh core.
+- Bash may lag. Reduced functionality, duplicated logic and a missing cache are
+  acceptable on the Bash side. Where a policy table has to exist in both
+  shells, keep both copies readable and detect divergence with a check rather
+  than eliminating the duplication by moving the decision into Bash-compatible
+  code.
+
+Measured on macOS (Darwin 24.6, Apple Silicon), for judging whether an
+optimization is worth anything. Interactive startup is about 310ms total:
+
+| Segment | Cost |
+| --- | --- |
+| `compinit` without cache | 1220ms |
+| `compinit -C` (cached dump) | 47ms |
+| Powerlevel10k | 48ms |
+| `mise activate zsh` | 35ms |
+| `fzf --zsh` | 16.5ms |
+| `zoxide init zsh` | 9ms |
+| `gdircolors -b` | 9ms |
+| `zsh -f` empty shell | 12.4ms |
+| plain fork | 6ms |
+
+The daily-driver cost is what survives the caches: the `fzf`, `zoxide` and
+`dircolors` rows are paid once per cache generation, not per shell, and
+instant prompt hides most of the remainder from the person typing. `mise
+activate` is the largest item that is still paid in full by every shell.
+
+Restructuring the shared helpers does not show up in that budget. Sourcing the
+227-line `apps/shell/lib.sh` costs 0.132ms against 0.118ms for a 91-line
+version with `ips` and the two table formatters removed, both byte-compiled --
+a 0.014ms difference, or 0.004% of startup. Splitting those helpers per
+platform, or moving them to `autoload`, buys nothing measurable. Decide their
+structure on readability, and do not describe such a change as a startup
+optimization.
+
 ## Shell loading and configuration placement
 
 The effective order starting at `apps/zsh/zshrc` is:
