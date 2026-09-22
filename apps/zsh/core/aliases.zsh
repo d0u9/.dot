@@ -12,6 +12,10 @@
         done
     fi
     typeset -ga _DOT_ZSH_MANAGED_ALIASES=()
+    if (( ${+_DOT_ZSH_MANAGED_PORTS} )); then
+        unfunction ports 2>/dev/null
+        unset _DOT_ZSH_MANAGED_PORTS _DOT_ZSH_PORTS_COMMAND
+    fi
 
     # Define an alias and remember it, so the cleanup above can find it again.
     _dot_alias() {
@@ -37,6 +41,8 @@
         xargs     'gxargs xargs'
         tar       'gtar tar'
         dircolors 'gdircolors dircolors'
+        git       'git'
+        ports     'lsof'
     )
     local -A linux_fallbacks=(
         ls        'eza ls'
@@ -49,6 +55,8 @@
         xargs     'xargs'
         tar       'tar'
         dircolors 'dircolors'
+        git       'git'
+        ports     'ss netstat'
     )
     local -A fallbacks selected
     case $OSTYPE in
@@ -106,7 +114,7 @@
     fi
 
     for command_name executable in "${(@kv)selected}"; do
-        [[ $command_name == (ls|tree|dircolors) ]] && continue
+        [[ $command_name == (ls|tree|dircolors|git|ports) ]] && continue
         [[ $command_name == $executable ]] && continue
         _dot_alias "$command_name" "$executable"
     done
@@ -115,6 +123,34 @@
         _dot_alias dps 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
         _dot_alias dpsa 'docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
     fi
+
+    if [[ ${selected[git]:-} == git ]]; then
+        _dot_alias gss 'git status --short'
+        _dot_alias glog 'git log --oneline --decorate -12'
+        _dot_alias gd 'git diff'
+        _dot_alias gds 'git diff --staged'
+    fi
+
+    case ${selected[ports]:-} in
+        lsof|ss|netstat)
+            typeset -g _DOT_ZSH_PORTS_COMMAND=${selected[ports]}
+            typeset -g _DOT_ZSH_MANAGED_PORTS=1
+            ports() {
+                case "${_DOT_ZSH_PORTS_COMMAND}:${1:-all}" in
+                    lsof:all) command lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:tcp) command lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:udp) command lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    ss:all) command ss -ltnup ;;
+                    ss:tcp) command ss -ltnp ;;
+                    ss:udp) command ss -lnup ;;
+                    netstat:all) command netstat -ltnup ;;
+                    netstat:tcp) command netstat -ltnp ;;
+                    netstat:udp) command netstat -lnup ;;
+                    *) print -u2 -- 'usage: ports [all|tcp|udp]'; return 2 ;;
+                esac
+            }
+            ;;
+    esac
 
     ## Colours ###############################################################
 

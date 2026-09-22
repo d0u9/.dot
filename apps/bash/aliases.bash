@@ -12,6 +12,10 @@ _dot_bash_aliases() {
         done
     fi
     _DOT_BASH_MANAGED_ALIASES=()
+    if [ -n "${_DOT_BASH_MANAGED_PORTS+x}" ]; then
+        unset -f ports 2>/dev/null
+        unset _DOT_BASH_MANAGED_PORTS _DOT_BASH_PORTS_COMMAND
+    fi
 
     _dot_bash_alias() {
         alias "$1=$2"
@@ -43,6 +47,7 @@ _dot_bash_aliases() {
             _dot_bash_select xargs gxargs xargs; local selected_xargs=$selected
             _dot_bash_select tar gtar tar; local selected_tar=$selected
             _dot_bash_select dircolors gdircolors dircolors; local selected_dircolors=$selected
+            _dot_bash_select ports lsof; local selected_ports=$selected
             ;;
         linux*)
             _dot_bash_select ls eza ls; local selected_ls=$selected
@@ -55,14 +60,16 @@ _dot_bash_aliases() {
             _dot_bash_select xargs xargs; local selected_xargs=$selected
             _dot_bash_select tar tar; local selected_tar=$selected
             _dot_bash_select dircolors dircolors; local selected_dircolors=$selected
+            _dot_bash_select ports ss netstat; local selected_ports=$selected
             ;;
         *)
             _dot_bash_select ls ls; local selected_ls=$selected
             local selected_tree= selected_vim= selected_vi= selected_sed=
             local selected_grep= selected_find= selected_xargs= selected_tar=
-            local selected_dircolors=
+            local selected_dircolors= selected_ports=
             ;;
     esac
+    _dot_bash_select git git; local selected_git=$selected
 
     long_flags=-lh
     all_flags=-lah
@@ -106,6 +113,34 @@ _dot_bash_aliases() {
 
     _dot_bash_alias .. 'cd ..'
     _dot_bash_alias ... 'cd ../..'
+
+    if [ "$selected_git" = git ]; then
+        _dot_bash_alias gss 'git status --short'
+        _dot_bash_alias glog 'git log --oneline --decorate -12'
+        _dot_bash_alias gd 'git diff'
+        _dot_bash_alias gds 'git diff --staged'
+    fi
+
+    case $selected_ports in
+        lsof|ss|netstat)
+            _DOT_BASH_PORTS_COMMAND=$selected_ports
+            _DOT_BASH_MANAGED_PORTS=1
+            ports() {
+                case "${_DOT_BASH_PORTS_COMMAND}:${1:-all}" in
+                    lsof:all) command lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:tcp) command lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:udp) command lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    ss:all) command ss -ltnup ;;
+                    ss:tcp) command ss -ltnp ;;
+                    ss:udp) command ss -lnup ;;
+                    netstat:all) command netstat -ltnup ;;
+                    netstat:tcp) command netstat -ltnp ;;
+                    netstat:udp) command netstat -lnup ;;
+                    *) printf 'usage: ports [all|tcp|udp]\n' >&2; return 2 ;;
+                esac
+            }
+            ;;
+    esac
 
     if executable_path=$(type -P docker 2>/dev/null) && [ -x "$executable_path" ]; then
         _dot_bash_alias dps 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
