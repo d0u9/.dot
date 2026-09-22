@@ -10,7 +10,7 @@ DOT_LOG_LEVEL="info"
 
 # import auxiliary functions
 export DOT_ZSH_DIR="$APP_DIR/zsh"
-source "$DOT_ZSH_DIR/lib.sh"
+source "$DOT_DIR/apps/shell/install.sh"
 
 # Echo the installable app names. Anything called test* is scaffolding and is
 # hidden here, though `-i test1` still reaches it.

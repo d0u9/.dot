@@ -20,6 +20,9 @@ done
 DOT_BASH_DIR=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
 unset _dot_bash_source _dot_bash_dir
 
+export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
+source "$DOT_BASH_DIR/../shell/lib.sh"
+
 if [ -d "$HOME/.local/bin/scripts" ]; then
     case :$PATH: in
         *:"$HOME/.local/bin/scripts":*) ;;

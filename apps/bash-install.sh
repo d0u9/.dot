@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # DOT_DIR, APP_DIR and DOT_LOG_LEVEL are exported by install.sh.
-source "$DOT_DIR/apps/zsh/lib.sh"
+source "$DOT_DIR/apps/shell/install.sh"
 
 info "Installing bash configuration"
 

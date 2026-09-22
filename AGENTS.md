@@ -75,7 +75,7 @@ Symlinked source edits can take effect on the next application launch or
 reload. Inspect links before editing an installed path. A folder being present
 in `apps/` does not mean that app is installed on this host.
 
-App installers use Bash with `set -euo pipefail` and share `apps/zsh/lib.sh`.
+App installers use Bash with `set -euo pipefail` and share `apps/shell/install.sh`.
 Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
 prompt flow. Installers can also download themes, clone/update plugins, and
