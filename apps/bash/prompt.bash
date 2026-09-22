@@ -26,11 +26,16 @@ _dot_git_prompt() {
 
     branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) ||
         branch="@$(git rev-parse --short HEAD 2>/dev/null)"
-    # Bash expands PS1 again when displaying it. Escape branch text so a
-    # repository name cannot become prompt syntax or a command substitution.
-    branch=${branch//\/\\}
-    branch=${branch//\$/\\$}
+    # Bash decodes backslash escapes in PS1 and, with promptvars set, expands
+    # it again. Escape branch text so a repository name cannot become prompt
+    # syntax or a command substitution. Backslash goes first: escaping it after
+    # the others would double the backslashes they just added.
+    branch=${branch//\\/\\\\}
     branch=${branch//\`/\\\`}
+    # `\$` also stops the second pass from expanding a parameter; it is a
+    # prompt escape of its own, so a `$` in a branch name prints as `#` for
+    # root. Displaying one character differently beats expanding the name.
+    branch=${branch//\$/\\$}
     git_segment="${_dot_git}${branch}"
 
     changes=$(git status --porcelain --untracked-files=normal 2>/dev/null)
