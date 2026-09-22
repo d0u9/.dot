@@ -111,6 +111,11 @@
         _dot_alias "$command_name" "$executable"
     done
 
+    if (( $+commands[docker] )) && [[ -x ${commands[docker]} ]]; then
+        _dot_alias dps 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
+        _dot_alias dpsa 'docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
+    fi
+
     ## Colours ###############################################################
 
     # GNU ls and eza both read LS_COLORS; GNU dircolors is optional on every

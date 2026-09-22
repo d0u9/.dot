@@ -107,6 +107,11 @@ _dot_bash_aliases() {
     _dot_bash_alias .. 'cd ..'
     _dot_bash_alias ... 'cd ../..'
 
+    if executable_path=$(type -P docker 2>/dev/null) && [ -x "$executable_path" ]; then
+        _dot_bash_alias dps 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
+        _dot_bash_alias dpsa 'docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
+    fi
+
     # Match Zsh's GNU-colour setup, but Bash has no shared generated-init cache.
     if [ -n "$selected_dircolors" ]; then
         local dircolors_init
