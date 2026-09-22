@@ -3,7 +3,7 @@ The bucket of dot files.
 
 # Description
 
-This repository contains configuration for Bash, Zsh, Neovim, tmux and other commonly
+This repository contains configuration for Bash, Zsh, Neovim and other commonly
 used applications. Private configuration lives in an independent repository so
 that sensitive information is not added here.
 
@@ -20,7 +20,6 @@ the required, strongly recommended and optional tools on macOS and Linux.
 - [NeoVim](#neovim)
 - [Zsh](#zsh)
 - [Bash](#bash)
-- [tmux](#tmux)
 
 # Supported platforms
 
@@ -98,7 +97,6 @@ was made because packer is no longer maintained.
 
 | Manager | Manages | Adopted | Commit |
 | --- | --- | --- | --- |
-| [tpm](https://github.com/tmux-plugins/tpm) | tmux plugins | 2015-12-20 | `ac272b7` |
 | [Homebrew](https://brew.sh) | macOS packages | 2021-04-30 | `1ba93ce` |
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | LSP servers | 2023-07-12 | `78e18c3` |
 
@@ -202,33 +200,6 @@ prompt highlights `user@host`, the current directory and failed exit statuses. I
 it also shows the branch (or detached commit), `*` for changes, and `⇡` / `⇣`
 when ahead of or behind the upstream branch. It uses plain text when the
 terminal does not support colour.
-
----
-
-# tmux
-
-## Make symbol link
-
-Link `tmux` dir and `tmux.conf` to your home directory:
-
-```
-ln -s /path/to/.dot/apps/tmux ~/.tmux
-ln -s /path/to/.dot/apps/tmux/tmux.conf ~/.tmux.conf
-```
-
-## Install tpm plugin
-
-The official installation guide can be found [https://github.com/tmux-plugins/tpm#installation](https://github.com/tmux-plugins/tpm#installation).
-
-Simply:
-
-```
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
-
-## Install other plugins
-
-Launch tmux and press the shortcut: `Prefix + I`.
 
 ---
 

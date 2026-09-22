@@ -33,9 +33,7 @@ or a scoped `rg` search.
 │   ├── bash/                lightweight server shell, completion, and prompt
 │   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
 │   ├── alacritty/           TOML config and downloaded themes
-│   ├── zellij/              KDL overrides of upstream defaults
-│   ├── tmux/                shared config, OS fragments, downloaded plugins
-│   └── neomutt/             mail UI config; private account files excluded
+│   └── zellij/              KDL overrides of upstream defaults
 ├── conf/                   independent private configuration repository
 ├── skills/                 independent agent skills repository
 ├── private/                separate private repository
@@ -57,7 +55,6 @@ Current installation targets (link location → repository source):
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
-| tmux | `~/.tmux`, `~/.tmux.conf` | `apps/tmux/`, `apps/tmux/tmux.conf` |
 
 The current installers use `$HOME/.config` explicitly, not `$XDG_CONFIG_HOME`.
 Do not claim XDG support without tracing these consumers.
@@ -70,8 +67,6 @@ files locate everything through those three variables; `bin/zsh-compile`
 resolves its own path the same way. Do not reintroduce a literal `~/.dot`, and
 do not add a `~/.dot` fallback for them -- guessing would silently act on the
 wrong tree on a host that keeps the checkout elsewhere.
-There are no current dispatcher installer for `neomutt/`.
-
 Symlinked source edits can take effect on the next application launch or
 reload. Inspect links before editing an installed path. A folder being present
 in `apps/` does not mean that app is installed on this host.
@@ -102,10 +97,10 @@ different machine could not reproduce for itself:
 
 - Tracked: hand-written configuration and pinned versions. Everything under
   `apps/zsh/` except `host-conf/*.sh`, the Neovim configuration including
-  `lazy-lock.json`, the Alacritty/Zellij/tmux/Neomutt sources, the
+  `lazy-lock.json`, the Alacritty/Zellij sources, the
   installers, and the documentation.
 - Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins,
-  Mason, parsers, undo/backup/swap), `apps/tmux/plugins`, downloaded Alacritty
+  Mason, parsers, undo/backup/swap), downloaded Alacritty
   themes under `apps/alacritty/plugins/*`, and `apps/zsh/host-conf/*.sh`.
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
@@ -299,11 +294,6 @@ interfaces. Re-sourcing must remove stale managed aliases before selection.
 - Zellij keeps only overrides of default settings in `config.kdl`. Preserve
   that approach. Its theme matches Alacritty; Powerlevel10k emits the prompt
   markers used by its scrollback integration.
-- tmux's main config sources an OS fragment and invokes TPM under `~/.tmux`.
-  The installer bootstraps TPM; plugins are installed through tmux. Keep
-  downloaded `apps/tmux/plugins/` out of source edits.
-- Neomutt references account configuration under `~/.mutt`; `*.info` and
-  cache data are ignored. Do not copy private account values into public files.
 
 ## Portability and verification
 

@@ -15,12 +15,12 @@ These are required by the repository itself or by its installers:
 | Tool | Why it is required |
 | --- | --- |
 | Bash | Runs `install.sh` and every `apps/*-install.sh` installer. |
-| Git | Clones Zsh, Neovim and tmux plugin repositories and supplies the Bash prompt's repository status. |
+| Git | Clones Zsh and Neovim plugin repositories and supplies the Bash prompt's repository status. |
 | curl | Downloads Alacritty themes and resources used by editor tooling. |
 | tar | Extracts downloaded tools and archives. |
 
 Install the application whose configuration you plan to use. Bash, Zsh, Neovim,
-Alacritty, Zellij and tmux are independent targets; installing one does not
+Alacritty and Zellij are independent targets; installing one does not
 require installing all of the others.
 
 ## Lightweight Bash server profile
@@ -46,7 +46,7 @@ For the main shell and editor setup, install all of the following:
 | tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
-| Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim and tmux. |
+| Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim. |
 
 On macOS, Homebrew is the preferred package source. In particular, install
 `tree-sitter-cli`, not the similarly named `tree-sitter` library formula.
@@ -94,17 +94,7 @@ prebuilt binary and the configuration itself is Lua.
 | Tool | Level | Notes |
 | --- | --- | --- |
 | Alacritty | Optional application | Uses the downloaded Catppuccin theme and the Maple Mono NF CN font. |
-| Zellij | Optional application | Modern terminal multiplexer; it can be used instead of tmux. |
-| tmux | Optional application | Uses TPM-managed plugins after `Prefix + I`. It does not need to be installed alongside Zellij. |
-| htop | Recommended with tmux | The tmux `Prefix + ~` binding opens it. |
-| reattach-to-user-namespace | Recommended with tmux on macOS | Used by the configured macOS clipboard binding. |
-
-### Mail and debugging
-
-| Tool | Level | Notes |
-| --- | --- | --- |
-| Neomutt | Optional | The repository has configuration but no dispatcher installer for it. |
-| w3m | Recommended with Neomutt | Renders HTML mail as text. The current mailcap references `/usr/local/bin/w3m`, so that path must be adjusted on hosts where the executable lives elsewhere. |
+| Zellij | Optional application | Modern terminal multiplexer. |
 
 ## Installed automatically
 
@@ -117,8 +107,6 @@ Do not treat the following as host prerequisites:
 - nvim-treesitter installs the selected parsers; only its CLI and compiler are
   host prerequisites.
 - The Alacritty installer downloads the Catppuccin theme files.
-- The tmux installer clones TPM. Other tmux plugins are installed from inside
-  tmux with `Prefix + I`.
 
 Generated files live in the locations documented in `AGENTS.md` and should
 not be copied between machines or committed.
