@@ -106,7 +106,9 @@ different machine could not reproduce for itself:
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its
   `.zwc`, `zcompcache/`, `gitstatus-probe`, `brew-shellenv.zsh`,
-  `dircolors.zsh`, `fzf-init.zsh`, `zoxide-init.zsh`); Powerlevel10k's `p10k-*` caches and `~/.cache/gitstatus`;
+  `dircolors.zsh`, `fzf-init.zsh`, `zoxide-init.zsh`, and a
+  `zcompdump-*.lock` directory plus `zcompdump-*.new.<pid>` files while a
+  background dump rebuild is in flight); Powerlevel10k's `p10k-*` caches and `~/.cache/gitstatus`;
   and the history file.
 
 The rule that decides where regeneration belongs: the installer is for things
@@ -165,7 +167,8 @@ optimization is worth anything. Interactive startup is about 310ms total:
 
 | Segment | Cost |
 | --- | --- |
-| `compinit` without cache | 1220ms |
+| `compinit` building the dump from cold | 1220ms |
+| `compinit` full run, dump still valid | 78ms |
 | `compinit -C` (cached dump) | 47ms |
 | Powerlevel10k | 48ms |
 | `mise activate zsh` | 35ms |
@@ -297,6 +300,31 @@ paying that between Enter and the next prompt made every `cd` visibly slower
 after the `cd` instead of during it. Aliases created
 by `core/aliases.zsh` are tracked so re-sourcing it removes stale managed
 aliases before applying the current table.
+
+The completion dump is never rebuilt in the foreground once it exists.
+`core/shell.zsh` runs `compinit -C`, which skips both the security check and
+the staleness comparison, and a dump older than a day is replaced by a
+detached `zsh -f` for the *next* shell to load. Measured with zprof, that
+takes `compinit` from 46-48ms plus a 10ms `compaudit` down to a steady 26ms on
+the shell that finds an expired dump. A dump that does not exist yet is still
+built in the foreground: that shell would otherwise have no completions.
+
+Nothing is lost against the earlier full run every 24 hours, which also served
+a dump up to a day old. A completion installed a moment ago appears once the
+dump is rebuilt; delete the dump and start a shell to force it now.
+
+Three details in that rebuild are load-bearing. `$fpath` is passed to the
+background shell explicitly, because a `zsh -f` starts with the default
+`$fpath` and would write a dump missing every completion reached through
+Homebrew or this account's `site-functions` -- a shell loading it later would
+silently lose those completions rather than fail. The lock is a directory, so
+`mkdir` is atomic and a burst of shells starting together produces one
+rebuild; a lock left by a killed rebuild is taken over after an hour, without
+which the dump would never refresh again. And the dump is moved into place
+before its compiled form: a shell starting inside that window sees a `.zwc`
+older than the dump, ignores it and reads the dump, costing one slower
+startup, where the other order would hand it a `.zwc` whose content does not
+match the dump beside it.
 
 ### Optional tool initialization and explicit fallback lists
 

@@ -80,26 +80,82 @@ _dot_zsh_cache=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
 _dot_zcompdump=$_dot_zsh_cache/zcompdump-$ZSH_VERSION
 
 autoload -Uz compinit
-# compinit's security check walks every directory in fpath, which is the
-# expensive half of it. Do the full run when the dump is older than a day and
-# take the cached one otherwise. `-C` skips both the check and the staleness
-# comparison.
+
+# Rebuild the completion dump in a detached background shell, so the shell
+# being started never waits for it. The rebuild is what walks every directory
+# in $fpath, runs compinit's security check over them, and rewrites the dump:
+# 721ms with a cold dump and 78ms with a warm one against 45ms for `-C` here.
+#
+# $fpath is passed explicitly. A `zsh -f` starts with the default $fpath, and a
+# dump generated from that would be missing every completion reached through
+# Homebrew's or this account's site-functions directory -- the shell that later
+# loads it would silently lose those completions rather than fail.
+#
+# mkdir is atomic, so a burst of shells starting together produces one
+# rebuild. A lock left behind by a killed rebuild is taken over after an hour;
+# without that, the dump would never be refreshed again.
+#
+# The dump moves into place before its compiled form. A shell starting inside
+# that window sees a .zwc older than the dump, ignores it, and reads the dump
+# itself, which costs one slower startup. The other order would hand it a .zwc
+# whose content does not match the dump beside it.
+_dot_zsh_rebuild_zcompdump() {
+    emulate -L zsh
+
+    local dump=$1
+    local lock=$dump.lock
+    if ! mkdir "$lock" 2>/dev/null; then
+        () {
+            emulate -L zsh -o extended_glob
+            [[ -n $lock(#qN/mh+1) ]] || return 1
+            rmdir "$lock" 2>/dev/null
+        } || return 0
+        mkdir "$lock" 2>/dev/null || return 0
+    fi
+
+    local tmp=$dump.new.$$
+    local script="fpath=(${(@q)fpath})
+autoload -Uz compinit
+compinit -d ${(q)tmp}
+zcompile -R -- ${(q)tmp}.zwc ${(q)tmp} 2>/dev/null
+mv -f ${(q)tmp} ${(q)dump}
+mv -f ${(q)tmp}.zwc ${(q)dump}.zwc 2>/dev/null
+rm -f ${(q)tmp} ${(q)tmp}.zwc
+rmdir ${(q)lock}"
+    # `&!` runs it detached and keeps job control silent.
+    zsh -f -c "$script" &!
+}
+
+# `-C` skips both the security check and the staleness comparison, which is
+# the whole cost above. Take it whenever a dump exists, and let the background
+# rebuild replace a dump older than a day for the *next* shell. A dump that
+# does not exist yet has to be built here: this shell has no completions
+# otherwise.
+#
+# Nothing is lost against doing the full run in the foreground every 24 hours,
+# because that branch also served a dump up to a day old to this shell. A
+# completion installed a moment ago appears once the dump is rebuilt; to force
+# it now, delete the dump and start a shell.
 #
 # The `(#q...)` glob-qualifier form needs EXTENDED_GLOB, which this
 # configuration does not set globally; without it the test is true for a dump
-# of any age and the cached branch is never taken. `emulate -L` restores the
-# option set on return, so the check runs inside an anonymous function.
-if ! () {
-    emulate -L zsh -o extended_glob
-    [[ -s $_dot_zcompdump && -z $_dot_zcompdump(#qN.mh+24) ]]
-}; then
+# of any age and the rebuild would run for every shell. `emulate -L` restores
+# the option set on return, so the check runs inside an anonymous function.
+if [[ -s $_dot_zcompdump ]]; then
+    compinit -C -d "$_dot_zcompdump"
+    if () {
+        emulate -L zsh -o extended_glob
+        [[ -n $_dot_zcompdump(#qN.mh+24) ]]
+    }; then
+        _dot_zsh_rebuild_zcompdump "$_dot_zcompdump"
+    fi
+else
     compinit -d "$_dot_zcompdump"
     # Compiling the dump saves reading and parsing it next time.
     [[ -f "$_dot_zcompdump.zwc" && "$_dot_zcompdump.zwc" -nt "$_dot_zcompdump" ]] \
         || zcompile -R -- "$_dot_zcompdump.zwc" "$_dot_zcompdump" 2>/dev/null
-else
-    compinit -C -d "$_dot_zcompdump"
 fi
+unfunction _dot_zsh_rebuild_zcompdump
 
 # Case-insensitive first, then partial-word, then substring. Typing `dow`
 # finds Downloads and `f.b` finds foo.bar.
