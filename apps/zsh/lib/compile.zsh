@@ -30,8 +30,13 @@ dot_zsh_compile_targets() {
         $plugins/zsh-syntax-highlighting/*.zsh(.N)
         $plugins/zsh-syntax-highlighting/highlighters/*/*.zsh(.N)
 
-        # This configuration's own sourced files.
-        $conf/lib.sh(.N)
+        # This configuration's own sourced files. The interactive Bash/Zsh
+        # helpers live one level up in apps/shell/, outside $DOT_ZSH_DIR, and
+        # zshrc sources them from there; ${conf:h} is apps/. They are listed by
+        # name rather than globbed: apps/shell/install.sh is installer-only,
+        # runs under Bash and is never sourced by a shell.
+        ${conf:h}/shell/lib.sh(.N)
+        ${conf:h}/shell/go.sh(.N)
         $conf/*.zsh(.N)
         $conf/core/*.zsh(.N)
         $conf/lib/*.zsh(.N)
