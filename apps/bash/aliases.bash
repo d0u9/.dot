@@ -76,12 +76,19 @@ _dot_bash_aliases() {
             ;;
         gls) ls_cmd='gls --color=auto --group-directories-first' ;;
         ls)
+            # The colour flag depends on whether this ls is BSD's or GNU's,
+            # which the platform stands in for. A probe would cost a fork.
             case $OSTYPE in
                 darwin*) export CLICOLOR=1; ls_cmd='ls -G' ;;
                 linux*) ls_cmd='ls --color=auto' ;;
                 *) ls_cmd=ls ;;
             esac
             ;;
+        # A newly listed implementation gets standard flags by default; add a
+        # preset above if it needs its own. Matches core/aliases.zsh, which
+        # had this branch while this file did not, so a new table row went
+        # unaliased here.
+        *) ls_cmd=$selected_ls ;;
     esac
     if [ -n "$ls_cmd" ]; then
         _dot_bash_alias ls "$ls_cmd"
