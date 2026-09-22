@@ -1,0 +1,36 @@
+# Command replacement candidates, shared by Bash and Zsh.
+#
+# Three fields separated by `|`: the command name, the candidates to try on
+# macOS, and the candidates to try on Linux. Within a field, candidates are
+# separated by spaces and ordered from most preferred to last; the first one
+# that is installed wins, and a command with no installed candidate keeps the
+# platform default by being left unaliased.
+#
+# The two platform columns are deliberately different rather than merged.
+# macOS goes modern replacement -> GNU tool -> platform default, because the
+# platform default is BSD; Linux goes modern replacement -> default command
+# with no `g`-prefixed detour, because the default is already GNU. Merging the
+# columns would make `gls` and `gsed` candidates on Linux too, which is not
+# what this configuration wants even where no such executable exists.
+#
+# Add a command row or insert a compatible replacement into a column. Do not
+# list tools whose command-line interface differs from the command they would
+# replace. Implementation-specific flags belong in the consumers' presets
+# (notably eza versus ls), not here.
+#
+# Consumed by apps/zsh/core/aliases.zsh and apps/bash/aliases.bash. Neither
+# forks to read it.
+
+# command | macos                | linux
+ls        | eza gls ls           | eza ls
+tree      | eza tree             | eza tree
+vim       | nvim vim             | nvim vim
+vi        | nvim vi              | nvim vi
+sed       | gsed sed             | sed
+grep      | ggrep grep           | grep
+find      | gfind find           | find
+xargs     | gxargs xargs         | xargs
+tar       | gtar tar             | tar
+dircolors | gdircolors dircolors | dircolors
+git       | git                  | git
+ports     | lsof                 | ss netstat

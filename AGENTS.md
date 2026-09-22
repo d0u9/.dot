@@ -25,6 +25,7 @@ or a scoped `rg` search.
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
 │   ├── shell/                shared Bash/Zsh runtime and installer helpers
+│   │   └── fallbacks            command replacement candidates, both shells
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
@@ -355,15 +356,24 @@ that variable; do not spell out `/opt/homebrew`, `/usr/local` or
 `/home/linuxbrew/.linuxbrew` again in a consumer, and do not fork
 `brew --prefix`.
 
-Declare candidates in the clearly labeled `macos_fallbacks` and
-`linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`, ordered from left to
-right. Add or change priorities there, not in scattered executable checks.
-Each row maps a command to candidate executable names; the first installed
-candidate wins. Tools without a modern replacement start at the next tier.
-Optional helpers such as dircolors use the same lists and are skipped if no
-candidate exists. Keep implementation-specific flags in separate presets
-(notably eza versus ls), and only alias replacements with compatible command
-interfaces. Re-sourcing must remove stale managed aliases before selection.
+Declare candidates in `apps/shell/fallbacks`, one row per command, ordered
+from most preferred to last within each column. Add or change priorities
+there, not in scattered executable checks, and not in either shell's alias
+file: both read that one table, which is what keeps them from drifting. The
+first installed candidate wins; tools without a modern replacement start at
+the next tier; optional helpers such as dircolors use the same table and are
+skipped if no candidate exists.
+
+The two platform columns stay separate on purpose -- merging them would make
+`gls` and `gsed` candidates on Linux too. Each shell decides only which column
+applies to it, which is the one `case $OSTYPE` that remains in each alias
+file. Neither shell forks to read the table: Zsh uses `$(<file)` and Bash a
+`while read` redirect.
+
+Keep implementation-specific flags in the consumers' presets (notably eza
+versus ls), not in the table, and only alias replacements with compatible
+command interfaces. Re-sourcing must remove stale managed aliases before
+selection.
 
 ## Application-specific conventions
 

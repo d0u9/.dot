@@ -2,7 +2,7 @@
 # This uses indexed arrays only, so it works in macOS's Bash 3.2.
 
 _dot_bash_aliases() {
-    local command_name executable executable_path
+    local command_name executable executable_path selected
     local ls_cmd long_flags all_flags
 
     # Re-sourcing must remove aliases whose replacement disappeared.
@@ -22,11 +22,12 @@ _dot_bash_aliases() {
         _DOT_BASH_MANAGED_ALIASES+=("$1")
     }
 
-    # Set $selected to first executable candidate. `type -P` bypasses aliases
-    # and functions; test path too because Bash can retain stale hash entries.
+    # Set $selected to the first installed candidate. `type -P` bypasses
+    # aliases and functions; test the path too because Bash can retain stale
+    # hash entries after an uninstall.
     _dot_bash_select() {
         selected=
-        for executable in "${@:2}"; do
+        for executable in "$@"; do
             executable_path=$(type -P "$executable" 2>/dev/null) || continue
             [ -x "$executable_path" ] || continue
             selected=$executable
@@ -35,41 +36,35 @@ _dot_bash_aliases() {
         return 1
     }
 
-    case $OSTYPE in
-        darwin*)
-            _dot_bash_select ls eza gls ls; local selected_ls=$selected
-            _dot_bash_select tree eza tree; local selected_tree=$selected
-            _dot_bash_select vim nvim vim; local selected_vim=$selected
-            _dot_bash_select vi nvim vi; local selected_vi=$selected
-            _dot_bash_select sed gsed sed; local selected_sed=$selected
-            _dot_bash_select grep ggrep grep; local selected_grep=$selected
-            _dot_bash_select find gfind find; local selected_find=$selected
-            _dot_bash_select xargs gxargs xargs; local selected_xargs=$selected
-            _dot_bash_select tar gtar tar; local selected_tar=$selected
-            _dot_bash_select dircolors gdircolors dircolors; local selected_dircolors=$selected
-            _dot_bash_select ports lsof; local selected_ports=$selected
-            ;;
-        linux*)
-            _dot_bash_select ls eza ls; local selected_ls=$selected
-            _dot_bash_select tree eza tree; local selected_tree=$selected
-            _dot_bash_select vim nvim vim; local selected_vim=$selected
-            _dot_bash_select vi nvim vi; local selected_vi=$selected
-            _dot_bash_select sed sed; local selected_sed=$selected
-            _dot_bash_select grep grep; local selected_grep=$selected
-            _dot_bash_select find find; local selected_find=$selected
-            _dot_bash_select xargs xargs; local selected_xargs=$selected
-            _dot_bash_select tar tar; local selected_tar=$selected
-            _dot_bash_select dircolors dircolors; local selected_dircolors=$selected
-            _dot_bash_select ports ss netstat; local selected_ports=$selected
-            ;;
-        *)
-            _dot_bash_select ls ls; local selected_ls=$selected
-            local selected_tree= selected_vim= selected_vi= selected_sed=
-            local selected_grep= selected_find= selected_xargs= selected_tar=
-            local selected_dircolors= selected_ports=
-            ;;
-    esac
-    _dot_bash_select git git; local selected_git=$selected
+    # The candidate table is apps/shell/fallbacks, shared with Zsh so the two
+    # shells cannot drift apart. `while read` from a file forks nothing.
+    #
+    # Only the column choice is per-shell, because each shell has to know
+    # which one applies to it. The candidates themselves, and the decision to
+    # keep the macOS and Linux columns separate, live in that file.
+    #
+    # Bash 3.2 on macOS has no associative arrays, so each row's winner lands
+    # in selected_<command> through `printf -v`. Declaring them here keeps
+    # them function-local; `printf -v` would otherwise create globals.
+    local selected_ls= selected_tree= selected_vim= selected_vi=
+    local selected_sed= selected_grep= selected_find= selected_xargs=
+    local selected_tar= selected_dircolors= selected_git= selected_ports=
+    local row_command row_macos row_linux candidates
+    while IFS='|' read -r row_command row_macos row_linux; do
+        row_command=${row_command// }
+        case $row_command in ''|\#*) continue;; esac
+        case $OSTYPE in
+            darwin*) candidates=$row_macos ;;
+            linux*)  candidates=$row_linux ;;
+            # An unknown platform maps each command to itself, so the
+            # selection finds the platform default and aliases nothing.
+            *)       candidates=$row_command ;;
+        esac
+        # Unquoted on purpose: the field holds space-separated candidates.
+        if _dot_bash_select $candidates; then
+            printf -v "selected_$row_command" %s "$selected"
+        fi
+    done < "$DOT_BASH_DIR/../shell/fallbacks"
 
     long_flags=-lh
     all_flags=-lah

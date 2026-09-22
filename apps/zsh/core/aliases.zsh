@@ -23,47 +23,35 @@
         _DOT_ZSH_MANAGED_ALIASES+=("$1")
     }
 
-    ## Editable fallback lists ###############################################
+    ## Fallback selection ####################################################
 
-    # Candidates are executable names, ordered from most preferred to last.
-    # macOS: modern replacement -> GNU tool -> platform default.
-    # Linux: modern replacement -> default command (no g-prefixed detour).
-    # Add a command row or insert a compatible replacement into its list.
-    # Do not substitute tools with incompatible command-line interfaces here.
-    local -A macos_fallbacks=(
-        ls        'eza gls ls'
-        tree      'eza tree'
-        vim       'nvim vim'
-        vi        'nvim vi'
-        sed       'gsed sed'
-        grep      'ggrep grep'
-        find      'gfind find'
-        xargs     'gxargs xargs'
-        tar       'gtar tar'
-        dircolors 'gdircolors dircolors'
-        git       'git'
-        ports     'lsof'
-    )
-    local -A linux_fallbacks=(
-        ls        'eza ls'
-        tree      'eza tree'
-        vim       'nvim vim'
-        vi        'nvim vi'
-        sed       'sed'
-        grep      'grep'
-        find      'find'
-        xargs     'xargs'
-        tar       'tar'
-        dircolors 'dircolors'
-        git       'git'
-        ports     'ss netstat'
-    )
+    # The candidate table is apps/shell/fallbacks, shared with Bash so the two
+    # shells cannot drift apart. Read it without forking: `$(<file)` is Zsh's
+    # own file read, and (f) splits it into lines.
+    #
+    # Only the column choice is per-shell, because each shell has to know
+    # which one applies to it. The candidates themselves, and the decision to
+    # keep the macOS and Linux columns separate, live in that file.
     local -A fallbacks selected
+    local row column=2
+    local -a cols
     case $OSTYPE in
-        darwin*) fallbacks=("${(@kv)macos_fallbacks}");;
-        linux*)  fallbacks=("${(@kv)linux_fallbacks}");;
-        *)       fallbacks=(ls ls);;
+        darwin*) column=2;;
+        linux*)  column=3;;
+        # An unknown platform gets each command mapped to itself, so the
+        # selection below finds the platform default and aliases nothing.
+        *)       column=0;;
     esac
+    for row in ${(f)"$(<$DOT_DIR/apps/shell/fallbacks)"}; do
+        [[ $row == \#* || -z ${row//[[:space:]]} ]] && continue
+        cols=("${(@s.|.)row}")
+        row=${cols[1]//[[:space:]]}
+        if (( column )); then
+            fallbacks[$row]=${cols[$column]}
+        else
+            fallbacks[$row]=$row
+        fi
+    done
 
     local candidates
     for command_name candidates in "${(@kv)fallbacks}"; do
