@@ -1,12 +1,14 @@
-# Load the first bash-completion installation found. These cover Linux system
-# packages and Homebrew on Apple Silicon and Intel Macs. Individual command
-# completions are loaded on demand by bash-completion itself.
+# Load the first bash-completion installation found: Homebrew's, then the
+# Linux system package locations. The Homebrew prefix comes from
+# $DOT_BREW_PREFIX, which apps/shell/lib.sh resolves for both shells, so the
+# platform and architecture prefixes are not spelled out again here.
+# Individual command completions are loaded on demand by bash-completion.
 for _dot_bash_completion in \
-    /opt/homebrew/etc/profile.d/bash_completion.sh \
-    /usr/local/etc/profile.d/bash_completion.sh \
+    "${DOT_BREW_PREFIX:+$DOT_BREW_PREFIX/etc/profile.d/bash_completion.sh}" \
     /usr/share/bash-completion/bash_completion \
     /etc/bash_completion
 do
+    [ -n "$_dot_bash_completion" ] || continue
     if [ -r "$_dot_bash_completion" ]; then
         source "$_dot_bash_completion"
         break
@@ -15,12 +17,11 @@ done
 unset _dot_bash_completion
 
 # Brew provides this completion even without the bash-completion package.
-if command -v brew >/dev/null 2>&1 && ! complete -p brew >/dev/null 2>&1; then
-    _dot_brew_prefix=$(brew --prefix 2>/dev/null)
-    if [ -r "$_dot_brew_prefix/etc/bash_completion.d/brew" ]; then
-        source "$_dot_brew_prefix/etc/bash_completion.d/brew"
-    fi
-    unset _dot_brew_prefix
+# $DOT_BREW_PREFIX replaces a `brew --prefix` fork, which costs as much as
+# starting brew itself.
+if [ -n "${DOT_BREW_PREFIX:-}" ] && ! complete -p brew >/dev/null 2>&1 &&
+   [ -r "$DOT_BREW_PREFIX/etc/bash_completion.d/brew" ]; then
+    source "$DOT_BREW_PREFIX/etc/bash_completion.d/brew"
 fi
 
 # Readline completion remains useful even when the optional package is absent.

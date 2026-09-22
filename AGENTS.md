@@ -105,8 +105,8 @@ different machine could not reproduce for itself:
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its
-  `.zwc`, `zcompcache/`, `gitstatus-probe`, `dircolors.zsh`, `fzf-init.zsh`,
-  `zoxide-init.zsh`); Powerlevel10k's `p10k-*` caches and `~/.cache/gitstatus`;
+  `.zwc`, `zcompcache/`, `gitstatus-probe`, `brew-shellenv.zsh`,
+  `dircolors.zsh`, `fzf-init.zsh`, `zoxide-init.zsh`); Powerlevel10k's `p10k-*` caches and `~/.cache/gitstatus`;
   and the history file.
 
 The rule that decides where regeneration belongs: the installer is for things
@@ -280,9 +280,10 @@ implemented, so do not describe any part of it as current behavior.
 The fzf integration prefers `fzf --zsh` and falls back to package-provided
 `completion.zsh` and `key-bindings.zsh` files for older releases. Zoxide loads
 after `compinit` and explicitly owns the `z` and `zi` commands. Both init
-scripts, and GNU `dircolors` output, go through `lib/toolcache.zsh`, which
-caches them as generated files under `$XDG_CACHE_HOME/zsh` and re-sources them
-from there, so startup forks none of the three. Each cache's first line records
+scripts, GNU `dircolors` output and `brew shellenv zsh` go through
+`lib/toolcache.zsh`, which caches them as generated files under
+`$XDG_CACHE_HOME/zsh` and re-sources them from there, so startup forks none of
+the four. Each cache's first line records
 the generating command and a fingerprint of the resolved executable -- path,
 size and modification time -- and is regenerated when either changes. Do not
 replace that with a timestamp comparison against the cache: a Homebrew install
@@ -305,7 +306,10 @@ Before running any tool-generated initialization such as
 source a stale init script for a missing tool. Keep the check visible at the
 integration call site, and retain the shared guard in `lib/toolcache.zsh`.
 Also verify the resolved path is executable: Zsh's command hash can survive
-an uninstall. Fallback selection must likewise skip these stale entries.
+an uninstall. An absolute path may be passed instead of a command name, for
+an executable that is not on `$PATH` yet -- `core/homebrew.zsh` runs before
+`brew shellenv` has added its prefix -- and the guard then tests that path
+directly. Fallback selection must likewise skip these stale entries.
 Missing optional tools must be skipped without command-not-found errors.
 
 Command replacement priority is platform-specific:
@@ -314,6 +318,14 @@ Command replacement priority is platform-specific:
   (for example `gls`) -> platform default (`ls`).
 - Linux: preferred modern replacement (for example `eza`) -> default command
   (`ls`), without trying a separate `g`-prefixed GNU command first.
+
+Homebrew's prefix is not one of these lists. `apps/shell/lib.sh` resolves it
+into `$DOT_BREW_PREFIX` for both shells, using `$CPUTYPE`/`$HOSTTYPE` rather
+than a `uname -m` fork, and it is empty on a host without Homebrew.
+`core/homebrew.zsh`, `core/integrations.zsh` and `bash/completion.bash` read
+that variable; do not spell out `/opt/homebrew`, `/usr/local` or
+`/home/linuxbrew/.linuxbrew` again in a consumer, and do not fork
+`brew --prefix`.
 
 Declare candidates in the clearly labeled `macos_fallbacks` and
 `linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`, ordered from left to

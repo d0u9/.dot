@@ -165,13 +165,20 @@ Background fetch updates remote-tracking refs. When force-pushing with
 `push.useForceIfIncludes=true`) to protect commits fetched in the background.
 
 Before completion and tool setup, `core/shell.zsh` loads `core/homebrew.zsh`
-to initialize an executable Homebrew using
-`brew shellenv zsh`: `/opt/homebrew` for macOS ARM, `/usr/local` for macOS
-Intel (including Rosetta shells), and `/home/linuxbrew/.linuxbrew` for Linux
-on Intel or ARM. Linux also checks the older `~/.linuxbrew` prefix; all platforms
-fall back to an executable `brew` on PATH for custom installations. Missing or
-non-executable installations are skipped. Homebrew initialization is not cached
-because its output depends on the incoming shell environment.
+to initialize an executable Homebrew using `brew shellenv zsh`. The prefix is
+resolved once in `apps/shell/lib.sh`, which both shells source, and exposed as
+`$DOT_BREW_PREFIX`: `/opt/homebrew` for macOS ARM, `/usr/local` for macOS Intel
+(including Rosetta shells), and `/home/linuxbrew/.linuxbrew` for Linux on Intel
+or ARM. Linux also checks the older `~/.linuxbrew` prefix; all platforms fall
+back to an executable `brew` on PATH for custom installations. Missing or
+non-executable installations are skipped.
+
+`shellenv`'s output is cached like the other tool initializations, keyed on the
+brew executable's resolved path, size and modification time. It does not depend
+on the incoming shell environment: the environment-sensitive parts are deferred
+expansions such as `${PATH+:$PATH}`, which the cached text expands when it is
+sourced. Removing that fork took interactive startup from about 220ms to about
+170ms on an Intel Mac.
 
 Other tool initialization is cached by executable identity and command arguments.
 Argument boundaries are preserved in the cache key, and cached command paths

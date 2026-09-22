@@ -24,10 +24,9 @@ if (( $+commands[fzf] )); then
             local -a fzf_roots=(
                 "${FZF_BASE:+$FZF_BASE/shell}"
                 "$HOME/.fzf/shell"
-                "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/fzf/shell}"
-                /opt/homebrew/opt/fzf/shell
-                /usr/local/opt/fzf/shell
-                /home/linuxbrew/.linuxbrew/opt/fzf/shell
+                # One Homebrew entry: $DOT_BREW_PREFIX is resolved per
+                # platform and architecture in apps/shell/lib.sh.
+                "${DOT_BREW_PREFIX:+$DOT_BREW_PREFIX/opt/fzf/shell}"
                 /usr/share/fzf
                 /usr/share/fzf/shell
                 /usr/share/doc/fzf/examples

@@ -63,6 +63,64 @@ command_exist() {
     command -v "$1" &> /dev/null
 }
 
+# Resolve Homebrew's installation prefix into $DOT_BREW_PREFIX, empty when this
+# host has none. The prefix is fixed per platform and architecture, and both
+# shells need it: Zsh evaluates `brew shellenv`, and Bash loads brew's own
+# completion from it. Deciding it once here replaces a `uname -m` fork in
+# core/homebrew.zsh and a `brew --prefix` fork in bash/completion.bash.
+#
+# $CPUTYPE and $HOSTTYPE report the architecture without forking. It only has
+# to disambiguate a host carrying both an Apple Silicon and a Rosetta
+# installation; anywhere else the executable test below decides on its own.
+#
+# No command substitution on the startup path: a `$(...)` costs a fork even for
+# a builtin, and this runs in every interactive shell. Assigning through one
+# would also abort the installer, which sources this file under `set -e`.
+_dot_set_brew_prefix() {
+    local candidate arch
+    DOT_BREW_PREFIX=
+
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        arch=$CPUTYPE
+    else
+        arch=${HOSTTYPE:-}
+    fi
+
+    set --
+    case $OSTYPE in
+        darwin*)
+            case $arch in
+                arm64|aarch64) set -- /opt/homebrew /usr/local;;
+                *)             set -- /usr/local /opt/homebrew;;
+            esac
+            ;;
+        linux*) set -- /home/linuxbrew/.linuxbrew "$HOME/.linuxbrew";;
+    esac
+
+    for candidate in "$@"; do
+        if [ -x "$candidate/bin/brew" ]; then
+            DOT_BREW_PREFIX=$candidate
+            return 0
+        fi
+    done
+
+    # An installation at a non-default prefix is reachable through PATH. Zsh
+    # answers this from its command table; Bash has no fork-free equivalent, so
+    # it pays a subshell here -- only on a host where neither default prefix
+    # exists, which is every host without Homebrew.
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        candidate=${commands[brew]:-}
+    else
+        candidate=$(type -P brew 2>/dev/null) || candidate=
+    fi
+    [ -n "$candidate" ] && [ -x "$candidate" ] || return 0
+    # <prefix>/bin/brew -> <prefix>
+    candidate=${candidate%/*}
+    DOT_BREW_PREFIX=${candidate%/*}
+}
+_dot_set_brew_prefix
+unset -f _dot_set_brew_prefix
+
 # Prepend an existing directory once. Keep PATH exported for child processes.
 _dot_prepend_path_if_dir() {
     local dir="$1"

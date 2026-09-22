@@ -19,9 +19,19 @@ _dot_source_tool_init() {
     local name=$1 exe=$2
     shift 2
     # Also guard the shared entry point: never generate or source cached init
-    # for an optional executable that is no longer installed.
-    (( $+commands[$exe] )) || return 1
-    [[ -x ${commands[$exe]} ]] || return 1
+    # for an optional executable that is no longer installed. <executable> may
+    # be an absolute path, which core/homebrew.zsh needs: it runs before
+    # `brew shellenv` has put the prefix on $PATH, so the command table cannot
+    # answer for it yet.
+    local target
+    if [[ $exe == */* ]]; then
+        [[ -x $exe ]] || return 1
+        target=${exe:A}
+    else
+        (( $+commands[$exe] )) || return 1
+        [[ -x ${commands[$exe]} ]] || return 1
+        target=${commands[$exe]:A}
+    fi
 
     local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
     local cache=$cache_dir/$name.zsh
@@ -42,7 +52,6 @@ _dot_source_tool_init() {
     # fingerprint degrades to the resolved path alone, which still catches a
     # Homebrew or pkg upgrade.
     local -A st
-    local target=${commands[$exe]:A}
     zmodload -F zsh/stat b:zstat 2>/dev/null && zstat -H st -- "$target" 2>/dev/null
 
     # The command line is part of the key too, so changing a flag at the call
