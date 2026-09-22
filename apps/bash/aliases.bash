@@ -1,25 +1,120 @@
-alias l='ls -1'
-alias ll='ls -lh'
-alias la='ls -lah'
-alias ..='cd ..'
-alias ...='cd ../..'
+# Interactive command replacements. Keep fallback order aligned with Zsh.
+# This uses indexed arrays only, so it works in macOS's Bash 3.2.
 
-if command -v eza >/dev/null 2>&1; then
-    alias ls='eza --color=auto --group-directories-first'
-    alias l='eza --color=auto --group-directories-first -1'
-    alias ll='eza --color=auto --group-directories-first -l'
-    alias la='eza --color=auto --group-directories-first -la'
-    alias tree='eza --tree'
-elif [ "$(uname -s)" = Darwin ]; then
-    if command -v gls >/dev/null 2>&1; then
-        alias ls='gls --color=auto'
-    else
-        alias ls='ls -G'
+_dot_bash_aliases() {
+    local command_name executable executable_path
+    local ls_cmd long_flags all_flags
+
+    # Re-sourcing must remove aliases whose replacement disappeared.
+    if [ -n "${_DOT_BASH_MANAGED_ALIASES+x}" ]; then
+        for command_name in "${_DOT_BASH_MANAGED_ALIASES[@]}"; do
+            unalias "$command_name" 2>/dev/null
+        done
     fi
-elif command -v ls >/dev/null 2>&1; then
-    alias ls='ls --color=auto'
-fi
-if command -v nvim >/dev/null 2>&1; then
-    alias vim='nvim'
-    alias vi='nvim'
-fi
+    _DOT_BASH_MANAGED_ALIASES=()
+
+    _dot_bash_alias() {
+        alias "$1=$2"
+        _DOT_BASH_MANAGED_ALIASES+=("$1")
+    }
+
+    # Set $selected to first executable candidate. `type -P` bypasses aliases
+    # and functions; test path too because Bash can retain stale hash entries.
+    _dot_bash_select() {
+        selected=
+        for executable in "${@:2}"; do
+            executable_path=$(type -P "$executable" 2>/dev/null) || continue
+            [ -x "$executable_path" ] || continue
+            selected=$executable
+            return 0
+        done
+        return 1
+    }
+
+    case $OSTYPE in
+        darwin*)
+            _dot_bash_select ls eza gls ls; local selected_ls=$selected
+            _dot_bash_select tree eza tree; local selected_tree=$selected
+            _dot_bash_select vim nvim vim; local selected_vim=$selected
+            _dot_bash_select vi nvim vi; local selected_vi=$selected
+            _dot_bash_select sed gsed sed; local selected_sed=$selected
+            _dot_bash_select grep ggrep grep; local selected_grep=$selected
+            _dot_bash_select find gfind find; local selected_find=$selected
+            _dot_bash_select xargs gxargs xargs; local selected_xargs=$selected
+            _dot_bash_select tar gtar tar; local selected_tar=$selected
+            _dot_bash_select dircolors gdircolors dircolors; local selected_dircolors=$selected
+            ;;
+        linux*)
+            _dot_bash_select ls eza ls; local selected_ls=$selected
+            _dot_bash_select tree eza tree; local selected_tree=$selected
+            _dot_bash_select vim nvim vim; local selected_vim=$selected
+            _dot_bash_select vi nvim vi; local selected_vi=$selected
+            _dot_bash_select sed sed; local selected_sed=$selected
+            _dot_bash_select grep grep; local selected_grep=$selected
+            _dot_bash_select find find; local selected_find=$selected
+            _dot_bash_select xargs xargs; local selected_xargs=$selected
+            _dot_bash_select tar tar; local selected_tar=$selected
+            _dot_bash_select dircolors dircolors; local selected_dircolors=$selected
+            ;;
+        *)
+            _dot_bash_select ls ls; local selected_ls=$selected
+            local selected_tree= selected_vim= selected_vi= selected_sed=
+            local selected_grep= selected_find= selected_xargs= selected_tar=
+            local selected_dircolors=
+            ;;
+    esac
+
+    long_flags=-lh
+    all_flags=-lah
+    case $selected_ls in
+        eza)
+            ls_cmd='eza --color=auto --group-directories-first'
+            long_flags=-l
+            all_flags=-la
+            ;;
+        gls) ls_cmd='gls --color=auto --group-directories-first' ;;
+        ls)
+            case $OSTYPE in
+                darwin*) export CLICOLOR=1; ls_cmd='ls -G' ;;
+                linux*) ls_cmd='ls --color=auto' ;;
+                *) ls_cmd=ls ;;
+            esac
+            ;;
+    esac
+    if [ -n "$ls_cmd" ]; then
+        _dot_bash_alias ls "$ls_cmd"
+        _dot_bash_alias l "$ls_cmd -1"
+        _dot_bash_alias ll "$ls_cmd $long_flags"
+        _dot_bash_alias la "$ls_cmd $all_flags"
+    fi
+
+    [ "$selected_tree" = eza ] && _dot_bash_alias tree 'eza --tree'
+
+    for command_name in vim vi sed grep find xargs tar; do
+        case $command_name in
+            vim) executable=$selected_vim ;;
+            vi) executable=$selected_vi ;;
+            sed) executable=$selected_sed ;;
+            grep) executable=$selected_grep ;;
+            find) executable=$selected_find ;;
+            xargs) executable=$selected_xargs ;;
+            tar) executable=$selected_tar ;;
+        esac
+        [ -n "$executable" ] && [ "$command_name" != "$executable" ] &&
+            _dot_bash_alias "$command_name" "$executable"
+    done
+
+    _dot_bash_alias .. 'cd ..'
+    _dot_bash_alias ... 'cd ../..'
+
+    # Match Zsh's GNU-colour setup, but Bash has no shared generated-init cache.
+    if [ -n "$selected_dircolors" ]; then
+        local dircolors_init
+        dircolors_init=$("$selected_dircolors" -b 2>/dev/null) && eval "$dircolors_init"
+    fi
+
+    unset -f _dot_bash_alias _dot_bash_select
+}
+
+_dot_bash_aliases
+unset -f _dot_bash_aliases

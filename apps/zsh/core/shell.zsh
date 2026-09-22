@@ -59,11 +59,9 @@ source "$DOT_ZSH_DIR/core/homebrew.zsh"
 # Nothing inside this repository goes on $PATH: its commands, such as
 # `bin/zsh-compile`, are run by their full path.
 #
-# `path` is tied to $PATH and (N) drops an entry whose directory does not
-# exist, so a host without ~/.local/bin never gets an empty element in the
-# search path. -U keeps a duplicate out when a private hook adds the same
-# directory.
-path=($HOME/.local/bin(N) $path)
+# Shared helper skips absent directories and duplicate entries. `path` remains
+# tied to $PATH; -U also removes duplicates a private hook may have added.
+_dot_prepend_path_if_dir "$HOME/.local/bin"
 typeset -gU path PATH
 
 # The same prefix's counterpart of /usr/local/share/zsh/site-functions: completion

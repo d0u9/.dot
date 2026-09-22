@@ -24,6 +24,7 @@ or a scoped `rg` search.
 ├── install.sh                public installer dispatcher
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
+│   ├── shell/                shared Bash/Zsh runtime and installer helpers
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine

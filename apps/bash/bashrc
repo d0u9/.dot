@@ -23,19 +23,8 @@ unset _dot_bash_source _dot_bash_dir
 export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
 source "$DOT_BASH_DIR/../shell/lib.sh"
 
-if [ -d "$HOME/.local/bin/scripts" ]; then
-    case :$PATH: in
-        *:"$HOME/.local/bin/scripts":*) ;;
-        *) PATH="$HOME/.local/bin/scripts:$PATH" ;;
-    esac
-fi
-if [ -d "$HOME/.local/bin" ]; then
-    case :$PATH: in
-        *:"$HOME/.local/bin":*) ;;
-        *) PATH="$HOME/.local/bin:$PATH" ;;
-    esac
-fi
-export PATH
+_dot_prepend_path_if_dir "$HOME/.local/bin/scripts"
+_dot_prepend_path_if_dir "$HOME/.local/bin"
 
 if [ -d "$HOME/.local/share/man" ]; then
     case :${MANPATH:-}: in

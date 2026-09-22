@@ -62,3 +62,14 @@ error() { dlog 'error' "$1" "${2:-}"; }
 command_exist() {
     command -v "$1" &> /dev/null
 }
+
+# Prepend an existing directory once. Keep PATH exported for child processes.
+_dot_prepend_path_if_dir() {
+    local dir="$1"
+    [ -d "$dir" ] || return 0
+    case :$PATH: in
+        *:"$dir":*) ;;
+        *) PATH="$dir:$PATH";;
+    esac
+    export PATH
+}
