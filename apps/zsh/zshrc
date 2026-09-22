@@ -38,6 +38,7 @@ fi
 export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
 
 source "$DOT_DIR/apps/shell/lib.sh"
+source "$DOT_DIR/apps/shell/go.sh"
 
 source "$DOT_ZSH_DIR/pre.zsh"
 source "$DOT_ZSH_DIR/core/shell.zsh"

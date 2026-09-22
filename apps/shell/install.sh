@@ -18,19 +18,6 @@ abs_path() {
     esac
 }
 
-cur_path_relative() {
-    local base="${1%/}"
-    local cur="$2"
-    case "$cur" in
-        /*) ;;
-        *) cur="$PWD/$cur";;
-    esac
-    case "$cur" in
-        "$base"/*) printf '%s\n' "${cur#"$base"}";;
-        *) printf '%s\n' "$cur";;
-    esac
-}
-
 yes_or_no() {
     while true; do
         read -p "$1 ([y]/n)?" -n 1 -r

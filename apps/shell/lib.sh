@@ -73,3 +73,18 @@ _dot_prepend_path_if_dir() {
     esac
     export PATH
 }
+
+# Return $2 relative to $1 when it is underneath $1. Host hooks use this for
+# log labels, so keep it in runtime helpers rather than installer-only code.
+cur_path_relative() {
+    local base="${1%/}"
+    local cur="$2"
+    case "$cur" in
+        /*) ;;
+        *) cur="$PWD/$cur";;
+    esac
+    case "$cur" in
+        "$base"/*) printf '%s\n' "${cur#"$base"}";;
+        *) printf '%s\n' "$cur";;
+    esac
+}

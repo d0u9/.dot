@@ -22,6 +22,7 @@ unset _dot_bash_source _dot_bash_dir
 
 export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"
 source "$DOT_BASH_DIR/../shell/lib.sh"
+source "$DOT_BASH_DIR/../shell/go.sh"
 
 _dot_prepend_path_if_dir "$HOME/.local/bin/scripts"
 _dot_prepend_path_if_dir "$HOME/.local/bin"
