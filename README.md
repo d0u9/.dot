@@ -208,6 +208,16 @@ it also shows the branch (or detached commit), `*` for changes, and `⇡` / `⇣
 when ahead of or behind the upstream branch. It uses plain text when the
 terminal does not support colour.
 
+Optional readable files or symlinks in `apps/bash/host-conf/` are loaded when
+they end in `-pre.sh` (before the aliases, completion, integrations and prompt)
+or `-post.sh` (after the prompt), in lexical order; they are ignored by the
+public repository. To show a chosen ID after `@` instead of the hostname, set
+`DOT_PROMPT_HOST` in a pre hook:
+
+```sh
+echo 'DOT_PROMPT_HOST=prod-db1' > apps/bash/host-conf/10-host-pre.sh
+```
+
 ---
 
 # License

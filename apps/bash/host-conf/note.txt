@@ -1,0 +1,13 @@
+This directory contains optional host-specific Bash hooks. `bashrc` sources
+every readable regular file or symlink ending in `-pre.sh` before the aliases,
+completion, integrations and prompt, and every one ending in `-post.sh` after
+the prompt.
+
+The hook files are ignored by the public repository. The prefix is not an
+enablement condition; use it only to describe hooks and control their lexical
+load order. Files without one of the two recognized suffixes are not sourced.
+
+For example, to show a chosen ID after "@" in the prompt instead of the
+hostname:
+
+    echo 'DOT_PROMPT_HOST=prod-db1' > 10-host-pre.sh

@@ -18,6 +18,8 @@ else
     _dot_ok= _dot_bad= _dot_git= _dot_dirty= _dot_arrows=
 fi
 
+# The name after "@" defaults to \h. A host hook can set DOT_PROMPT_HOST to
+# show a chosen ID instead without renaming the machine.
 _dot_git_prompt() {
     local branch changes counts ahead behind git_segment inside
     command -v git >/dev/null 2>&1 || return
@@ -75,7 +77,14 @@ _dot_prompt_command() {
         colour=$_dot_bad
     fi
     git_segment=$(_dot_git_prompt)
-    PS1="${_dot_dim}[${_dot_reset}${_dot_user}\u${_dot_reset}@${_dot_host}\h${_dot_reset}${_dot_dim}]${_dot_reset} ${_dot_path}\w${_dot_reset}${git_segment} ${colour}${mark}${_dot_reset} "
+    local host='\h'
+    if [ -n "${DOT_PROMPT_HOST:-}" ]; then
+        # Same escaping as the branch name in _dot_git_prompt.
+        host=${DOT_PROMPT_HOST//\\/\\\\}
+        host=${host//\`/\\\`}
+        host=${host//\$/\\$}
+    fi
+    PS1="${_dot_dim}[${_dot_reset}${_dot_user}\u${_dot_reset}@${_dot_host}${host}${_dot_reset}${_dot_dim}]${_dot_reset} ${_dot_path}\w${_dot_reset}${git_segment} ${colour}${mark}${_dot_reset} "
 }
 
 # Preserve an existing PROMPT_COMMAND (for example one installed by a terminal

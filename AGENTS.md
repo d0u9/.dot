@@ -97,12 +97,12 @@ This repository is shared between machines, so the dividing line is what a
 different machine could not reproduce for itself:
 
 - Tracked: hand-written configuration and pinned versions. Everything under
-  `apps/zsh/` except `host-conf/*.sh`, the Neovim configuration including
-  `lazy-lock.json`, the Alacritty/Zellij sources, the
+  `apps/zsh/` and `apps/bash/` except `host-conf/*.sh`, the Neovim
+  configuration including `lazy-lock.json`, the Alacritty/Zellij sources, the
   installers, and the documentation.
 - Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins,
   Mason, parsers, undo/backup/swap), downloaded Alacritty
-  themes under `apps/alacritty/plugins/*`, and `apps/zsh/host-conf/*.sh`.
+  themes under `apps/alacritty/plugins/*`, and `apps/{zsh,bash}/host-conf/*.sh`.
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its
@@ -221,6 +221,7 @@ Choose scope first, then execution phase:
 | --- | --- |
 | Pre/post extension points | `apps/zsh/{pre,post}.zsh` |
 | Optional per-host pre/post hooks | `apps/zsh/host-conf/*-{pre,post}.{sh,zsh}` |
+| Optional per-host Bash hooks | `apps/bash/host-conf/*-{pre,post}.sh` |
 | Portable public shell behavior | `apps/zsh/core/shell.zsh` |
 | Interactive aliases and GNU replacements | `apps/zsh/core/aliases.zsh` |
 | Interactive tool integration | `apps/zsh/core/integrations.zsh` |
@@ -326,6 +327,17 @@ before its compiled form: a shell starting inside that window sees a `.zwc`
 older than the dump, ignores it and reads the dump, costing one slower
 startup, where the other order would hand it a `.zwc` whose content does not
 match the dump beside it.
+
+### Bash loading
+
+`apps/bash/bashrc` resolves `DOT_BASH_DIR`, sources `apps/shell/lib.sh`, sets
+`PATH` and history, then runs readable `host-conf/*-pre.sh` hooks in lexical
+order, followed by `aliases.bash`, `completion.bash`, `integrations.bash`,
+`prompt.bash`, and finally readable `host-conf/*-post.sh` hooks. Other
+suffixes are ignored. Host hooks are the place for per-host Bash settings;
+for example, a pre hook can set `DOT_PROMPT_HOST` to replace `\h` after `@`
+in the prompt without renaming the machine. `prompt.bash` escapes that value
+like a branch name, so it cannot inject prompt syntax.
 
 ### Optional tool initialization and explicit fallback lists
 

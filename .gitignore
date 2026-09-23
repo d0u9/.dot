@@ -8,8 +8,9 @@
 !/LICENSE
 !/README.md
 
-# Host-specific Zsh config
+# Host-specific shell config
 apps/zsh/host-conf/*.sh
+apps/bash/host-conf/*.sh
 
 # nvim tmp files
 apps/nvim/runtime/*

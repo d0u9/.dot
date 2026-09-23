@@ -55,7 +55,21 @@ HISTFILESIZE=200000
 shopt -s histappend checkwinsize
 HISTCONTROL=ignoreboth:erasedups
 
+# Optional per-host hooks, ignored by the public repository. A hook is
+# selected by its -pre.sh or -post.sh suffix; the leading name only orders
+# hooks within a phase. An unmatched pattern stays literal and fails -f.
+_dot_source_host_hooks() {
+    local hook
+    for hook in "$DOT_BASH_DIR"/host-conf/*-"$1".sh; do
+        [ -f "$hook" ] && [ -r "$hook" ] || continue
+        source "$hook"
+    done
+}
+
+_dot_source_host_hooks pre
 source "$DOT_BASH_DIR/aliases.bash"
 source "$DOT_BASH_DIR/completion.bash"
 source "$DOT_BASH_DIR/integrations.bash"
 source "$DOT_BASH_DIR/prompt.bash"
+_dot_source_host_hooks post
+unset -f _dot_source_host_hooks
