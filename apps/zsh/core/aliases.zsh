@@ -124,14 +124,28 @@
             typeset -g _DOT_ZSH_PORTS_COMMAND=${selected[ports]}
             typeset -g _DOT_ZSH_MANAGED_PORTS=1
             ports() {
-                # -s/--sudo runs the tool through sudo: without it, sockets
-                # owned by other users show no process name or PID.
+                # -t TCP (default), -u UDP, -a both. -s/--sudo runs the tool
+                # through sudo: without it, sockets owned by other users show
+                # no process name or PID. Short flags combine, as in -su.
                 local -a run=(command)
-                if [[ ${1:-} == (-s|--sudo) ]]; then
-                    run=(sudo)
-                    shift
-                fi
-                case "${_DOT_ZSH_PORTS_COMMAND}:${1:-all}" in
+                local proto=tcp arg flag
+                for arg in "$@"; do
+                    case $arg in
+                        --sudo) run=(sudo); continue ;;
+                        -[stua]*) ;;
+                        *) print -u2 -- 'usage: ports [-s|--sudo] [-t|-u|-a]'; return 2 ;;
+                    esac
+                    for flag in ${(s::)arg#-}; do
+                        case $flag in
+                            s) run=(sudo) ;;
+                            t) proto=tcp ;;
+                            u) proto=udp ;;
+                            a) proto=all ;;
+                            *) print -u2 -- 'usage: ports [-s|--sudo] [-t|-u|-a]'; return 2 ;;
+                        esac
+                    done
+                done
+                case "${_DOT_ZSH_PORTS_COMMAND}:$proto" in
                     lsof:all) "${run[@]}" lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
                     lsof:tcp) "${run[@]}" lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
                     lsof:udp) "${run[@]}" lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
@@ -141,7 +155,7 @@
                     netstat:all) "${run[@]}" netstat -ltnup ;;
                     netstat:tcp) "${run[@]}" netstat -ltnp ;;
                     netstat:udp) "${run[@]}" netstat -lnup ;;
-                    *) print -u2 -- 'usage: ports [-s|--sudo] [all|tcp|udp]'; return 2 ;;
+                    *) return 2 ;;
                 esac
             }
             ;;

@@ -128,13 +128,27 @@ _dot_bash_aliases() {
             _DOT_BASH_PORTS_COMMAND=$selected_ports
             _DOT_BASH_MANAGED_PORTS=1
             ports() {
-                # -s/--sudo runs the tool through sudo: without it, sockets
-                # owned by other users show no process name or PID.
-                local run=command
-                case ${1:-} in
-                    -s|--sudo) run=sudo; shift ;;
-                esac
-                case "${_DOT_BASH_PORTS_COMMAND}:${1:-all}" in
+                # -t TCP (default), -u UDP, -a both. -s/--sudo runs the tool
+                # through sudo: without it, sockets owned by other users show
+                # no process name or PID. Short flags combine, as in -su.
+                local run=command proto=tcp arg i
+                for arg in "$@"; do
+                    case $arg in
+                        --sudo) run=sudo; continue ;;
+                        -[stua]*) ;;
+                        *) printf 'usage: ports [-s|--sudo] [-t|-u|-a]\n' >&2; return 2 ;;
+                    esac
+                    for ((i = 1; i < ${#arg}; i++)); do
+                        case ${arg:i:1} in
+                            s) run=sudo ;;
+                            t) proto=tcp ;;
+                            u) proto=udp ;;
+                            a) proto=all ;;
+                            *) printf 'usage: ports [-s|--sudo] [-t|-u|-a]\n' >&2; return 2 ;;
+                        esac
+                    done
+                done
+                case "${_DOT_BASH_PORTS_COMMAND}:$proto" in
                     lsof:all) "$run" lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
                     lsof:tcp) "$run" lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
                     lsof:udp) "$run" lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
@@ -144,7 +158,7 @@ _dot_bash_aliases() {
                     netstat:all) "$run" netstat -ltnup ;;
                     netstat:tcp) "$run" netstat -ltnp ;;
                     netstat:udp) "$run" netstat -lnup ;;
-                    *) printf 'usage: ports [-s|--sudo] [all|tcp|udp]\n' >&2; return 2 ;;
+                    *) return 2 ;;
                 esac
             }
             ;;
