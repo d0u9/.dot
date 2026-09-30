@@ -283,3 +283,66 @@ ips() {
         *) return 1;;
     esac
 }
+
+# Toggle passwordless sudo for the current user through a drop-in under
+# /etc/sudoers.d. Linux only. Usage: sudo_nopasswd [on|off|status], toggling
+# when no argument is given. The rule is validated with `visudo -c` before it
+# is installed: a malformed sudoers file locks everyone out of sudo. Sudo
+# ignores drop-in names containing '.' or ending in '~', so the file name
+# replaces anything outside [A-Za-z0-9_-]; the rule inside keeps the real name.
+sudo_nopasswd() {
+    local user file tmp action
+    case $OSTYPE in
+        linux*) ;;
+        *) error "sudo_nopasswd: Linux only"; return 1;;
+    esac
+    command_exist sudo || { error "sudo_nopasswd: sudo not installed"; return 1; }
+    command_exist visudo || [ -x /usr/sbin/visudo ] || {
+        error "sudo_nopasswd: visudo not found"; return 1; }
+
+    user=${USER:-$(id -un)}
+    if [ "$user" = root ]; then
+        error "sudo_nopasswd: refusing to run as root"
+        return 1
+    fi
+    file="/etc/sudoers.d/90-nopasswd-$(printf '%s' "$user" | tr -c 'A-Za-z0-9_-' '_')"
+
+    action=${1:-toggle}
+    if [ "$action" = toggle ]; then
+        if sudo test -e "$file"; then action=off; else action=on; fi
+    fi
+
+    case $action in
+        on)
+            tmp=$(mktemp) || return 1
+            printf '%s ALL=(ALL) NOPASSWD: ALL\n' "$user" > "$tmp"
+            if ! sudo env PATH="$PATH:/usr/sbin:/sbin" visudo -cqf "$tmp"; then
+                rm -f "$tmp"
+                error "sudo_nopasswd: rule failed validation"
+                return 1
+            fi
+            sudo install -o root -g root -m 0440 "$tmp" "$file"
+            local rc=$?
+            rm -f "$tmp"
+            [ "$rc" -eq 0 ] || return "$rc"
+            info "sudo password disabled for $user" "$file"
+            ;;
+        off)
+            sudo rm -f "$file" || return 1
+            # Drop the cached credential so the change is visible at once.
+            sudo -k
+            info "sudo password enabled for $user"
+            ;;
+        status)
+            if sudo test -e "$file"; then
+                info "sudo password disabled for $user" "$file"
+            else
+                info "sudo password enabled for $user"
+            fi
+            ;;
+        *)
+            printf 'usage: sudo_nopasswd [on|off|status]\n' >&2
+            return 2
+            ;;
+    esac
+}
