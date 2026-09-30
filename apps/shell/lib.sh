@@ -284,14 +284,29 @@ ips() {
     esac
 }
 
+# Report whether sudo currently runs without a password, without prompting.
+# `sudo -n -l` lists the matching rules in parse order, and for sudoers the
+# last match wins, so the final `ALL` rule decides. A NOPASSWD rule followed
+# by a PASSWD one -- as cloud images add in their own drop-ins -- still
+# prompts. When listing itself needs a password, the answer is "prompts".
+_dot_sudo_nopasswd_active() {
+    sudo -n -l 2>/dev/null |
+        awk '/PASSWD: ?ALL$/ { last = $0 } END { exit !(last ~ /NOPASSWD: ?ALL$/) }'
+}
+
 # Toggle passwordless sudo for the current user through a drop-in under
 # /etc/sudoers.d. Linux only. Usage: sudo_nopasswd [on|off|status], toggling
 # when no argument is given. The rule is validated with `visudo -c` before it
-# is installed: a malformed sudoers file locks everyone out of sudo. Sudo
-# ignores drop-in names containing '.' or ending in '~', so the file name
-# replaces anything outside [A-Za-z0-9_-]; the rule inside keeps the real name.
+# is installed: a malformed sudoers file locks everyone out of sudo.
+#
+# Drop-ins are read in lexical order and the last matching rule wins, so the
+# file is named `zz-` to sort after numbered ones such as cloud-init's, which
+# may grant the same user a PASSWD rule. Sudo ignores drop-in names containing
+# '.' or ending in '~', so the name replaces anything outside [A-Za-z0-9_-];
+# the rule inside keeps the real user name. `off` also removes the file an
+# earlier version installed as `90-nopasswd-<user>`.
 sudo_nopasswd() {
-    local user file tmp action
+    local user name file legacy tmp action rc
     case $OSTYPE in
         linux*) ;;
         *) error "sudo_nopasswd: Linux only"; return 1;;
@@ -305,11 +320,13 @@ sudo_nopasswd() {
         error "sudo_nopasswd: refusing to run as root"
         return 1
     fi
-    file="/etc/sudoers.d/90-nopasswd-$(printf '%s' "$user" | tr -c 'A-Za-z0-9_-' '_')"
+    name=$(printf '%s' "$user" | tr -c 'A-Za-z0-9_-' '_')
+    file="/etc/sudoers.d/zz-nopasswd-$name"
+    legacy="/etc/sudoers.d/90-nopasswd-$name"
 
     action=${1:-toggle}
     if [ "$action" = toggle ]; then
-        if sudo test -e "$file"; then action=off; else action=on; fi
+        if _dot_sudo_nopasswd_active; then action=off; else action=on; fi
     fi
 
     case $action in
@@ -322,20 +339,26 @@ sudo_nopasswd() {
                 return 1
             fi
             sudo install -o root -g root -m 0440 "$tmp" "$file"
-            local rc=$?
+            rc=$?
             rm -f "$tmp"
             [ "$rc" -eq 0 ] || return "$rc"
-            printf '%s (%s)\n' "sudo password disabled for $user" "$file"
+            sudo rm -f "$legacy"
+            if _dot_sudo_nopasswd_active; then
+                printf '%s (%s)\n' "sudo password disabled for $user" "$file"
+            else
+                error "sudo_nopasswd: installed $file, but a later rule still asks for a password"
+                return 1
+            fi
             ;;
         off)
-            sudo rm -f "$file" || return 1
+            sudo rm -f "$file" "$legacy" || return 1
             # Drop the cached credential so the change is visible at once.
             sudo -k
             printf '%s\n' "sudo password enabled for $user"
             ;;
         status)
-            if sudo test -e "$file"; then
-                printf '%s (%s)\n' "sudo password disabled for $user" "$file"
+            if _dot_sudo_nopasswd_active; then
+                printf '%s\n' "sudo password disabled for $user"
             else
                 printf '%s\n' "sudo password enabled for $user"
             fi
