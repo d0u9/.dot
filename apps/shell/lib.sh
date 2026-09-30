@@ -325,19 +325,19 @@ sudo_nopasswd() {
             local rc=$?
             rm -f "$tmp"
             [ "$rc" -eq 0 ] || return "$rc"
-            info "sudo password disabled for $user" "$file"
+            printf '%s (%s)\n' "sudo password disabled for $user" "$file"
             ;;
         off)
             sudo rm -f "$file" || return 1
             # Drop the cached credential so the change is visible at once.
             sudo -k
-            info "sudo password enabled for $user"
+            printf '%s\n' "sudo password enabled for $user"
             ;;
         status)
             if sudo test -e "$file"; then
-                info "sudo password disabled for $user" "$file"
+                printf '%s (%s)\n' "sudo password disabled for $user" "$file"
             else
-                info "sudo password enabled for $user"
+                printf '%s\n' "sudo password enabled for $user"
             fi
             ;;
         *)
