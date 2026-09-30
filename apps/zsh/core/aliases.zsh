@@ -124,17 +124,24 @@
             typeset -g _DOT_ZSH_PORTS_COMMAND=${selected[ports]}
             typeset -g _DOT_ZSH_MANAGED_PORTS=1
             ports() {
+                # -s/--sudo runs the tool through sudo: without it, sockets
+                # owned by other users show no process name or PID.
+                local -a run=(command)
+                if [[ ${1:-} == (-s|--sudo) ]]; then
+                    run=(sudo)
+                    shift
+                fi
                 case "${_DOT_ZSH_PORTS_COMMAND}:${1:-all}" in
-                    lsof:all) command lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
-                    lsof:tcp) command lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
-                    lsof:udp) command lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
-                    ss:all) command ss -ltnup ;;
-                    ss:tcp) command ss -ltnp ;;
-                    ss:udp) command ss -lnup ;;
-                    netstat:all) command netstat -ltnup ;;
-                    netstat:tcp) command netstat -ltnp ;;
-                    netstat:udp) command netstat -lnup ;;
-                    *) print -u2 -- 'usage: ports [all|tcp|udp]'; return 2 ;;
+                    lsof:all) "${run[@]}" lsof -nP -iTCP -sTCP:LISTEN -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:tcp) "${run[@]}" lsof -nP -iTCP -sTCP:LISTEN -FpcLutn | _dot_format_lsof_ports ;;
+                    lsof:udp) "${run[@]}" lsof -nP -iUDP -FpcLutn | _dot_format_lsof_ports ;;
+                    ss:all) "${run[@]}" ss -ltnup ;;
+                    ss:tcp) "${run[@]}" ss -ltnp ;;
+                    ss:udp) "${run[@]}" ss -lnup ;;
+                    netstat:all) "${run[@]}" netstat -ltnup ;;
+                    netstat:tcp) "${run[@]}" netstat -ltnp ;;
+                    netstat:udp) "${run[@]}" netstat -lnup ;;
+                    *) print -u2 -- 'usage: ports [-s|--sudo] [all|tcp|udp]'; return 2 ;;
                 esac
             }
             ;;
