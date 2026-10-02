@@ -284,6 +284,149 @@ ips() {
     esac
 }
 
+# Render sorted tab-separated PARENT, CHILD, DETAIL... records as a tree: each
+# parent, then its children indented below it. Columns align across the whole
+# tree, not only within one parent. "-" cells are left blank, a column blank
+# in every row is dropped, and a "-" child marks a parent with no children.
+# Usage: _dot_tsv_tree [color [N]]. With "color", parents are bold, and a
+# trailing " (...)" on a parent and every column from N on are dim, counting
+# the child as column 1. Padding is measured before the escapes are added.
+_dot_tsv_tree() {
+    local color=0
+    [ "${1:-}" = color ] && color=1
+    awk -F '\t' -v color="$color" -v dimfrom="${2:-0}" '
+        BEGIN {
+            bold=color ? "\033[1m" : ""; dim=color ? "\033[2m" : ""
+            reset=color ? "\033[0m" : ""
+        }
+        {
+            parent[++count]=$1; child[count]=$2
+            if ($2 != "-" && length($2) > width[1]) width[1]=length($2)
+            for (i = 3; i <= NF; i++) {
+                cell[count, i - 1]=$i
+                if ($i != "-" && length($i) > width[i - 1]) width[i - 1]=length($i)
+            }
+            if (NF - 1 > cols) cols=NF - 1
+        }
+        END {
+            for (r = 1; r <= count; r++) {
+                if (r == 1 || parent[r] != parent[r - 1]) {
+                    at=index(parent[r], " (")
+                    if (at) print bold substr(parent[r], 1, at - 1) reset dim substr(parent[r], at) reset
+                    else print bold parent[r] reset
+                }
+                if (child[r] == "-") { print "    " dim "(none)" reset; continue }
+                last=1
+                for (i = 2; i <= cols; i++) if (width[i] > 0 && cell[r, i] != "-" && cell[r, i] != "") last=i
+                line=(last == 1) ? child[r] : sprintf("%-*s", width[1], child[r])
+                for (i = 2; i <= last; i++) if (width[i] > 0) {
+                    value=cell[r, i] == "-" ? "" : cell[r, i]
+                    if (i < last) value=sprintf("%-*s", width[i], value)
+                    line=line "  " (i >= dimfrom ? dim value reset : value)
+                }
+                print "    " line
+            }
+        }
+    '
+}
+
+# Show each Docker network as a tree of its running containers, with their
+# address on that network and the ports they publish or expose. Usage:
+# dnets [network...]. Colored only on a terminal without NO_COLOR, so piped
+# output stays plain text.
+dnets() {
+    local color=
+    [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && color=color
+    command_exist docker || { error "dnets: docker not installed"; return 1; }
+    {
+        docker ps --format 'P\t{{.Names}}\t{{.Ports}}'
+        if [ "$#" -gt 0 ]; then printf '%s\n' "$@"; else docker network ls -q; fi |
+            xargs docker network inspect --format '{{$n := .Name}}{{$d := .Driver}}{{range .Containers}}N{{"\t"}}{{$n}}{{"\t"}}{{$d}}{{"\t"}}{{.Name}}{{"\t"}}{{.IPv4Address}}{{"\n"}}{{else}}N{{"\t"}}{{$n}}{{"\t"}}{{$d}}{{"\t-\t-\n"}}{{end}}'
+    } | awk -F '\t' '
+        $1 == "P" { ports[$2]=$3; next }
+        $1 == "N" {
+            port=($4 in ports && ports[$4] != "") ? ports[$4] : "-"
+            printf "%s (%s)\t%s\t%s\t%s\n", $2, $3, $4, ($5 == "" ? "-" : $5), port
+        }
+    ' | sort | _dot_tsv_tree "$color" 3
+}
+
+# Show each running container as a tree of the networks it joins, with its
+# addresses and aliases there. Usage: dcnets [container...]. Colored like dnets.
+dcnets() {
+    local ids color=
+    [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && color=color
+    command_exist docker || { error "dcnets: docker not installed"; return 1; }
+    if [ "$#" -gt 0 ]; then ids=$(printf '%s\n' "$@"); else ids=$(docker ps -q) || return 1; fi
+    [ -n "$ids" ] || { info "dcnets: no running containers"; return 0; }
+    printf '%s\n' "$ids" |
+        xargs docker inspect --format '{{$c := slice .Name 1}}{{range $k, $v := .NetworkSettings.Networks}}{{$c}}{{"\t"}}{{$k}}{{"\t"}}{{or $v.IPAddress "-"}}{{"\t"}}{{or $v.GlobalIPv6Address "-"}}{{"\t"}}{{if $v.Aliases}}aliases: {{join $v.Aliases ","}}{{else}}-{{end}}{{"\n"}}{{end}}' |
+        awk -F '\t' -v OFS='\t' '
+            # Docker 25+ stores addresses as netip.Addr, whose unset value
+            # prints as "invalid IP" instead of an empty string. Compose also
+            # repeats the container name among the aliases.
+            NF {
+                for (i = 3; i <= 4; i++) if ($i == "invalid IP") $i="-"
+                if ($5 != "-") {
+                    n=split(substr($5, 10), alias, ","); list=""; split("", seen)
+                    for (a = 1; a <= n; a++)
+                        if (!(alias[a] in seen)) { seen[alias[a]]=1; list=list (list == "" ? "" : ",") alias[a] }
+                    $5="aliases: " list
+                }
+                print
+            }
+        ' | sort | _dot_tsv_tree "$color" 4
+}
+
+# Show each Docker volume as a tree of the containers that mount it, stopped
+# ones included, with the mount point and mode. A state column appears only
+# for containers that are not running. Unused anonymous volumes are counted
+# on stderr instead of listed. Usage: dvols [volume...]. Colored like dnets.
+dvols() {
+    local ids color=
+    [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && color=color
+    command_exist docker || { error "dvols: docker not installed"; return 1; }
+    ids=$(docker ps -aq) || return 1
+    {
+        docker volume ls --format 'V\t{{.Name}}\t{{.Driver}}'
+        [ -z "$ids" ] || printf '%s\n' "$ids" |
+            xargs docker inspect --format '{{$c := slice .Name 1}}{{$s := .State.Status}}{{range .Mounts}}{{if eq .Type "volume"}}M{{"\t"}}{{.Name}}{{"\t"}}{{$c}}{{"\t"}}{{.Destination}}{{"\t"}}{{if .RW}}rw{{else}}ro{{end}}{{"\t"}}{{$s}}{{"\n"}}{{end}}{{end}}'
+    } | awk -F '\t' -v want="$*" '
+        BEGIN { n=split(want, w, " "); for (i = 1; i <= n; i++) keep[w[i]]=1 }
+        n && !($2 in keep) { next }
+        $1 == "V" { driver[$2]=$3; order[++count]=$2; next }
+        $1 == "M" {
+            used[$2]=1
+            printf "%s (%s)\t%s\t%s\t%s\t%s\n", $2, ($2 in driver ? driver[$2] : "?"), $3, $4, $5, ($6 == "running" ? "-" : $6)
+        }
+        END {
+            for (i = 1; i <= count; i++) {
+                name=order[i]
+                if (name in used) continue
+                # Unused anonymous volumes are 64 hex digits each and pile up;
+                # count them instead, unless they were asked for by name.
+                if (!n && length(name) == 64 && name !~ /[^0-9a-f]/) { hidden++; continue }
+                printf "%s (%s)\t-\n", name, driver[name]
+            }
+            if (hidden) printf "dvols: %d unused anonymous volumes hidden; docker volume prune removes them\n", hidden > "/dev/stderr"
+        }
+    ' | sort | _dot_tsv_tree "$color" 3
+}
+
+# Show each container, stopped ones included, as a tree of its mounts: mount
+# point, source (volume name or host path), type, mode and bind propagation.
+# Usage: dcvols [container...]. Colored like dnets.
+dcvols() {
+    local ids color=
+    [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && color=color
+    command_exist docker || { error "dcvols: docker not installed"; return 1; }
+    if [ "$#" -gt 0 ]; then ids=$(printf '%s\n' "$@"); else ids=$(docker ps -aq) || return 1; fi
+    [ -n "$ids" ] || { info "dcvols: no containers"; return 0; }
+    printf '%s\n' "$ids" |
+        xargs docker inspect --format '{{$c := slice .Name 1}}{{if ne .State.Status "running"}}{{$c = printf "%s (%s)" $c .State.Status}}{{end}}{{range .Mounts}}{{$c}}{{"\t"}}{{.Destination}}{{"\t"}}{{if eq .Type "volume"}}{{.Name}}{{else}}{{.Source}}{{end}}{{"\t"}}{{.Type}}{{"\t"}}{{if .RW}}rw{{else}}ro{{end}}{{"\t"}}{{or .Propagation "-"}}{{"\n"}}{{else}}{{$c}}{{"\t-\n"}}{{end}}' |
+        sed '/^$/d' | sort | _dot_tsv_tree "$color" 4
+}
+
 # Report whether sudo currently runs without a password, without prompting.
 # `sudo -n -l` lists the matching rules in parse order, and for sudoers the
 # last match wins, so the final `ALL` rule decides. A NOPASSWD rule followed
