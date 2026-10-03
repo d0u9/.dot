@@ -149,8 +149,8 @@ This repository is shared between machines, so the dividing line is what a
 different machine could not reproduce for itself:
 
 - Tracked: hand-written configuration and pinned versions. Everything under
-  `apps/zsh/` and `apps/bash/` except host hooks
-  (`host-conf/*.{sh,zsh}` for Zsh, `host-conf/*.sh` for Bash) and generated
+  `apps/zsh/` and `apps/bash/` except host-conf contents (only each directory's
+  `note.txt` usage note is tracked) and generated
   `.zwc` files, the Neovim
   configuration including `lazy-lock.json`, the Alacritty/Zellij sources, the
   installers, and the documentation.
@@ -158,9 +158,13 @@ different machine could not reproduce for itself:
   Mason, parsers, undo/backup/swap), downloaded Alacritty
   themes under `apps/alacritty/plugins/*`, and compiled `.zwc` files beside
   public shell sources. Tracked README files in these directories are exceptions.
-- Private inside the repository, ignored: host hooks under
-  `apps/zsh/host-conf/*.{sh,zsh}` and `apps/bash/host-conf/*.sh`. They may be
-  hand-written private configuration or symlinks, not reproducible build output.
+- Private inside the repository, ignored: all contents of
+  `apps/zsh/host-conf/` and `apps/bash/host-conf/`, except each directory's public
+  `note.txt` usage note. This includes dotfiles and subdirectories, regardless of
+  extension. Host hooks may be hand-written private configuration or symlinks,
+  not reproducible build output. `note.txt` also preserves the directory in Git;
+  do not add a separate placeholder. Never store private data in this tracked
+  note; use only generic instructions and invented examples.
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its

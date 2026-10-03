@@ -9,9 +9,10 @@
 !/README.md
 
 # Host-specific shell config
-apps/zsh/host-conf/*.sh
-apps/zsh/host-conf/*.zsh
-apps/bash/host-conf/*.sh
+apps/zsh/host-conf/*
+!apps/zsh/host-conf/note.txt
+apps/bash/host-conf/*
+!apps/bash/host-conf/note.txt
 
 # nvim tmp files
 apps/nvim/runtime/*
