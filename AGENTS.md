@@ -17,6 +17,57 @@ working in them. Do not search all nested repositories or downloaded plugins
 when a task only concerns the public configuration. Start with `git ls-files`
 or a scoped `rg` search.
 
+## Public repository: no private data
+
+This repository is PUBLIC: anyone can access, clone, search, and archive it.
+Privacy is a hard requirement for every change, including this AGENTS.md.
+Never put any private data in this repository, even temporarily or in an
+uncommitted file. Nothing in it may identify a real deployment,
+person or network: not in code, comments, help text, error messages, tests,
+fixtures, testdata, documentation, examples, generated files or commit
+messages. History counts: a value committed once has leaked, even if a later
+commit removes it.
+
+- Use only reserved or obviously invented values: domains under
+  `example.com`, `example.net`, `example.org` or `.test`; addresses from
+  `192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24` and `2001:db8::/32`,
+  and private ranges only in plainly made-up forms such as `10.0.0.0/24`;
+  MAC addresses starting `02:00:00`; names such as `alice`, `bob`,
+  `host-a`, `node-1`.
+- Never copy a value from a real configuration into this repository, even
+  to reproduce a bug. Reduce the case to invented values first.
+- Never add a script, definition or default that only serves one particular
+  deployment. Add the generic capability here; the deployment-specific part
+  stays in that deployment's own private configuration.
+- `conf/`, `private/` and the other ignored nested repositories are private.
+  Nothing from them may be copied into the public tree: not a host name, a
+  path layout, an address, nor a hook that names them.
+- Private data includes credentials, tokens, API keys, passwords, cookies,
+  private keys, connection strings, personal or employer information, email
+  addresses, account identifiers, internal domains, hostnames, IP/MAC addresses,
+  private remote URLs, machine-specific paths, logs, history, and screenshots containing
+  any of them. Renaming a variable or partially masking a value does not make
+  real data suitable for this public repository.
+- Read only the private files needed for the authorized task. Do not dump
+  private configuration, environment variables, credentials, history, or
+  private Git remotes into tool output, chat, reports, PR descriptions, or
+  external services. Describe findings with invented examples and minimal,
+  sanitized excerpts; do not upload private content for debugging.
+- Ignored does not mean safe to publish. Verify ignore coverage before creating
+  a host hook or generated file, and check the actual staged diff before any
+  requested commit. Review filenames, symlink targets, and generated artifacts
+  as well as file contents. Never stage nested private repositories or use
+  force-add to bypass their exclusion.
+- If a change seems to need real data, keep that data in its private repository
+  and implement only generic behavior here. If that boundary cannot be kept,
+  stop and ask the maintainer; do not publish the value to explain the problem.
+- If private data is found in public files or history, do not repeat it in
+  output, commit, push, or rewrite history. Report the affected location without
+  the value and ask the maintainer to coordinate removal and, for credentials,
+  revocation. Deleting the current file does not undo a historical leak.
+- Do not bypass commit hooks (`--no-verify`) that check for private data,
+  and do not reword a rejected value to slip past them.
+
 ## Layout and installation
 
 ```text
@@ -25,7 +76,8 @@ or a scoped `rg` search.
 ├── apps/
 │   ├── <app>-install.sh      per-application installation
 │   ├── shell/                shared Bash/Zsh runtime and installer helpers
-│   │   └── fallbacks            command replacement candidates, both shells
+│   │   ├── fallbacks            command replacement candidates, both shells
+│   │   └── go.sh                shared Go workspace and binary paths
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
@@ -97,12 +149,18 @@ This repository is shared between machines, so the dividing line is what a
 different machine could not reproduce for itself:
 
 - Tracked: hand-written configuration and pinned versions. Everything under
-  `apps/zsh/` and `apps/bash/` except `host-conf/*.sh`, the Neovim
+  `apps/zsh/` and `apps/bash/` except host hooks
+  (`host-conf/*.{sh,zsh}` for Zsh, `host-conf/*.sh` for Bash) and generated
+  `.zwc` files, the Neovim
   configuration including `lazy-lock.json`, the Alacritty/Zellij sources, the
   installers, and the documentation.
 - Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins,
   Mason, parsers, undo/backup/swap), downloaded Alacritty
-  themes under `apps/alacritty/plugins/*`, and `apps/{zsh,bash}/host-conf/*.sh`.
+  themes under `apps/alacritty/plugins/*`, and compiled `.zwc` files beside
+  public shell sources. Tracked README files in these directories are exceptions.
+- Private inside the repository, ignored: host hooks under
+  `apps/zsh/host-conf/*.{sh,zsh}` and `apps/bash/host-conf/*.sh`. They may be
+  hand-written private configuration or symlinks, not reproducible build output.
 - Generated outside the repository, per host: the Zsh plugin checkouts under
   `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins` and the `.zwc` files compiled
   beside them; `${XDG_CACHE_HOME:-~/.cache}/zsh/` (`zcompdump-*` and its
@@ -127,15 +185,16 @@ completion dump to the host's `fpath`.
 `~/.local` is the account's install prefix: what this user installed without
 root and outside any package manager. `core/shell.zsh` puts `~/.local/bin` on
 `$PATH`; `~/.local/lib` holds unpacked toolchains and SDKs, and
-`~/.local/share/man` their manual pages, both referenced from the private
-layer. It replaces an older `~/Apps` tree that used private names for the same
-layout -- `~/.local` is what rustup, pipx, uv and most `curl | sh` installers
-already target, so nothing has to be redirected to land there. Its content is
+`~/.local/share/man` their manual pages. Bash adds that manual directory when
+present and adds `~/.local/lib` to `LD_LIBRARY_PATH` on Linux when present.
+`~/.local` is the default destination for many account-local installers. Its content is
 per-architecture, machine-local, and belongs to the generated category above:
 never committed, and reproduced by fetching, not by copying between hosts.
-Nothing in this repository installs into it yet, so a binary placed there by
-hand has no recorded provenance or update path; an installer that fetches by
-`uname -s`/`uname -m` is where that belongs.
+`apps/shell/go.sh` is sourced by both shells and exports
+`GOPATH=${XDG_DATA_HOME:-$HOME/.local/share}/go` and `GOBIN=$HOME/.local/bin`.
+This sets destinations for Go workspace data and `go install` binaries; it
+neither installs nor selects a Go toolchain. A binary placed in the prefix by
+hand still needs a recorded provenance and update path.
 
 `core/p10k.zsh` is tracked and hand-edited, but it is also what
 `POWERLEVEL9K_CONFIG_FILE` points at, so running `p10k configure` overwrites a
@@ -163,8 +222,9 @@ Two consequences for shared code:
   than eliminating the duplication by moving the decision into Bash-compatible
   code.
 
-Measured on macOS (Darwin 24.6, Apple Silicon), for judging whether an
-optimization is worth anything. Interactive startup is about 310ms total:
+Historical reference measurements on macOS (Darwin 24.6, Apple Silicon),
+for judging whether an optimization is worth investigating. The measured
+configuration started in about 310ms; these are not current-host guarantees:
 
 | Segment | Cost |
 | --- | --- |
@@ -181,8 +241,9 @@ optimization is worth anything. Interactive startup is about 310ms total:
 
 The daily-driver cost is what survives the caches: the `fzf`, `zoxide` and
 `dircolors` rows are paid once per cache generation, not per shell, and
-instant prompt hides most of the remainder from the person typing. `mise
-activate` is the largest item that is still paid in full by every shell.
+instant prompt hides most of the remainder from the person typing. The `mise`
+row describes the measured configuration, not a public startup integration.
+Measure the relevant current configuration before claiming a performance gain.
 
 Restructuring the shared helpers does not show up in that budget. Sourcing the
 227-line `apps/shell/lib.sh` costs 0.132ms against 0.118ms for a 91-line
@@ -197,12 +258,13 @@ optimization.
 The effective order starting at `apps/zsh/zshrc` is:
 
 ```text
-base variables → core/prompt-options.zsh → instant prompt → lib.sh
+base variables → core/prompt-options.zsh → instant prompt → lib.sh → go.sh
   → pre.zsh → readable host-conf/*-pre.{sh,zsh} hooks in lexical order
   → optional hook-trace start warning
   → core/shell.zsh for options, $PATH, completion and key bindings
   → post.zsh
       → core/prompt.zsh → Powerlevel10k with core/p10k.zsh
+      → core/git-autofetch.zsh for background upstream fetch
       → core/aliases.zsh for optional GNU replacements and shortcuts
       → core/integrations.zsh for fzf and zoxide
       → core/plugins.zsh: byte-compile, then autosuggestions, then syntax
@@ -224,6 +286,9 @@ Choose scope first, then execution phase:
 | Optional per-host Bash hooks | `apps/bash/host-conf/*-{pre,post}.sh` |
 | Portable public shell behavior | `apps/zsh/core/shell.zsh` |
 | Interactive aliases and GNU replacements | `apps/zsh/core/aliases.zsh` |
+| Background Git upstream fetch | `apps/zsh/core/git-autofetch.zsh` |
+| Shared Go environment | `apps/shell/go.sh` |
+| Host-hook selection and ordering | `apps/zsh/lib/host-hooks.zsh` |
 | Interactive tool integration | `apps/zsh/core/integrations.zsh` |
 | ZLE plugins and load order | `apps/zsh/core/plugins.zsh` |
 | Logic shared by startup and commands | `apps/zsh/lib/*.zsh` |
@@ -231,9 +296,7 @@ Choose scope first, then execution phase:
 | Early and post-reset prompt policy | `apps/zsh/core/prompt-options.zsh` |
 | Prompt loading and backend policy | `apps/zsh/core/prompt.zsh` |
 | Powerlevel10k settings | `apps/zsh/core/p10k.zsh` |
-| Shared personal configuration | `conf/01-apps/zsh/00-zshrc-{pre,post}.sh` |
-| Personal OS-specific configuration | `conf/01-apps/zsh/10-{linux,macos}-{pre,post}.sh` |
-| Host, employer, or project configuration | `conf/01-apps/zsh/scene/20-*.sh` or its subdirectories |
+| Personal, OS, host, employer, or project configuration | Private repository governed by its own instructions; expose through ignored host hooks |
 | Initialization requiring final hook ownership | End of executable setup in `apps/zsh/zshrc` |
 
 Private Zsh files remain in `conf/`, but that directory is not scanned or
@@ -243,11 +306,11 @@ regular file or symlink whose name ends in `-pre.sh` or `-pre.zsh` before
 highlighting. Prefixes do not enable or select a hook; they only determine the
 lexical order within each phase. Other suffixes are ignored. A hook may be an
 ignored symlink into `conf/`; verify the link target and readability before
-describing it as active. `pub` within `conf` means shared personal scope, not
-public or secret-free.
+describing it as active. Names such as "shared" or "public" inside a private
+repository do not establish that its contents are safe to publish.
 
-Powerlevel10k loads first in `post.zsh`, followed by fzf and zoxide, then
-autosuggestions and syntax highlighting. Syntax highlighting must remain last
+Powerlevel10k loads first in `post.zsh`, followed by Git autofetch, aliases,
+fzf and zoxide, then autosuggestions and syntax highlighting. Syntax highlighting must remain last
 so it sees the final ZLE widget set. Before sourcing them, `core/plugins.zsh`
 byte-compiles anything out of date, using `lib/compile.zsh`. Its targets are
 the plugin files this configuration sources and the configuration's own files;
@@ -276,6 +339,15 @@ them changes. Fallback shells keep instant prompt and instead delete an instant
 prompt cache that still carries a `_p9k_preinit` function, which is the only
 part of that cache able to start a daemon this host has rejected. The readable
 post host hook runs only after this core setup has completed.
+
+`core/git-autofetch.zsh` registers a `precmd` hook that fetches the current
+branch's upstream remote in a disowned background job, throttled per worktree
+using `FETCH_HEAD` modification time. `DOT_GIT_AUTOFETCH_INTERVAL` defaults to
+300 seconds; set it to `0` to disable. It skips detached HEADs and branches
+without an upstream remote, disables terminal credential prompts, and defaults
+SSH to batch mode unless `GIT_SSH_COMMAND` is already set. This is network
+activity at prompt time: isolated checks should use `zsh -f`, avoid private
+hooks, and disable autofetch if loading the full configuration is necessary.
 
 Prefer Zsh's native autoload mechanism for command-specific completion and add
 other integrations individually only when needed. `apps/zsh/doc/completion.md`
@@ -330,8 +402,8 @@ match the dump beside it.
 
 ### Bash loading
 
-`apps/bash/bashrc` resolves `DOT_BASH_DIR`, sources `apps/shell/lib.sh`, sets
-`PATH` and history, then runs readable `host-conf/*-pre.sh` hooks in lexical
+`apps/bash/bashrc` resolves `DOT_BASH_DIR`, sources `apps/shell/lib.sh` and
+`apps/shell/go.sh`, sets `PATH` and history, then runs readable `host-conf/*-pre.sh` hooks in lexical
 order, followed by `aliases.bash`, `completion.bash`, `integrations.bash`,
 `prompt.bash`, and finally readable `host-conf/*-post.sh` hooks. Other
 suffixes are ignored. Host hooks are the place for per-host Bash settings;
@@ -390,7 +462,8 @@ selection.
 ## Application-specific conventions
 
 - Neovim: `init.lua` derives paths from its own location, bootstraps lazy.nvim,
-  loads `plugins/install.lua`, then `plugins/setting.lua` and `config/`.
+  loads `config.options` and `config.autocmds` before lazy.nvim setup, then
+  `plugins/install.lua`, `plugins/setting.lua`, and the remaining `config/` modules.
   Per-plugin settings live in `plugins/configs/`; common Lua settings live in
   `config/`, with language-local overrides in `after/ftplugin/`. LSP and parser
   lists are shared with the installer through
@@ -417,10 +490,13 @@ Check each relevant repository's status before editing and preserve unrelated
 changes. Syntax-check each changed shell file separately using its actual
 interpreter (`.sh` files sourced by Zsh can contain Zsh syntax):
 
-```sh
+```zsh
 bash -n install.sh
 for f in apps/*-install.sh; do bash -n "$f" || break; done
-for f in apps/zsh/zshrc apps/zsh/*.sh apps/zsh/*.zsh apps/zsh/core/*.zsh; do
+# Zsh nullglob qualifiers skip absent files; each source is checked separately.
+for f in apps/zsh/zshrc apps/zsh/*.zsh(N) apps/zsh/core/*.zsh(N) \
+         apps/zsh/lib/*.zsh(N) apps/zsh/bin/*(N.) \
+         apps/shell/lib.sh apps/shell/go.sh; do
     zsh -n "$f" || break
 done
 ```

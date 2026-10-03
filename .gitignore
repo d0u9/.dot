@@ -10,6 +10,7 @@
 
 # Host-specific shell config
 apps/zsh/host-conf/*.sh
+apps/zsh/host-conf/*.zsh
 apps/bash/host-conf/*.sh
 
 # nvim tmp files
