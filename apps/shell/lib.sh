@@ -645,10 +645,6 @@ _dot_sudo_nopasswd_active() {
 # earlier version installed as `90-nopasswd-<user>`.
 sudo_nopasswd() {
     local user name file legacy tmp action rc
-    case $OSTYPE in
-        linux*) ;;
-        *) error "sudo_nopasswd: Linux only"; return 1;;
-    esac
     command_exist sudo || { error "sudo_nopasswd: sudo not installed"; return 1; }
     command_exist visudo || [ -x /usr/sbin/visudo ] || {
         error "sudo_nopasswd: visudo not found"; return 1; }
@@ -706,4 +702,66 @@ sudo_nopasswd() {
             return 2
             ;;
     esac
+}
+# Defined on Linux only, so on other platforms the command does not exist
+# rather than failing when run, and dgscmds does not list it.
+case $OSTYPE in
+    linux*) ;;
+    *) unset -f sudo_nopasswd;;
+esac
+
+# List the commands this configuration adds to the interactive shell: the
+# functions below, then the aliases the shell's alias file created. Only
+# what is defined in this shell is shown, so a command whose tool is missing
+# (dps or dnets without docker, ports without lsof/ss/netstat) does not
+# appear. A platform-specific function is defined only on its platform, as
+# sudo_nopasswd is, so the same check leaves it out elsewhere.
+# Usage: dgscmds. Add a row here when adding a user-facing function.
+dgscmds() {
+    local name requires usage description value names
+
+    printf 'Commands:\n'
+    # Tab-separated NAME, REQUIRED TOOL (- for none), USAGE, DESCRIPTION;
+    # the usage column itself contains '|'.
+    while IFS=$'\t' read -r name requires usage description; do
+        type "$name" >/dev/null 2>&1 || continue
+        [ "$requires" = - ] || command_exist "$requires" || continue
+        printf '  %-36s %s\n' "$usage" "$description"
+    done <<'TABLE'
+ports	-	ports [-s] [-t|-u|-a] [-o KEY]	listening sockets as a sortable table; --help for options
+ips	-	ips [local|public]	local interface addresses, or public IPv4/IPv6
+dnets	docker	dnets [network...]	Docker networks as trees of their containers
+dcnets	docker	dcnets [container...]	running containers as trees of their networks
+dvols	docker	dvols [volume...]	Docker volumes as trees of the containers mounting them
+dcvols	docker	dcvols [container...]	containers as trees of their mounts
+sudo_nopasswd	sudo	sudo_nopasswd [on|off|status]	toggle passwordless sudo for this user
+dgscmds	-	dgscmds	this list
+TABLE
+
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        names=${_DOT_ZSH_MANAGED_ALIASES[*]:-}
+    else
+        names=${_DOT_BASH_MANAGED_ALIASES[*]:-}
+    fi
+    [ -n "$names" ] || return 0
+    printf '\nAliases:\n'
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        for name in "${_DOT_ZSH_MANAGED_ALIASES[@]}"; do
+            value=${aliases[$name]:-}
+            [ -n "$value" ] || continue
+            [ "${#value}" -le 60 ] || value="${value:0:57}..."
+            printf '  %-8s %s\n' "$name" "$value"
+        done
+    else
+        for name in "${_DOT_BASH_MANAGED_ALIASES[@]}"; do
+            # BASH_ALIASES is missing from Bash 3.2, which macOS ships, so
+            # read the definition back from `alias`: alias NAME='VALUE'.
+            value=$(alias -- "$name" 2>/dev/null) || continue
+            value=${value#*=\'}
+            value=${value%\'}
+            [ -n "$value" ] || continue
+            [ "${#value}" -le 60 ] || value="${value:0:57}..."
+            printf '  %-8s %s\n' "$name" "$value"
+        done
+    fi
 }
