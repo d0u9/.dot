@@ -13,7 +13,7 @@ _dot_bash_aliases() {
     fi
     _DOT_BASH_MANAGED_ALIASES=()
     if [ -n "${_DOT_BASH_MANAGED_PORTS+x}" ]; then
-        unset -f ports 2>/dev/null
+        unset -f ports killport 2>/dev/null
         unset _DOT_BASH_MANAGED_PORTS _DOT_BASH_PORTS_COMMAND
     fi
 
@@ -127,8 +127,10 @@ _dot_bash_aliases() {
         lsof|ss|netstat)
             _DOT_BASH_PORTS_COMMAND=$selected_ports
             _DOT_BASH_MANAGED_PORTS=1
-            # Options and output are documented at _dot_ports in apps/shell/lib.sh.
+            # Options and output are documented at _dot_ports and _dot_killport
+            # in apps/shell/lib.sh.
             ports() { _dot_ports "$_DOT_BASH_PORTS_COMMAND" "$@"; }
+            killport() { _dot_killport "$_DOT_BASH_PORTS_COMMAND" "$@"; }
             ;;
     esac
 

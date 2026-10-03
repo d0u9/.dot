@@ -29,7 +29,9 @@ require installing all of the others.
 | --- | --- | --- |
 | Bash | Required for Bash | The server-oriented shell configuration and prompt. |
 | bash-completion | Strongly recommended | Adds programmable completion for Git, SSH, package managers and other installed commands. The Bash installer tries to install it through the first supported package manager. |
-| Docker | Optional | Enables the `dps`/`dpsa` aliases and the `dnets` (network to containers, addresses and ports), `dcnets` (container to networks), `dvols` (volume to containers) and `dcvols` (container to mounts) commands in both shells. Without it the aliases are not defined and the commands print an error. |
+| Docker | Optional | Enables the `dps`/`dpsa` aliases and the `dnets` (network to containers, addresses and ports), `dcnets` (container to networks), `dvols` (volume to containers) and `dcvols` (container to mounts), `dips` (container addresses and ports), `dsh` (shell in a container) and `dclean` (prune unused objects) commands in both shells. Without it the aliases are not defined and the commands print an error. |
+| unzip, 7z, unrar, zstd, xz | Optional | Archive formats for the `extract` command in both shells; `tar`, `gunzip` and `bunzip2` cover the common ones. A missing tool makes `extract` report that format as unsupported. |
+| python3 | Optional | Runs the `serve` command (`python3 -m http.server`) in both shells. |
 
 ## Core Zsh and Neovim workstation
 

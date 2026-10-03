@@ -13,7 +13,7 @@
     fi
     typeset -ga _DOT_ZSH_MANAGED_ALIASES=()
     if (( ${+_DOT_ZSH_MANAGED_PORTS} )); then
-        unfunction ports 2>/dev/null
+        unfunction ports killport 2>/dev/null
         unset _DOT_ZSH_MANAGED_PORTS _DOT_ZSH_PORTS_COMMAND
     fi
 
@@ -123,8 +123,10 @@
         lsof|ss|netstat)
             typeset -g _DOT_ZSH_PORTS_COMMAND=${selected[ports]}
             typeset -g _DOT_ZSH_MANAGED_PORTS=1
-            # Options and output are documented at _dot_ports in apps/shell/lib.sh.
+            # Options and output are documented at _dot_ports and _dot_killport
+            # in apps/shell/lib.sh.
             ports() { _dot_ports "$_DOT_ZSH_PORTS_COMMAND" "$@"; }
+            killport() { _dot_killport "$_DOT_ZSH_PORTS_COMMAND" "$@"; }
             ;;
     esac
 
