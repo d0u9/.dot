@@ -147,23 +147,218 @@ cur_path_relative() {
     esac
 }
 
-# Render lsof's machine-readable process/socket records without the wide
-# DEVICE and SIZE/OFF columns. Command names retain spaces and truncate only
-# after 24 characters.
-_dot_format_lsof_ports() {
-    awk '
-        function compact(value) {
-            gsub(/[[:space:]]+/, " ", value)
-            return length(value) > 24 ? substr(value, 1, 21) "..." : value
-        }
-        BEGIN { printf "%-24s %-7s %-12s %-6s %s\n", "COMMAND", "PID", "USER", "FAMILY", "ADDRESS" }
-        /^p/ { pid=substr($0, 2); next }
-        /^c/ { command=substr($0, 2); next }
-        /^u/ { user=substr($0, 2); next }
-        /^L/ { user=substr($0, 2); next }
-        /^t/ { family=substr($0, 2); next }
-        /^n/ { printf "%-24s %-7s %-12s %-6s %s\n", compact(command), pid, user, family, substr($0, 2) }
+# Listening sockets as one table, whichever tool the shells selected for
+# `ports` from apps/shell/fallbacks. Each backend parser emits tab-separated
+# PROTO, ADDRESS, PORT, PID, COMMAND, USER records; a field the tool cannot
+# report is "-". Records are deduplicated (lsof lists one per descriptor, so
+# a forking server repeats), sorted, then laid out with computed widths.
+# The shells' `ports` functions only pass their selected tool and arguments.
+#
+# Without root, lsof lists only this user's sockets and ss/netstat omit the
+# process of sockets owned by others; -s runs the tool through sudo.
+
+# Split ADDRESS:PORT at the last colon, dropping IPv6 brackets.
+_DOT_PORTS_AWK_SPLIT='
+function emit(proto, local, pid, command, user,    address, port) {
+    sub(/->.*/, "", local)
+    port = local; sub(/.*:/, "", port)
+    # An unbound UDP socket (*:*) has no port to list.
+    if (port !~ /^[0-9]+$/) return
+    address = local; sub(/:[^:]*$/, "", address)
+    gsub(/[][]/, "", address)
+    gsub(/[[:space:]]+/, " ", command)
+    if (length(command) > 32) command = substr(command, 1, 29) "..."
+    if (address == "") address = "*"
+    if (pid == "") pid = "-"
+    if (command == "") command = "-"
+    if (user == "") user = "-"
+    printf "%s\t%s\t%s\t%s\t%s\t%s\n", proto, address, port, pid, command, user
+}'
+
+_dot_ports_lsof() {
+    awk "$_DOT_PORTS_AWK_SPLIT"'
+        /^p/ { pid = substr($0, 2); next }
+        /^c/ { command = substr($0, 2); next }
+        /^L/ { user = substr($0, 2); next }
+        /^P/ { proto = tolower(substr($0, 2)); next }
+        /^n/ { emit(proto, substr($0, 2), pid, command, user) }
     '
+}
+
+# ss and netstat print one protocol per run here, so the parser is told which.
+_dot_ports_ss() {
+    awk -v proto="$1" "$_DOT_PORTS_AWK_SPLIT"'
+        NR == 1 && $1 == "State" { next }
+        {
+            pid = ""; command = ""; process = ""
+            for (field = 6; field <= NF; field++) process = process $field
+            if (match(process, /"[^"]*"/)) command = substr(process, RSTART + 1, RLENGTH - 2)
+            if (match(process, /pid=[0-9]+/)) pid = substr(process, RSTART + 4, RLENGTH - 4)
+            emit(proto, $4, pid, command, "")
+        }
+    '
+}
+
+_dot_ports_netstat() {
+    awk -v proto="$1" "$_DOT_PORTS_AWK_SPLIT"'
+        $1 !~ /^(tcp|udp)/ { next }
+        {
+            # PID/Program follows State for TCP; UDP has no State column.
+            # The program name may itself contain blanks, as in "sshd: user".
+            pid = ""; command = ""; process = ""
+            for (field = ($1 ~ /^tcp/ ? 7 : 6); field <= NF; field++)
+                process = process (process == "" ? "" : " ") $field
+            if (process ~ /^[0-9]+\//) {
+                pid = process; sub(/\/.*/, "", pid)
+                command = process; sub(/^[0-9]+\//, "", command)
+            }
+            emit(proto, $4, pid, command, "")
+        }
+    '
+}
+
+_dot_ports_table() {
+    awk -F '\t' '
+        BEGIN {
+            split("PROTO ADDRESS PORT PID COMMAND USER", head, " ")
+            for (column = 1; column <= 6; column++) width[column] = length(head[column])
+        }
+        {
+            rows[NR] = $0
+            for (column = 1; column <= 6; column++)
+                if (length($column) > width[column]) width[column] = length($column)
+        }
+        END {
+            # The last column is not padded, so lines carry no trailing blanks.
+            for (column = 1; column < 6; column++) format[column] = "%-" width[column] "s  "
+            format[6] = "%s\n"
+            for (column = 1; column <= 6; column++) printf format[column], head[column]
+            for (row = 1; row <= NR; row++) {
+                split(rows[row], field, "\t")
+                for (column = 1; column <= 6; column++) printf format[column], field[column]
+            }
+        }
+    '
+}
+
+_dot_ports_help() {
+    cat <<'HELP'
+Usage: ports [OPTION]...
+List listening sockets as a table of PROTO, ADDRESS, PORT, PID, COMMAND
+and USER. Fields the underlying tool cannot report are shown as "-".
+
+Protocol (the last one given wins):
+  -t              TCP listening sockets (default)
+  -u              UDP sockets bound to a port
+  -a              both TCP and UDP
+
+Ordering:
+  -o KEY, --order=KEY
+                  sort rows by KEY; ties are broken by port:
+                    port   port number (default)
+                    addr   listening address (alias: address)
+                    name   process name (alias: command)
+
+Privileges:
+  -s, --sudo      run the underlying tool through sudo. Without root,
+                  lsof lists only your own sockets, and ss or netstat
+                  omit the PID and COMMAND of sockets owned by others.
+
+Other:
+  -h, --help      show this help and exit
+
+Short options combine: -su, -ao name, -soaddr.
+The tool is lsof on macOS, and ss or else netstat on Linux; USER is
+reported only by lsof.
+
+Examples:
+  ports              TCP listeners, ordered by port
+  ports -a -o name   TCP and UDP, ordered by process name
+  ports -so addr     TCP listeners of every user, ordered by address
+HELP
+}
+
+_dot_ports_usage() {
+    printf 'usage: ports [-s] [-t|-u|-a] [-o port|addr|name]\n' >&2
+    printf "Try 'ports --help' for more information.\n" >&2
+    return 2
+}
+
+# _dot_ports TOOL [ARGS...]: the body of the shells' `ports`.
+# -t TCP listeners (default), -u UDP sockets, -a both. -o orders rows by
+# port (default), listening address, or process name; ties fall back to the
+# port. -s/--sudo runs the tool through sudo. Short flags combine, as in
+# -su or -so name.
+_dot_ports() {
+    local tool="$1" run=command proto=tcp order=port arg flag i tab
+    shift
+    while [ $# -gt 0 ]; do
+        arg=$1
+        shift
+        case $arg in
+            --sudo) run=sudo; continue ;;
+            --help) _dot_ports_help; return 0 ;;
+            --order=*) order=${arg#--order=}; continue ;;
+            -?*) ;;
+            *) _dot_ports_usage; return ;;
+        esac
+        i=1
+        while [ "$i" -lt "${#arg}" ]; do
+            flag=${arg:$i:1}
+            i=$((i + 1))
+            case $flag in
+                s) run=sudo ;;
+                h) _dot_ports_help; return 0 ;;
+                t) proto=tcp ;;
+                u) proto=udp ;;
+                a) proto=all ;;
+                o)
+                    # The value is the rest of this argument or the next one.
+                    if [ "$i" -lt "${#arg}" ]; then
+                        order=${arg:$i}
+                    elif [ $# -gt 0 ]; then
+                        order=$1
+                        shift
+                    else
+                        _dot_ports_usage; return
+                    fi
+                    break
+                    ;;
+                *) _dot_ports_usage; return ;;
+            esac
+        done
+    done
+
+    # Sort keys go in the positional parameters, now that the options are
+    # consumed: an unquoted variable would not split into words under Zsh.
+    case $order in
+        port) set -- -k3,3n -k1,1 -k2,2 ;;
+        addr|address) set -- -k2,2 -k3,3n ;;
+        name|command) set -- -k5,5 -k3,3n ;;
+        *) _dot_ports_usage; return ;;
+    esac
+    case $tool in
+        lsof|ss|netstat) ;;
+        *) printf 'ports: unsupported tool: %s\n' "$tool" >&2; return 1 ;;
+    esac
+
+    tab=$(printf '\t')
+    {
+        case $proto in tcp|all) _dot_ports_run "$run" "$tool" tcp;; esac
+        case $proto in udp|all) _dot_ports_run "$run" "$tool" udp;; esac
+    } | awk '!seen[$0]++' | LC_ALL=C sort -t "$tab" "$@" | _dot_ports_table
+}
+
+# _dot_ports_run RUNNER TOOL PROTO: one tool invocation, parsed to records.
+_dot_ports_run() {
+    case $2:$3 in
+        lsof:tcp) "$1" lsof +c 0 -nP -iTCP -sTCP:LISTEN -FpcLPn | _dot_ports_lsof ;;
+        lsof:udp) "$1" lsof +c 0 -nP -iUDP -FpcLPn | _dot_ports_lsof ;;
+        ss:tcp) "$1" ss -ltnp | _dot_ports_ss tcp ;;
+        ss:udp) "$1" ss -lunp | _dot_ports_ss udp ;;
+        netstat:tcp) "$1" netstat -ltnp | _dot_ports_netstat tcp ;;
+        netstat:udp) "$1" netstat -lunp | _dot_ports_netstat udp ;;
+    esac
 }
 
 # Consume tab-separated FAMILY, INTERFACE, ADDRESS records. Print one row per
