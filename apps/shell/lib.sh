@@ -147,6 +147,224 @@ cur_path_relative() {
     esac
 }
 
+# Print the shortest relative path from directory $1 to path $2. Both must be
+# absolute and normalized (no "." or ".." components, no trailing slash).
+_dot_relpath() {
+    local common="${1%/}" target="$2" up=
+    while :; do
+        case $target in
+            "$common"|"$common"/*) break ;;
+        esac
+        common="${common%/*}"
+        up="../$up"
+    done
+    target="${target#"$common"}"
+    target="${target#/}"
+    up="$up$target"
+    up="${up%/}"
+    printf '%s\n' "${up:-.}"
+}
+
+# Absolute physical path of $1, whose parent directory must exist.
+_dot_abspath() {
+    local parent dir base
+    case $1 in
+        */*) parent="${1%/*}"; base="${1##*/}" ;;
+        *) parent=.; base="$1" ;;
+    esac
+    dir=$(cd -P -- "${parent:-/}" 2>/dev/null && pwd) || {
+        printf 'directory does not exist: %s\n' "${parent:-/}" >&2
+        return 1
+    }
+    case $base in
+        ''|.) printf '%s\n' "$dir" ;;
+        ..) dir="${dir%/*}"; printf '%s\n' "${dir:-/}" ;;
+        *) printf '%s\n' "${dir%/}/$base" ;;
+    esac
+}
+
+_dot_lns_help() {
+    cat <<'HELP'
+Usage: lns [OPTION]... TARGET LINK
+Create the symbolic link LINK pointing at TARGET through the shortest
+relative path, so the pair keeps working when their common tree moves.
+Both paths are taken relative to the current directory, as with ln. A LINK
+that is an existing directory receives a link named after TARGET.
+Directories are resolved physically, so symlinked parents are followed.
+
+  -a              link through TARGET's absolute path instead
+  -f              replace an existing LINK
+  -p              create LINK's missing parent directories
+  -h, --help      show this help and exit
+
+Short options combine: -fp, -ap.
+
+Examples:
+  lns a/b/1 x/y/z      x/y/z -> ../../a/b/1
+  lns -p a/b/1 n/m/z   create n/m first, then n/m/z -> ../../a/b/1
+  lns ../1 .           ./1 -> ../1
+  lns -a ../1 .        ./1 -> the absolute path of ../1
+HELP
+}
+
+lns() {
+    local force= abs= parents= target link arg i
+    while [ $# -gt 0 ]; do
+        case $1 in
+            --help) _dot_lns_help; return 0 ;;
+            --) shift; break ;;
+            -?*) ;;
+            *) break ;;
+        esac
+        arg=$1
+        shift
+        i=1
+        while [ "$i" -lt "${#arg}" ]; do
+            case ${arg:$i:1} in
+                a) abs=1 ;;
+                f) force=f ;;
+                p) parents=1 ;;
+                h) _dot_lns_help; return 0 ;;
+                *) printf "lns: unknown option -%s; try 'lns --help'\n" "${arg:$i:1}" >&2
+                   return 2 ;;
+            esac
+            i=$((i + 1))
+        done
+    done
+    if [ $# -ne 2 ]; then
+        printf "usage: lns [-afp] TARGET LINK; try 'lns --help'\n" >&2
+        return 2
+    fi
+    target="${1%/}"; link="${2%/}"
+    if [ -n "$parents" ]; then
+        case $link in
+            */*) mkdir -p -- "${link%/*}" || return 1 ;;
+        esac
+    fi
+    [ -d "$link" ] && [ ! -L "$link" ] && link="$link/${target##*/}"
+    target=$(_dot_abspath "${target:-/}") || return 1
+    link=$(_dot_abspath "${link:-/}") || return 1
+    [ -n "$abs" ] || target=$(_dot_relpath "${link%/*}" "$target")
+    ln -sn$force -- "$target" "$link"
+}
+
+_dot_lnmv_help() {
+    cat <<'HELP'
+Usage: lnmv [OPTION]... LINK DEST
+  or:  lnmv [OPTION]... LINK... DIR
+Move symbolic links without breaking them. Each link is recreated at its
+new place, still pointing at the same target: a relative link gets the
+shortest relative path from there, an absolute link stays absolute. The
+old link is removed only after the new one exists. A DEST that is an
+existing directory receives the link under its own name; with several
+LINKs, the last argument must be such a directory. As with mv, a LINK that
+fails is reported and the rest are still moved; the status is then 1. A
+broken link whose target directory is gone keeps its old text, prefixed
+with the path from the new place back to the old one.
+
+  -a              make every new link absolute
+  -f              replace an existing destination
+  -p              create the destination's missing parent directories
+  -h, --help      show this help and exit
+
+Short options combine: -fp, -ap.
+
+Examples:
+  lnmv x/l y/l        x/l -> ../a/1 becomes y/l -> ../a/1, as y/l sees it
+  lnmv -p x/l n/m/    create n/m, then move x/l into it
+  lnmv x/l1 x/l2 y    move both links into y
+HELP
+}
+
+lnmv() {
+    local opts= arg i dest link new target n dir old force= rc=0
+    while [ $# -gt 0 ]; do
+        case $1 in
+            --help) _dot_lnmv_help; return 0 ;;
+            --) shift; break ;;
+            -?*) ;;
+            *) break ;;
+        esac
+        arg=$1
+        shift
+        i=1
+        while [ "$i" -lt "${#arg}" ]; do
+            case ${arg:$i:1} in
+                a|f|p) opts="$opts${arg:$i:1}" ;;
+                h) _dot_lnmv_help; return 0 ;;
+                *) printf "lnmv: unknown option -%s; try 'lnmv --help'\n" "${arg:$i:1}" >&2
+                   return 2 ;;
+            esac
+            i=$((i + 1))
+        done
+    done
+    if [ $# -lt 2 ]; then
+        printf "usage: lnmv [-afp] LINK... DEST; try 'lnmv --help'\n" >&2
+        return 2
+    fi
+    n=$#
+    case $opts in *f*) force=f ;; esac
+    eval "dest=\${$n}"
+    case $opts:$dest in
+        *p*:*/) mkdir -p -- "$dest" || return 1 ;;
+    esac
+    case $dest in
+        */) [ -d "$dest" ] || {
+                printf 'lnmv: not a directory: %s\n' "$dest" >&2
+                return 1
+            } ;;
+    esac
+    dest="${dest%/}"
+    if [ $n -gt 2 ] && { [ ! -d "$dest" ] || [ -L "$dest" ]; }; then
+        printf 'lnmv: target is not a directory: %s\n' "$dest" >&2
+        return 1
+    fi
+    while [ $# -gt 1 ]; do
+        link="${1%/}"
+        shift
+        if [ ! -L "$link" ]; then
+            printf 'lnmv: not a symbolic link: %s\n' "$link" >&2
+            rc=1; continue
+        fi
+        new="$dest"
+        [ -d "$new" ] && [ ! -L "$new" ] && new="$new/${link##*/}"
+        if [ "$(_dot_abspath "$new" 2>/dev/null)" = "$(_dot_abspath "$link")" ]; then
+            printf 'lnmv: source and destination are the same: %s\n' "$link" >&2
+            rc=1; continue
+        fi
+        target=$(readlink -- "$link") || { rc=1; continue; }
+        arg=$opts
+        case $target in
+            /*) arg="a$opts" ;;
+            *)
+                case $link in
+                    */*) dir="${link%/*}" ;;
+                    *) dir=. ;;
+                esac
+                # A dangling target's directory cannot be resolved, so keep
+                # the old text behind the path from the new place to the old.
+                if [ ! -d "$(dirname -- "$dir/$target")" ]; then
+                    case $opts:$new in
+                        *p*:*/*) mkdir -p -- "${new%/*}" || { rc=1; continue; } ;;
+                    esac
+                    old=$(_dot_abspath "$dir/.") && i=$(_dot_abspath "$new") || {
+                        rc=1; continue
+                    }
+                    case $opts in
+                        *a*) old="$old/$target" ;;
+                        *) old="$(_dot_relpath "${i%/*}" "$old")/$target" ;;
+                    esac
+                    ln -sn$force -- "$old" "$new" && rm -- "$link" || rc=1
+                    continue
+                fi
+                target="$dir/$target"
+                ;;
+        esac
+        lns ${arg:+"-$arg"} -- "$target" "$new" && rm -- "$link" || rc=1
+    done
+    return $rc
+}
+
 # Listening sockets as one table, whichever tool the shells selected for
 # `ports` from apps/shell/fallbacks. Each backend parser emits tab-separated
 # PROTO, ADDRESS, PORT, PID, COMMAND, USER records; a field the tool cannot
@@ -1310,6 +1528,8 @@ Docker	dips	docker	dips [container...]	containers with network, IPv4 and ports
 Docker	dsh	docker	dsh NAME [COMMAND...]	shell (bash, else sh) in a running container
 Docker	dclean	docker	dclean [-v] [-y]	show and prune unused containers, images, cache
 Files	mkcd	-	mkcd DIR	create DIR and cd into it
+Files	lns	-	lns [-afp] TARGET LINK	symlink by shortest relative path, -a absolute
+Files	lnmv	-	lnmv [-afp] LINK... DEST	move symlinks, keeping them pointed at their target
 Files	extract	-	extract FILE...	unpack archives by extension
 Files	bak	-	bak FILE...	copy to FILE.bak.<timestamp>
 Files	serve	python3	serve [PORT]	share this directory over HTTP (default 8000)
