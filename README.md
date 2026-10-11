@@ -194,6 +194,49 @@ use temporary caches and stub tools and do not load private configuration.
 
 ---
 
+# Shell commands
+
+Both shells load these helpers from `apps/shell/lib.sh`. `dgscmds` lists the
+ones available on the current host -- a command whose required tool is
+missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
+`dgscmds SECTION...` shows them in full.
+
+| Section | Command | Purpose |
+| --- | --- | --- |
+| Network | `ports [-s] [-t\|-u\|-a] [-o KEY]` | listening sockets as one sortable table |
+| Network | `killport [-s] [-y] [-9] PORT` | stop the processes listening on PORT, after asking |
+| Network | `ips [local\|public]` | local interface addresses, or public IPv4/IPv6 |
+| Network | `myip` | public IPv4 and IPv6 (`ips public`, needs curl) |
+| Process | `psg PATTERN` | processes whose command line matches |
+| Process | `topmem [N]` | top N processes by resident memory |
+| System | `sysinfo` | OS, CPU, memory, disk, uptime and load |
+| System | `dfh` | disk usage of real filesystems only |
+| System | `svc [--user] [ACTION] [UNIT]` | systemctl and journalctl shortcuts (Linux) |
+| System | `sudo_nopasswd [on\|off\|status]` | toggle passwordless sudo for this user (Linux) |
+| Docker | `dnets`, `dcnets` | networks as trees of containers, and the reverse |
+| Docker | `dvols`, `dcvols` | volumes as trees of mounting containers, and the reverse |
+| Docker | `dips [container...]` | containers with network, IPv4 and ports |
+| Docker | `dsh NAME [COMMAND...]` | shell (bash, else sh) in a running container |
+| Docker | `dclean [-v] [-y]` | show and prune unused containers, images and cache |
+| Files | `mkcd DIR` | create DIR and cd into it |
+| Files | `lns [-afp] TARGET LINK` | symlink by shortest relative path, `-a` absolute |
+| Files | `lnmv [-afp] LINK... DEST` | move symlinks without breaking them |
+| Files | `extract FILE...` | unpack archives by extension |
+| Files | `bak FILE...` | copy to `FILE.bak.<timestamp>` |
+| Files | `serve [PORT]` | share this directory over HTTP (default 8000, needs python3) |
+
+`lns [-afp] TARGET LINK` creates a symlink through the shortest relative path
+from the link's directory to TARGET, so the pair keeps working when their
+common tree moves; `-a` uses the absolute path instead. Both paths are taken
+relative to the current directory, so `lns a/b/1 x/y/z` creates
+`x/y/z -> ../../a/b/1`. `lnmv [-afp] LINK... DEST` moves symlinks without
+breaking them: each one is recreated at its destination pointing at the same
+target, an absolute link stays absolute, and the old link is removed only
+after the new one exists. In both, `-f` replaces an existing destination and
+`-p` creates missing parent directories; see `lns --help` or `lnmv --help`.
+
+---
+
 # Bash
 
 Run `./install.sh -i bash` for the lightweight server shell profile. It links
