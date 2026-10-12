@@ -1395,26 +1395,162 @@ mkcd() {
     mkdir -p -- "$1" && cd -- "$1"
 }
 
-# Unpack archives by extension into the current directory.
-# Usage: extract FILE...
-extract() {
-    local file tool rc=0
-    case ${1:-} in
-        ''|-h|--help)
-            cat <<'HELP'
-Usage: extract FILE...
-Unpack each archive into the current directory, chosen by extension:
-tar(.gz|.bz2|.xz|.zst), tgz, zip, jar, 7z, rar, gz, bz2, xz, zst.
-Single-file formats keep the compressed original.
+# Pack one directory beside itself, keeping the directory name in the archive.
+pack() (
+    local format=tar.gz output= tool sevenzip dir archive temporary=
+    while [ $# -gt 0 ]; do
+        case $1 in
+            -h|--help)
+                cat <<'HELP'
+Usage: pack [-f FORMAT] [-o FILE] [--] DIR
+Pack one directory, including hidden files, its name and modification times.
+
+  -f, --format FORMAT  tar.gz (default), tgz, tar, tar.bz2, tar.xz, zip
+                      With 7zz: also 7z
+  -o, --output FILE    output path (default: DIR.FORMAT beside DIR)
+  -h, --help           show this help
+  --                   end options, for directory names starting with '-'
+
+Existing output files are never overwritten. Output must be outside DIR.
+Tools: tar and gzip/bzip2/xz; zip uses 7zz when available, else zip.
+7z requires an executable 7zz (macOS: brew install sevenzip).
+RAR creation is not supported by 7-Zip.
 
 Examples:
-  extract release.tar.gz
-  extract *.zip
+  pack project
+  pack -f zip -o release.zip project
+  pack -f 7z project
+  pack -- -folder
 HELP
-            [ $# -gt 0 ]; return ;;
+                return 0 ;;
+            -f|--format|-o|--output)
+                [ $# -ge 2 ] || { error "pack: $1 requires a value"; return 2; }
+                case $1 in -f|--format) format=$2 ;; *) output=$2 ;; esac
+                shift 2 ;;
+            --) shift; break ;;
+            -*) error "pack: unknown option: $1"; return 2 ;;
+            *) break ;;
+        esac
+    done
+    [ $# -eq 1 ] || { printf 'usage: pack [-f FORMAT] [-o FILE] [--] DIR\n' >&2; return 2; }
+    case $format in
+        tgz) format=tar.gz ;;
+        tar|tar.gz|tar.bz2|tar.xz|zip|7z) ;;
+        *) error "pack: unsupported format: $format"; return 2 ;;
     esac
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        sevenzip=${commands[7zz]:-}
+    else
+        sevenzip=$(type -P 7zz 2>/dev/null) || sevenzip=
+    fi
+    [ -n "$sevenzip" ] && [ -x "$sevenzip" ] || sevenzip=
+    case $format in
+        tar) tool=tar ;;
+        tar.gz) tool=gzip ;;
+        tar.bz2) tool=bzip2 ;;
+        tar.xz) tool=xz ;;
+        zip) tool=${sevenzip:-zip} ;;
+        7z)
+            [ -n "$sevenzip" ] || { error 'pack: install 7zz (macOS: brew install sevenzip)'; return 1; }
+            tool=$sevenzip ;;
+    esac
+    command_exist "$tool" || { error "pack: install $tool (7zz on macOS: brew install sevenzip)"; return 1; }
+    case $format in tar*) command_exist tar || { error 'pack: tar not installed'; return 1; } ;; esac
+    case $output in ''|/*) ;; *) output="$PWD/$output" ;; esac
+    case $1 in /*) cd -P -- "$1" ;; *) cd -P -- "./$1" ;; esac || return 1
+    [ "$PWD" != / ] || { error 'pack: cannot pack the filesystem root'; return 1; }
+    dir=${PWD##*/}
+    output=${output:-$PWD.$format}
+    # Resolve the output parent before checking containment, including symlinks.
+    archive=$(cd -P -- "${output%/*}" && printf '%s/%s' "$PWD" "${output##*/}") || return 1
+    case $archive in "$PWD"/*) error 'pack: output must be outside the source directory'; return 2 ;; esac
+    [ ! -e "$archive" ] && [ ! -L "$archive" ] || { error 'pack: output already exists'; return 1; }
+    cd .. || return 1
+    set -C
+    set -o pipefail
+    case $format in
+        tar) command tar -cf - -- "./$dir" > "$archive" ;;
+        tar.gz|tar.bz2|tar.xz)
+            command tar -cf - -- "./$dir" | command "$tool" -c > "$archive" ;;
+        zip|7z)
+            if [ -n "$sevenzip" ]; then
+                temporary=$(mktemp -d) || return 1
+                trap 'rm -rf -- "$temporary"' EXIT
+                "$sevenzip" a "-t$format" -- "$temporary/archive.$format" "./$dir" &&
+                    command cat "$temporary/archive.$format" > "$archive"
+            else
+                command zip -qr - -- "./$dir" > "$archive"
+            fi ;;
+    esac || return 1
+    printf '%s\n' "$archive"
+)
+
+# Prefer 7zz format detection; fall back to extension-specific tools.
+# Usage: unpack FILE...
+unpack() (
+    local file tool sevenzip destination=$PWD origin=$PWD rc=0
+    while [ $# -gt 0 ]; do
+        case $1 in
+        -h|--help)
+            cat <<'HELP'
+Usage: unpack [-d DIR] [--] FILE...
+Unpack each archive into the current directory. Prefer 7zz when installed:
+it detects formats including 7z, zip, rar, cab, iso, arj and more.
+Compressed tar archives are fully unpacked, not left as intermediate tar files.
+Without 7zz, choose a tool by extension:
+tar(.gz|.bz2|.xz|.zst), tgz, zip, jar, 7z, rar, gz, bz2, xz, zst.
+Single-file formats keep the compressed original.
+RAR prefers unar, then unrar: Homebrew's 7zz cannot decompress RAR.
+
+  -d, --directory DIR  create DIR and extract there (default: current directory)
+  -h, --help           show this help
+  --                   end options, for filenames starting with '-'
+Restore modification times stored in the archive, including directory times.
+Precision depends on the archive format. Creation/change times are not guaranteed.
+Existing files follow the underlying tool's overwrite/prompt behavior.
+
+Examples:
+  unpack release.tar.gz
+  unpack -d output release.7z
+  unpack *.zip
+HELP
+            return 0 ;;
+        -d|--directory)
+            [ $# -ge 2 ] && [ -n "$2" ] || { error 'unpack: -d requires a directory'; return 2; }
+            destination=$2; shift 2 ;;
+        --) shift; break ;;
+        -*) error "unpack: unknown option: $1"; return 2 ;;
+        *) break ;;
+        esac
+    done
+    [ $# -gt 0 ] || { printf 'usage: unpack [-d DIR] [--] FILE...\n' >&2; return 2; }
+    mkdir -p -- "$destination" && cd -- "$destination" || return 1
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        sevenzip=${commands[7zz]:-}
+    else
+        sevenzip=$(type -P 7zz 2>/dev/null) || sevenzip=
+    fi
     for file in "$@"; do
-        [ -f "$file" ] || { error "extract: no such file: $file"; rc=1; continue; }
+        case $file in /*) ;; *) file="$origin/$file" ;; esac
+        [ -f "$file" ] || { error "unpack: no such file: $file"; rc=1; continue; }
+        # Homebrew's 7zz is built without the RAR codecs ("Unsupported Method").
+        case $file in *.rar|*.RAR)
+            if command_exist unar; then unar -q -D -- "$file" || rc=1; continue; fi
+            if command_exist unrar; then unrar x -- "$file" || rc=1; continue; fi
+        esac
+        if [ -n "$sevenzip" ] && [ -x "$sevenzip" ]; then
+            case $file in
+                *.tar.gz|*.tgz|*.tar.bz2|*.tbz|*.tbz2|*.tar.xz|*.txz|*.tar.zst|*.tzst|*.tar.lzma|*.tar.lz|*.tar.Z|*.taz)
+                    ( set -o pipefail
+                      "$sevenzip" x -so -- "$file" | "$sevenzip" x -si -ttar
+                    ) || rc=1 ;;
+                *.rar|*.RAR) "$sevenzip" x -- "$file" || {
+                    error "unpack: 7zz failed on $file; if it reports Unsupported Method, install unar or unrar"
+                    rc=1; } ;;
+                *) "$sevenzip" x -- "$file" || rc=1 ;;
+            esac
+            continue
+        fi
         case $file in
             *.tar.zst|*.tzst) tool=zstd ;;
             *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz|*.tbz2|*.tar.xz|*.txz) tool=tar ;;
@@ -1425,23 +1561,26 @@ HELP
             *.bz2) tool=bunzip2 ;;
             *.xz) tool=unxz ;;
             *.zst) tool=zstd ;;
-            *) error "extract: unknown archive type: $file"; rc=1; continue ;;
+            *) error "unpack: unknown archive type: $file; install 7zz (macOS: brew install sevenzip)"; rc=1; continue ;;
         esac
-        command_exist "$tool" || { error "extract: $tool not installed"; rc=1; continue; }
+        command_exist "$tool" || {
+            error "unpack: $tool not installed; install $tool or 7zz (macOS: brew install sevenzip)"
+            rc=1; continue
+        }
         case $file in
             *.tar.zst|*.tzst) zstd -dc -- "$file" | tar -xf - ;;
             *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz|*.tbz2|*.tar.xz|*.txz) tar -xf "$file" ;;
             *.zip|*.jar) unzip -q -- "$file" ;;
             *.7z) 7z x -- "$file" ;;
             *.rar) unrar x -- "$file" ;;
-            *.gz) gunzip -k -- "$file" ;;
-            *.bz2) bunzip2 -k -- "$file" ;;
-            *.xz) unxz -k -- "$file" ;;
-            *.zst) zstd -d -- "$file" ;;
+            *.gz) ( set -C; tool=${file##*/}; gunzip -c -- "$file" > "${tool%.gz}" ) ;;
+            *.bz2) ( set -C; tool=${file##*/}; bunzip2 -c -- "$file" > "${tool%.bz2}" ) ;;
+            *.xz) ( set -C; tool=${file##*/}; unxz -c -- "$file" > "${tool%.xz}" ) ;;
+            *.zst) ( set -C; tool=${file##*/}; zstd -dc -- "$file" > "${tool%.zst}" ) ;;
         esac || rc=1
     done
     return "$rc"
-}
+)
 
 # Copy each FILE or directory to FILE.bak.YYYYMMDD-HHMMSS beside it,
 # keeping modes and times. Usage: bak FILE...
@@ -1530,7 +1669,8 @@ Docker	dclean	docker	dclean [-v] [-y]	show and prune unused containers, images, 
 Files	mkcd	-	mkcd DIR	create DIR and cd into it
 Files	lns	-	lns [-afp] TARGET LINK	symlink by shortest relative path, -a absolute
 Files	lnmv	-	lnmv [-afp] LINK... DEST	move symlinks, keeping them pointed at their target
-Files	extract	-	extract FILE...	unpack archives by extension
+Files	pack	tar	pack [-f FORMAT] [-o FILE] DIR	pack a directory without overwriting
+Files	unpack	-	unpack [-d DIR] FILE...	unpack archives, preferring 7zz
 Files	bak	-	bak FILE...	copy to FILE.bak.<timestamp>
 Files	serve	python3	serve [PORT]	share this directory over HTTP (default 8000)
 Shell	dgscmds	-	dgscmds	this list

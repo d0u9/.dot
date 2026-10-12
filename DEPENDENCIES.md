@@ -17,7 +17,7 @@ These are required by the repository itself or by its installers:
 | Bash | Runs `install.sh` and every `apps/*-install.sh` installer. |
 | Git | Clones Zsh and Neovim plugin repositories and supplies the Bash prompt's repository status. |
 | curl | Downloads Alacritty themes and resources used by editor tooling. |
-| tar | Extracts downloaded tools and archives. |
+| tar | Extracts downloaded tools and archives; `pack` in both shells creates tar archives and uses gzip by default (supplied by macOS and standard Linux installations). |
 
 Install the application whose configuration you plan to use. Bash, Zsh, Neovim,
 Alacritty and Zellij are independent targets; installing one does not
@@ -30,7 +30,9 @@ require installing all of the others.
 | Bash | Required for Bash | The server-oriented shell configuration and prompt. |
 | bash-completion | Strongly recommended | Adds programmable completion for Git, SSH, package managers and other installed commands. The Bash installer tries to install it through the first supported package manager. |
 | Docker | Optional | Enables the `dps`/`dpsa` aliases and the `dnets` (network to containers, addresses and ports), `dcnets` (container to networks), `dvols` (volume to containers) and `dcvols` (container to mounts), `dips` (container addresses and ports), `dsh` (shell in a container) and `dclean` (prune unused objects) commands in both shells. Without it the aliases are not defined and the commands print an error. |
-| unzip, 7z, unrar, zstd, xz | Optional | Archive formats for the `extract` command in both shells; `tar`, `gunzip` and `bunzip2` cover the common ones. A missing tool makes `extract` report that format as unsupported. |
+| 7zz (7-Zip) | Optional, preferred for archives | `unpack` in both shells prefers `7zz` for automatic format detection, including 7z, zip, rar, cab, iso and arj. Homebrew provides it as `sevenzip`; on Linux use a distribution package providing `7zz` or the official 7-Zip binary. Compressed tar archives are decompressed and then unpacked. `pack -f 7z` requires it, and `pack -f zip` prefers it. |
+| unar | Optional, recommended for RAR | `unpack` uses `unar` (then `unrar`) for `.rar` before `7zz`, because Homebrew builds `7zz` without the RAR codecs and it fails with "Unsupported Method". macOS: `brew install unar`; Linux: package `unar`. |
+| zip, unzip, 7z, unrar, gzip, bzip2, zstd, xz | Optional fallback | `pack` uses gzip/bzip2/xz for tar compression and zip for ZIP creation when `7zz` is unavailable. The extraction tools are used by `unpack` when `7zz` is unavailable; `tar`, `gunzip` and `bunzip2` cover the common formats. A missing tool makes `unpack` report that format as unsupported. |
 | python3 | Optional | Runs the `serve` command (`python3 -m http.server`) in both shells. |
 
 ## Core Zsh and Neovim workstation

@@ -157,6 +157,16 @@ instant prompt: a fallback shell discards a prompt cache left behind by a
 gitstatus installation that no longer works on this host, rather than giving
 up the instant prompt on the hosts that benefit from it most.
 
+Both Bash and Zsh provide `pack [-f FORMAT] [-o FILE] DIR`, defaulting to
+`DIR.tar.gz` beside the directory without overwriting an existing archive.
+Formats include tar, tar.gz, tar.bz2, tar.xz and zip; 7z requires `7zz`.
+Output must be outside the source directory. `unpack [-d DIR] FILE...` unpacks
+archives into the current directory (or creates the specified `-d` directory), preferring an executable `7zz` for format
+detection and broader format support, with extension-based tools as fallback; use
+`pack --help` or `unpack --help` for usage. Directory archives preserve file
+and directory modification times within the format's timestamp precision;
+creation and metadata-change times are not guaranteed.
+
 The shell fetches the current branch's upstream remote in the background at
 most once every five minutes per worktree. Set `DOT_GIT_AUTOFETCH_INTERVAL=0`
 before loading Zsh to disable this, or set another interval in seconds.
@@ -221,7 +231,7 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | Files | `mkcd DIR` | create DIR and cd into it |
 | Files | `lns [-afp] TARGET LINK` | symlink by shortest relative path, `-a` absolute |
 | Files | `lnmv [-afp] LINK... DEST` | move symlinks without breaking them |
-| Files | `extract FILE...` | unpack archives by extension |
+| Files | `pack`, `unpack` | create and extract archives, see the Zsh section |
 | Files | `bak FILE...` | copy to `FILE.bak.<timestamp>` |
 | Files | `serve [PORT]` | share this directory over HTTP (default 8000, needs python3) |
 
