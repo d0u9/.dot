@@ -250,7 +250,6 @@ release_list() {
     printf "$fmt" TOOL CHANNEL INSTALLED TARGET STATUS
     printf '%s\n' ${names[@]+"${names[@]}"} | sort -u | while read -r name; do
         wanted=$(release_channel "$name")
-        [ -z "$(release_current "$name")" ] || wanted=${wanted:-default}
         installed=$(release_current "$name")
         target= status=
         if [ -n "$check" ]; then
@@ -261,6 +260,7 @@ release_list() {
             else status='update available'
             fi
         fi
+        [ -z "$installed" ] || wanted=${wanted:-default}
         printf "$fmt" "$name" "${wanted:--}" "${installed:--}" "${target:--}" "$status"
     done
 }
