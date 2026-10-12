@@ -18,6 +18,7 @@ while [ -L "$_dot_bash_source" ]; do
     esac
 done
 DOT_BASH_DIR=$(cd -P -- "$(dirname -- "$_dot_bash_source")" && pwd)
+DOT_DIR=${DOT_BASH_DIR%/apps/bash}
 unset _dot_bash_source _dot_bash_dir
 
 export DOT_LOG_LEVEL="${DOT_LOG_LEVEL:-warn}"

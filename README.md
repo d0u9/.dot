@@ -108,7 +108,22 @@ was made because packer is no longer maintained.
 
 ## Install NeoVim
 
-You may check [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+`./install.sh -i release` installs the official Neovim build into `~/.local`,
+following the channel in `apps/release/tools` (`stable` by default). Use
+the `dgspkg` shell command (`apps/release/dgspkg`) afterwards:
+
+```
+dgspkg sync              # install or upgrade everything listed
+dgspkg install nvim nightly
+dgspkg versions nvim     # versions on disk, * = current
+dgspkg versions -r nvim  # channels and upstream releases
+dgspkg uninstall nvim
+```
+
+Each version is kept whole under `~/.local/lib/nvim/`, linked from
+`~/.local/bin/nvim`; the previous version stays for a switch back without a
+download. Other installation methods are listed
+[here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 ## Install this configuration
 
@@ -223,6 +238,7 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | System | `dfh` | disk usage of real filesystems only |
 | System | `svc [--user] [ACTION] [UNIT]` | systemctl and journalctl shortcuts (Linux) |
 | System | `sudo_nopasswd [on\|off\|status]` | toggle passwordless sudo for this user (Linux) |
+| System | `dgspkg COMMAND` | install and upgrade official prebuilt releases, see the NeoVim section |
 | Docker | `dnets`, `dcnets` | networks as trees of containers, and the reverse |
 | Docker | `dvols`, `dcvols` | volumes as trees of mounting containers, and the reverse |
 | Docker | `dips [container...]` | containers with network, IPv4 and ports |

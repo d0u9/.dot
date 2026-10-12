@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# The interactive shells export DOT_LOG_LEVEL=warn to keep startup quiet;
+# this command reports what it installs.
+DOT_LOG_LEVEL=info
+DOT_DIR=$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
+source "$DOT_DIR/apps/shell/release.sh"
+
+usage() {
+    cat <<'HELP'
+Usage: dgspkg COMMAND [ARGS]
+Install official prebuilt releases into ~/.local/lib, linked from ~/.local/bin.
+
+  sync                    install or upgrade every tool in apps/release/tools
+  install NAME [VERSION]  install one tool, without listing it; VERSION is a
+                          version or a channel such as stable or nightly
+                          (default: the recipe's default channel)
+  upgrade NAME [VERSION]  same as install; the previous version is kept
+  uninstall NAME          remove the tool and its link
+  versions [-r] NAME      list versions on disk (* = current); switching
+                          to one with install NAME VERSION needs no download.
+                          -r lists channels and recent upstream releases
+                          (* = current, + = on disk)
+  list [-u]               show every tool with a recipe: WANTED is its line in
+                          tools (- when not listed), INSTALLED its version.
+                          -u also fills TARGET and STATUS online: up to date,
+                          update available, not installed (listed but
+                          missing) or available (recipe only)
+HELP
+}
+
+case ${1:-} in
+    sync) release_sync ;;
+    install|upgrade) [ $# -ge 2 ] || { usage >&2; exit 2; }; release_install "$2" "${3:-}" ;;
+    uninstall) [ $# -eq 2 ] || { usage >&2; exit 2; }; release_uninstall "$2" ;;
+    versions)
+        if [ "${2:-}" = -r ]; then
+            [ $# -eq 3 ] || { usage >&2; exit 2; }; release_remote "$3"
+        elif [ $# -eq 2 ]; then release_versions "$2"
+        else usage >&2; exit 2; fi ;;
+    list)
+        case ${2:-} in
+            '') release_list ;;
+            -u) release_list -u ;;
+            *) usage >&2; exit 2 ;;
+        esac ;;
+    -h|--help) usage ;;
+    *) usage >&2; exit 2 ;;
+esac

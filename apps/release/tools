@@ -1,0 +1,9 @@
+# Tools installed from official prebuilt releases, one per line:
+#   NAME [VERSION]
+# VERSION is a release tag or a channel the recipe supports (see
+# `dgspkg versions -r NAME`); omit it for the recipe's default. Each NAME needs
+# recipes/NAME.sh. `dgspkg sync` installs or upgrades everything listed;
+# removing a line does not uninstall the tool.
+
+nvim    stable
+7zz

@@ -77,7 +77,9 @@ commit removes it.
 │   ├── <app>-install.sh      per-application installation
 │   ├── shell/                shared Bash/Zsh runtime and installer helpers
 │   │   ├── fallbacks            command replacement candidates, both shells
-│   │   └── go.sh                shared Go workspace and binary paths
+│   │   ├── go.sh                shared Go workspace and binary paths
+│   │   └── release.sh           official prebuilt release installer, Bash only
+│   ├── release/             release tool list, recipes, and the release command
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
@@ -108,6 +110,7 @@ Current installation targets (link location → repository source):
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
+| Releases | `~/.local/bin/<tool>` → `~/.local/lib/<tool>/current` | `apps/release/tools`, `apps/release/recipes/` |
 
 The current installers use `$HOME/.config` explicitly, not `$XDG_CONFIG_HOME`.
 Do not claim XDG support without tracing these consumers.
@@ -199,6 +202,24 @@ never committed, and reproduced by fetching, not by copying between hosts.
 This sets destinations for Go workspace data and `go install` binaries; it
 neither installs nor selects a Go toolchain. A binary placed in the prefix by
 hand still needs a recorded provenance and update path.
+
+`apps/release/dgspkg` is that path for official prebuilt binaries; it is not
+on `$PATH`, and both shells reach it through the `dgspkg` function in
+`apps/shell/lib.sh` (Bash sets `DOT_DIR` for it). `apps/release/tools` lists `NAME [VERSION]` lines, and
+`apps/release/recipes/NAME.sh` says where each tool's release lives: the
+GitHub repository, the asset name for `macos`/`linux` and `arm64`/`x86_64`,
+and the executable inside the archive. Each version is unpacked whole into
+`~/.local/lib/NAME/VERSION/`, `~/.local/lib/NAME/current` points at it, and
+`~/.local/bin/NAME` links through `current`. Installing keeps the previous
+version for a download-free switch back and removes older ones. A VERSION may
+be a channel (`latest`, `stable`, or what the recipe adds, such as nvim's
+`nightly`); channels resolve to a concrete version before anything is
+compared or named, so a channel upgrades when it moves and a moving tag never
+names a directory. Downloads are checked against the sha256 GitHub records
+for the asset, with a warning when none is published. The scope is macOS and
+Linux tools with official prebuilt binaries; a tool without one stays with
+the platform package manager. Shared logic lives in `apps/shell/release.sh`;
+add a tool with a recipe, not with download code in an installer.
 
 `core/p10k.zsh` is tracked and hand-edited, but it is also what
 `POWERLEVEL9K_CONFIG_FILE` points at, so running `p10k configure` overwrites a
