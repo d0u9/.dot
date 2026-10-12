@@ -21,9 +21,10 @@ post() {
         || warn 'some LSP servers failed to install; see doc/install.md for their toolchain requirements'
 
     info "Installing tree-sitter parsers"
+    # Without a compiler nvim still works, with regex highlighting only.
     command_exist cc || {
-        error "no C compiler (cc) to build the parsers: install build-essential or the equivalent, then rerun"
-        return 1
+        warn "no C compiler (cc): parsers skipped; install build-essential or the equivalent, then rerun"
+        return 0
     }
     # The config installs these asynchronously on every start; wait for the
     # first run here so a fresh host finishes bootstrapping before returning.

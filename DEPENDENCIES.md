@@ -44,7 +44,7 @@ For the main shell and editor setup, install all of the following:
 | Zsh | Required for Zsh | The shell configuration, prompt and plugins. |
 | Neovim 0.12+ | Required for Neovim | The editor configuration. `./install.sh nvim` installs the official build into `~/.local` on macOS and Linux (arm64 and x86_64); the Linux build needs a reasonably recent glibc. |
 | tree-sitter CLI | Required for Neovim | Builds the configured Tree-sitter parsers. The executable must be named `tree-sitter`. |
-| C build toolchain | Required for Neovim | Compiles Tree-sitter parsers. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
+| C build toolchain | Strongly recommended for Neovim | Compiles Tree-sitter parsers; without it `./install.sh nvim` warns and skips them, leaving regex highlighting. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
 | eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. |
