@@ -14,7 +14,7 @@ the required, strongly recommended and optional tools on macOS and Linux.
 curl -fsSL https://raw.githubusercontent.com/d0u9/.dot/master/bootstrap.sh | bash
 ```
 
-`bootstrap.sh` checks for git, curl and tar, clones the repository into
+`bootstrap.sh` checks for git, curl, tar, xz and unzip, clones the repository into
 `~/.dot` (or `$DOT_DIR`), or updates it, then opens a checklist of the apps
 and their optional parts; ticking mise shows node, python and go below it.
 Afterwards `./install.sh` manages the apps:

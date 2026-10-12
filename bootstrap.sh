@@ -15,7 +15,7 @@ DOT_DIR=${DOT_DIR:-$HOME/.dot}
 DOT_REPO=${DOT_REPO:-https://github.com/d0u9/.dot.git}
 
 missing=
-for cmd in git curl tar; do
+for cmd in git curl tar xz unzip; do
     command -v "$cmd" > /dev/null 2>&1 || missing="$missing $cmd"
 done
 [ -z "$missing" ] || { echo "bootstrap: install first:$missing" >&2; exit 1; }
