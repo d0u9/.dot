@@ -103,14 +103,15 @@ commit removes it.
 `apps/shell/apps.sh`. Every directory with an `app.sh` is an app; that file
 only declares what the app owns -- `desc`, `release` (dgspkg tools), `git`
 checkouts, `link` pairs, optional `items` with `item_install` and
-`item_uninstall` -- plus an optional `post` function, run last with `APP_DIR`
+`item_uninstall`, `data` paths it generates -- plus an optional `post` function, run last with `APP_DIR`
 set. The engine performs the declarations, so installing again is updating,
 and uninstalling reverses them: links are removed and their `.bk` backups
 restored, checkouts deleted, and release tools removed unless another
 installed app declares them. Installed apps and their chosen items are
 recorded in `${XDG_STATE_HOME:-~/.local/state}/dot/apps`. Usage:
 `install.sh APP[:ITEM,...]`, no argument or `-m` checklist, `-a` all, `-u` update installed,
-`-r APP` uninstall, `-l` list. Each app runs in a subshell with errexit;
+`-r APP` uninstall, `-p APP` delete its `data` (uninstall never does),
+`-l` list. Each app runs in a subshell with errexit;
 a failure is reported and the run continues. Without a terminal, prompts take
 their default: back up an existing file, never overwrite an existing `.bk`.
 Add an app by adding `apps/NAME/app.sh`, not by extending the engine.

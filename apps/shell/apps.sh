@@ -11,10 +11,11 @@
 #   items=(NAME[:on] ...)      optional parts; :on ones are chosen by default
 #   item_install NAME, item_uninstall NAME
 #   post                       anything else, run last with $APP_DIR set
+#   data=(PATH ...)            generated data, deleted only by purge
 #
 # Installing is idempotent, so updating an app is installing it again.
 # Uninstalling reverses the declarations, restoring a link's .bk backup; it
-# leaves generated data and system packages alone. The installed apps and
+# leaves generated data and system packages alone; purge deletes the data. The installed apps and
 # their chosen items are recorded in $APP_STATE, one `NAME ITEM,...` line each.
 
 source "$DOT_DIR/apps/shell/release.sh"
@@ -33,7 +34,7 @@ app_names() {
 }
 
 app_load() {
-    desc= release=() git=() link=() items=()
+    desc= release=() git=() link=() items=() data=()
     unset -f post item_install item_uninstall
     APP_NAME=$1 APP_DIR=$APPS_DIR/$1
     [ -f "$APP_DIR/app.sh" ] || { error "no app $1 in $APPS_DIR"; return 1; }
@@ -119,6 +120,23 @@ app_do_install() {
     done
     ! declare -F post > /dev/null || post
     [ -z "$failed" ]
+}
+
+# Inside the repository only ignored files go, so tracked notes such as a
+# README stay; -ff also takes the plugin checkouts, which are repositories.
+app_do_purge() {
+    local path
+    app_load "$1"
+    [ ${#data[@]} -gt 0 ] || { info "$1 declares no data"; return 0; }
+    yes_or_no "delete the data of $1: ${data[*]}" || return 0
+    for path in "${data[@]}"; do
+        [ -e "$path" ] || continue
+        case $path in
+            "$DOT_DIR"/*) git -C "$DOT_DIR" clean -ffdXq -- "$path" ;;
+            *) rm -fr -- "$path" ;;
+        esac
+        info "removed" "$path"
+    done
 }
 
 # Release names of the recorded apps other than NAME.

@@ -16,6 +16,7 @@ Usage: install.sh                     choose apps and items from a checklist
        install.sh -a                  install every app
        install.sh -u                  update every installed app
        install.sh -r APP...           uninstall apps
+       install.sh -p APP...           delete the data apps generated
        install.sh -l                  list apps (* = installed)
 
 An app's ITEMS are its optional parts; a bare APP that has them opens its
@@ -50,10 +51,11 @@ case ${1:-} in
     -u)
         [ -f "$APP_STATE" ] || { info "no app is installed"; exit 0; }
         for name in $(awk '{ print $1 }' "$APP_STATE"); do app_run install "$name"; done ;;
-    -r)
+    -r|-p)
+        verb=uninstall; [ "$1" = -p ] && verb=purge
         shift
         [ $# -gt 0 ] || { usage >&2; exit 2; }
-        for name in "$@"; do app_run uninstall "$name"; done ;;
+        for name in "$@"; do app_run "$verb" "$name"; done ;;
     -*) usage >&2; exit 2 ;;
     *) for spec in "$@"; do install_spec "$spec"; done ;;
 esac

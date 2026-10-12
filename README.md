@@ -24,6 +24,7 @@ Afterwards `./install.sh` manages the apps:
 ./install.sh zsh mise:node   # install or update apps, choosing items
 ./install.sh -u              # update every installed app
 ./install.sh -r zellij       # uninstall, restoring any .bk backup
+./install.sh -p nvim         # delete generated data (plugins, undo, ...)
 ./install.sh -l              # list apps, * = installed
 ```
 

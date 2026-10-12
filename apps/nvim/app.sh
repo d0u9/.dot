@@ -2,6 +2,8 @@ desc="Neovim binary, configuration, plugins, LSP servers and parsers"
 release=(nvim tree-sitter)
 link=(".:$HOME/.config/nvim")
 items=(treesitter:on)
+# Plugins, Mason servers, parsers, the lockfile, undo, backup and swap.
+data=("$APP_DIR/runtime")
 # init reads this marker: without it the tree-sitter plugins are disabled and
 # `Lazy! sync` below removes them.
 TS_MARK=$APP_DIR/runtime/treesitter.on
