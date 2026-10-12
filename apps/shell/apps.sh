@@ -85,10 +85,10 @@ app_git() {
 
 # NAME [ITEMS]: without ITEMS, the recorded choice, else the defaults.
 app_do_install() {
-    local name=$1 chosen old spec ver item dest failed=
+    local name=$1 chosen old rec spec ver item dest failed=
     app_load "$name"
-    old=$(app_recorded "$name") || old=
-    if [ $# -ge 2 ]; then chosen=$2; else chosen=$(app_recorded "$name") || chosen=$(app_default_items); fi
+    if old=$(app_recorded "$name"); then rec=1; else old= rec=; fi
+    if [ $# -ge 2 ]; then chosen=$2; elif [ -n "$rec" ]; then chosen=$old; else chosen=$(app_default_items); fi
     for item in ${chosen//,/ }; do
         case " ${items[*]-} " in *" $item "*|*" $item:on "*) ;; *) error "$name has no item $item"; return 1 ;; esac
     done
