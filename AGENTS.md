@@ -91,7 +91,7 @@ commit removes it.
 │   │   ├── lib/toolcache.zsh    shared cache for tool-generated shell init
 │   │   └── doc/completion.md    proposed completion registry (not implemented)
 │   ├── bash/                lightweight server shell, completion, and prompt
-│   ├── nvim/                Lua/Vim config, plugin specs, tracked lockfile
+│   ├── nvim/                Lua/Vim config and plugin specs
 │   ├── alacritty/           TOML config and downloaded themes
 │   └── zellij/              KDL overrides of upstream defaults
 ├── conf/                   independent private configuration repository
@@ -173,9 +173,9 @@ different machine could not reproduce for itself:
   `apps/zsh/` and `apps/bash/` except host-conf contents (only each directory's
   `note.txt` usage note is tracked) and generated
   `.zwc` files, the Neovim
-  configuration including `lazy-lock.json`, the Alacritty/Zellij sources, the
+  configuration, the Alacritty/Zellij sources, the
   installers, and the documentation.
-- Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins,
+- Generated inside the repository, ignored: `apps/nvim/runtime/*` (plugins, the lazy.nvim lockfile,
   Mason, parsers, undo/backup/swap), downloaded Alacritty
   themes under `apps/alacritty/plugins/*`, and compiled `.zwc` files beside
   public shell sources. Tracked README files in these directories are exceptions.
@@ -513,7 +513,7 @@ selection.
   `config/`, with language-local overrides in `after/ftplugin/`. LSP and parser
   lists are shared with the installer through
   `lsp-servers.lua` and `treesitter-languages.lua`. Read `apps/nvim/doc/install.md`
-  before changes. `lazy-lock.json` is tracked; runtime plugins, Mason, parsers,
+  before changes. The lockfile, runtime plugins, Mason, parsers,
   undo, backup, and swap data live under ignored `runtime/`. Old plugin-manager
   directories there are not authoritative configuration and may contain
   third-party instructions that do not govern this repository.

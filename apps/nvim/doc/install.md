@@ -18,7 +18,7 @@ installer is doing and where each piece keeps its state.
 | --- | --- | --- |
 | lazy.nvim clones itself | `init.lua`, on the first start | `runtime/plugins/lazy/lazy.nvim` |
 | Plugins are installed | `plugins/install.lua` via `:Lazy sync` | `runtime/plugins/lazy/` |
-| Plugin versions are pinned | `:Lazy sync` writing the lockfile | `lazy-lock.json` (tracked in git) |
+| Plugin versions are recorded | `:Lazy sync` writing the lockfile | `runtime/lazy-lock.json` (per host, ignored) |
 | LSP servers are installed | `plugins/configs/lsp-servers.lua` | `runtime/mason/` |
 | Parsers are installed | `plugins/configs/treesitter-languages.lua` | `runtime/treesitter/` |
 
@@ -86,7 +86,7 @@ itself lua, so it is always wanted.
 ## Adding to the setup
 
 Each list has exactly one home, shared by the running config and the
-installer. Add the entry, restart nvim, and commit the lockfile if it moved.
+installer. Add the entry, and restart nvim.
 
 | To add | Edit | Then |
 | --- | --- | --- |

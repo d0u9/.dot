@@ -196,10 +196,9 @@ Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which
 `apps/nvim/plugins/configs/`. `:Lazy` opens the manager, `:Lazy sync`
 installs and updates.
 
-`apps/nvim/lazy-lock.json` pins the exact commit of every plugin and is
-tracked in git, so all hosts converge on the same versions -- commit it after
-a `:Lazy sync`. Everything else a plugin writes lives under
-`apps/nvim/runtime/`, which is gitignored and can be deleted to rebuild from
+Plugin versions are not pinned across hosts: lazy.nvim's lockfile is
+written to `apps/nvim/runtime/lazy-lock.json` and only records this host's
+last sync. Everything a plugin writes lives under `apps/nvim/runtime/`, which is gitignored and can be deleted to rebuild from
 scratch.
 
 **[`apps/nvim/doc/install.md`](apps/nvim/doc/install.md) is the reference**:

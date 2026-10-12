@@ -75,7 +75,7 @@ vim.opt.directory   = _G.RUNTIME_DIR .. '/swap_files/'
 require('lazy').setup(require('plugins.install'), {
   root = _G.LAZY_DIR,
   -- Tracked in git next to the spec, so every host installs the same commits.
-  lockfile = _G.CONFIG_DIR .. 'lazy-lock.json',
+  lockfile = _G.RUNTIME_DIR .. '/lazy-lock.json',
   install = { colorscheme = { _G.THEME() } },
 })
 require('plugins.setting')
