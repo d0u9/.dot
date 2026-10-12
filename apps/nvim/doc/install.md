@@ -50,9 +50,13 @@ installer does them explicitly:
 
 The tree-sitter one is the easy mistake: the formula called **`tree-sitter`
 is the library only** and leaves no binary in `$PATH`. The CLI is
-`tree-sitter-cli`. The installer checks for it and refuses to continue
-without it, because nvim-treesitter's `main` branch cannot build a parser
-otherwise.
+`tree-sitter-cli`. Parsers are the `treesitter` item, on by default
+(`install.sh nvim:` leaves it out). It is kept only when `cc` exists and
+`tree-sitter --version` runs: the official Linux binary needs a recent glibc,
+and on an older one such as EL9's 2.34 `cargo install tree-sitter-cli` is the
+way. Otherwise the installer warns and deletes `runtime/treesitter.on`, the
+marker `plugins/install.lua` reads; without it nvim-treesitter is disabled,
+`Lazy! sync` removes it, and highlighting falls back to regex.
 
 ### Per language
 

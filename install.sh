@@ -11,8 +11,8 @@ source "$DOT_DIR/apps/shell/menu.sh"
 
 usage() {
     cat <<'HELP'
-Usage: install.sh APP[:ITEM,...]...   install or update apps
-       install.sh -m                  choose apps and items from a checklist
+Usage: install.sh                     choose apps and items from a checklist
+       install.sh APP[:ITEM,...]...   install or update apps
        install.sh -a                  install every app
        install.sh -u                  update every installed app
        install.sh -r APP...           uninstall apps
@@ -33,9 +33,9 @@ install_spec() {
 }
 
 case ${1:-} in
-    ''|-h|--help) usage ;;
+    -h|--help) usage ;;
     -l) app_list ;;
-    -m)
+    ''|-m)
         specs=$(app_menu) || { info "cancelled"; exit 1; }
         for spec in $specs; do install_spec "$spec"; done ;;
     -a) for name in $(app_names); do app_run install "$name"; done ;;

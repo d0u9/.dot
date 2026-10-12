@@ -90,7 +90,7 @@ return {
   },
   {
     'kevinhwang91/nvim-ufo',
-    dependencies = { 'kevinhwang91/promise-async', 'nvim-treesitter/nvim-treesitter' },
+    dependencies = { 'kevinhwang91/promise-async' },
     ft = { 'rust', 'ruby', 'go', 'python', 'vim', 'git' },
     config = config('nvim-ufo'),
   },
@@ -126,6 +126,9 @@ return {
     -- Upstream does not support lazy-loading; TS commands must also be
     -- available when starting without a file.
     lazy = false,
+    -- The installer's `treesitter` item writes this marker when the
+    -- tree-sitter CLI and a C compiler work on this host.
+    enabled = vim.uv.fs_stat(_G.RUNTIME_DIR .. '/treesitter.on') ~= nil,
     build = ':TSUpdate',
     config = config('nvim-treesitter'),
   },
