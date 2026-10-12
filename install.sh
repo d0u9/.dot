@@ -18,17 +18,25 @@ Usage: install.sh                     choose apps and items from a checklist
        install.sh -r APP...           uninstall apps
        install.sh -l                  list apps (* = installed)
 
-An app's ITEMS are its optional parts; without them the last choice is kept,
-or the app's defaults on a first install. `APP:` chooses none. Unticking an
+An app's ITEMS are its optional parts; a bare APP that has them opens its
+checklist on a terminal, and elsewhere keeps the last choice, or the app's
+defaults on a first install. `APP:` chooses none. Unticking an
 app in the checklist does not uninstall it; use -r.
 HELP
 }
 
-# APP[:ITEMS]
+# APP[:ITEMS]. A bare APP that has items asks for them on a terminal.
 install_spec() {
+    local spec
     case $1 in
         *:*) app_run install "${1%%:*}" "${1#*:}" ;;
-        *) app_run install "$1" ;;
+        *)
+            if [ -t 0 ] && (app_load "$1" > /dev/null 2>&1 && [ ${#items[@]} -gt 0 ]); then
+                spec=$(app_menu "$1") || { info "cancelled"; return; }
+                [ -z "$spec" ] || install_spec "$spec"
+            else
+                app_run install "$1"
+            fi ;;
     esac
 }
 
