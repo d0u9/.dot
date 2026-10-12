@@ -108,6 +108,9 @@ app_do_install() {
         mkdir -p -- "$(dirname -- "$dest")"
         link_config "$(app_link_src "$spec")" "$(abs_path "$dest")"
     done
+    # Recorded before the items and post run, so an app whose later step
+    # fails can still be uninstalled; installing again retries that step.
+    app_record "$name" "$chosen"
     for item in ${old//,/ }; do
         case ,$chosen, in *,"$item",*) ;; *) item_uninstall "$item" ;; esac
     done
@@ -115,7 +118,6 @@ app_do_install() {
         item_install "$item"
     done
     ! declare -F post > /dev/null || post
-    app_record "$name" "$chosen"
     [ -z "$failed" ]
 }
 

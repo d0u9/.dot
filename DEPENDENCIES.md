@@ -42,7 +42,7 @@ For the main shell and editor setup, install all of the following:
 | Tool | Level | What it enables |
 | --- | --- | --- |
 | Zsh | Required for Zsh | The shell configuration, prompt and plugins. |
-| Neovim 0.12+ | Required for Neovim | The editor configuration. `./install.sh nvim` installs the official build into `~/.local` on macOS and Linux (arm64 and x86_64); the Linux build needs a reasonably recent glibc. |
+| Neovim 0.12+ | Required for Neovim | The editor configuration. `./install.sh nvim` installs the official build into `~/.local` on macOS and Linux (arm64 and x86_64); the Linux build needs a reasonably recent glibc and does not run on musl hosts such as Alpine; install the distribution package there (`apk add neovim`). |
 | tree-sitter CLI | Required for Neovim | Builds the configured Tree-sitter parsers. The executable must be named `tree-sitter`. |
 | C build toolchain | Strongly recommended for Neovim | Compiles Tree-sitter parsers; without it `./install.sh nvim` warns and skips them, leaving regex highlighting. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
@@ -84,7 +84,7 @@ Install these only on hosts that develop the corresponding language:
 | Go | Makes the configuration request `gopls` and enables the Go-specific editor workflow. |
 | Python | Supports Python development and the virtual-environment prompt segment. |
 | Ruby | Supports Ruby development; the parser and editor settings themselves do not require a local Ruby runtime. |
-| mise | Optional development-tool version manager. `./install.sh mise` installs the official build and global node, python and go; both shells put its shims directory on `PATH` instead of running `mise activate`, and the shims pick each project's versions when called. |
+| mise | Optional development-tool version manager. `./install.sh mise` installs the official build and global node, python and go; both shells put its shims directory on `PATH` instead of running `mise activate`, and the shims pick each project's versions when called. On musl hosts such as Alpine, mise has no prebuilt node and builds it from source, which needs python and a C++ toolchain. |
 | Node.js/npm | Needed for JavaScript/TypeScript development, but not for the base editor bootstrap. |
 
 Mason installs the configured language servers after the relevant toolchain

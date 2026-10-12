@@ -32,9 +32,14 @@ post() {
     nvim --headless \
         -c 'lua local ts, langs = require("nvim-treesitter"), require("plugins.configs.treesitter-languages")
             ts.install(langs):wait(600000)
-            local have = {}
-            for _, l in ipairs(ts.get_installed()) do have[l] = true end
-            local miss = vim.tbl_filter(function(l) return not have[l] end, langs)
+            -- Parallel installs can race on the shared cache; retry once.
+            local missing = function()
+                local have = {}
+                for _, l in ipairs(ts.get_installed()) do have[l] = true end
+                return vim.tbl_filter(function(l) return not have[l] end, langs)
+            end
+            if #missing() > 0 then ts.install(missing()):wait(600000) end
+            local miss = missing()
             if #miss > 0 then
                 io.stderr:write("missing parsers: " .. table.concat(miss, " ") .. "\n")
                 vim.cmd("cquit 1")
