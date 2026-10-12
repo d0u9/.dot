@@ -21,6 +21,10 @@ post() {
         || warn 'some LSP servers failed to install; see doc/install.md for their toolchain requirements'
 
     info "Installing tree-sitter parsers"
+    command_exist cc || {
+        error "no C compiler (cc) to build the parsers: install build-essential or the equivalent, then rerun"
+        return 1
+    }
     # The config installs these asynchronously on every start; wait for the
     # first run here so a fresh host finishes bootstrapping before returning.
     # nvim exits 0 when a parser fails, so check what is installed afterwards.
