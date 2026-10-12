@@ -32,3 +32,8 @@ blink_interval = 600
 blink_timeout = 0
 unfocused_hollow = false
 thickness = 0.6
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"
