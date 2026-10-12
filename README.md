@@ -15,6 +15,7 @@ the required, strongly recommended and optional tools on macOS and Linux.
 # Content
 - [Supported platforms](#supported-platforms)
 - [Dependencies](#dependencies)
+- [Prebuilt tools](#prebuilt-tools)
 - [Private config files](#Private config files)
 - [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
@@ -65,6 +66,47 @@ lines.
 
 ---
 
+# Prebuilt tools
+
+`dgspkg` installs command-line tools from their official prebuilt releases on
+macOS and Linux (arm64 and x86_64), with no package manager. Each version is
+unpacked whole under `~/.local/lib/<tool>/`, `~/.local/bin/<tool>` links to
+the current one, and the previous version stays for a switch back without a
+download. Downloads are checked against the sha256 that GitHub records.
+`./install.sh -i release` runs `dgspkg sync` once.
+
+| Tool | Command | Default | Purpose |
+| --- | --- | --- | --- |
+| [Neovim](https://github.com/neovim/neovim) | `nvim` | `stable` (also `latest`, `nightly`) | the editor |
+| [7-Zip](https://github.com/ip7z/7zip) | `7zz` | latest | archives for `pack`/`unpack`, including RAR |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | `rg` | latest | content search, fzf-lua live grep |
+| [fd](https://github.com/sharkdp/fd) | `fd` | latest | file search for fzf-lua |
+| [fzf](https://github.com/junegunn/fzf) | `fzf` | latest | fuzzy finder and shell key bindings |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | `zoxide` | latest | `z`/`zi` directory jumping |
+| [tree-sitter CLI](https://github.com/tree-sitter/tree-sitter) | `tree-sitter` | latest | builds Neovim's parsers |
+| [Zellij](https://github.com/zellij-org/zellij) | `zellij` | latest | terminal multiplexer |
+
+The list lives in `apps/release/tools`, one `NAME [VERSION]` per line; a
+VERSION is a tag (with or without its leading `v`) or a channel. Common
+commands, each with a short form:
+
+```
+dgspkg sync                # s:  install or upgrade everything listed
+dgspkg list -u             # ls: installed and target versions, update status
+dgspkg install fd v10.5.0  # i:  one tool at a version or channel
+dgspkg upgrade nvim        # up: same as install
+dgspkg versions nvim       # v:  versions on disk, * = current
+dgspkg versions -r nvim    #     channels and recent upstream releases
+dgspkg uninstall fd        # rm: remove the tool and its link
+```
+
+To add a tool with an official release, write `apps/release/recipes/<tool>.sh`
+(a GitHub repository, the executable inside the archive, and the asset name
+for each platform) and add a line to the list. Tools without official binaries
+for both platforms, such as eza on macOS, stay with the package manager.
+
+---
+
 # Private config files
 
 If you have any private files(files containe sensitive contents), you may gather all of them together and put them in the `conf` directory. The `conf` directory has been added in `gitignore` file, which won't be pushed to the server.
@@ -108,22 +150,10 @@ was made because packer is no longer maintained.
 
 ## Install NeoVim
 
-`./install.sh -i release` installs the official Neovim build into `~/.local`,
-following the channel in `apps/release/tools` (`stable` by default). Use
-the `dgspkg` shell command (`apps/release/dgspkg`) afterwards:
-
-```
-dgspkg sync              # install or upgrade everything listed
-dgspkg install nvim nightly
-dgspkg versions nvim     # versions on disk, * = current
-dgspkg versions -r nvim  # channels and upstream releases
-dgspkg uninstall nvim
-```
-
-Each version is kept whole under `~/.local/lib/nvim/`, linked from
-`~/.local/bin/nvim`; the previous version stays for a switch back without a
-download. Other installation methods are listed
-[here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
+`dgspkg install nvim` installs the official build into `~/.local`, following
+the `stable` channel; `dgspkg install nvim nightly` switches to the nightly
+build. See [Prebuilt tools](#prebuilt-tools). Other installation methods are
+listed [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 
 ## Install this configuration
 
@@ -238,7 +268,7 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | System | `dfh` | disk usage of real filesystems only |
 | System | `svc [--user] [ACTION] [UNIT]` | systemctl and journalctl shortcuts (Linux) |
 | System | `sudo_nopasswd [on\|off\|status]` | toggle passwordless sudo for this user (Linux) |
-| System | `dgspkg COMMAND` | install and upgrade official prebuilt releases, see the NeoVim section |
+| System | `dgspkg COMMAND` | install and upgrade official prebuilt releases, see [Prebuilt tools](#prebuilt-tools) |
 | Docker | `dnets`, `dcnets` | networks as trees of containers, and the reverse |
 | Docker | `dvols`, `dcvols` | volumes as trees of mounting containers, and the reverse |
 | Docker | `dips [container...]` | containers with network, IPv4 and ports |
