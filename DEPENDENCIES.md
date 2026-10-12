@@ -16,7 +16,7 @@ These are required by the repository itself or by its installers:
 | --- | --- |
 | Bash | Runs `install.sh` and every `apps/*-install.sh` installer. |
 | Git | Clones Zsh and Neovim plugin repositories and supplies the Bash prompt's repository status. |
-| curl | Downloads Alacritty themes, resources used by editor tooling, and the official releases installed by `dgspkg`, which also needs `shasum` (macOS) or `sha256sum` (Linux) to verify them. |
+| curl | Downloads Alacritty themes, resources used by editor tooling, and the official releases installed by `dgspkg`, which also needs `shasum` (macOS) or `sha256sum` (Linux) to verify them and `unzip` for zip archives. |
 | tar | Extracts downloaded tools and archives; `pack` in both shells creates tar archives and uses gzip by default (supplied by macOS and standard Linux installations). |
 
 Install the application whose configuration you plan to use. Bash, Zsh, Neovim,

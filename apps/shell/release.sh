@@ -29,6 +29,7 @@ release_load() {
     local recipe="$RELEASE_DIR/recipes/$1.sh"
     unset release_repo release_bin
     unset -f release_asset release_resolve
+    release_name=$1
     release_channels="latest stable"
     release_default=latest
     [ -f "$recipe" ] || { error "release: no recipe for $1: $recipe"; return 1; }
@@ -64,8 +65,35 @@ release_target() {
         return ;;
     esac
     case $request in
-        *[0-9]*) printf '%s %s\n' "$request" "$request" ;;
+        *[0-9]*) release_github_tag "$request" ;;
         *) error "release: unknown channel $request (supported: $release_channels)" >&2; return 1 ;;
+    esac
+}
+
+# Print VERSION TAG for the release tagged VERSION, also trying it with the
+# leading v added or removed, since projects differ (v10.5.0 against 15.2.0).
+# A version already on disk is used without asking GitHub.
+release_github_tag() {
+    local tag
+    for tag in "$1" "$([ "${1#v}" = "$1" ] && echo "v$1" || echo "${1#v}")"; do
+        if [ -d "$RELEASE_LIB/$release_name/$tag" ] ||
+            curl -fsS -o /dev/null -I "https://github.com/$release_repo/releases/tag/$tag" 2> /dev/null; then
+            printf '%s %s\n' "$tag" "$tag"
+            return 0
+        fi
+    done
+    error "release: no release $1 in $release_repo" >&2
+    return 1
+}
+
+# Print the Rust target triple for OS ARCH, which many projects name their
+# assets after: aarch64-apple-darwin, x86_64-unknown-linux-musl (static).
+release_rust_target() {
+    local cpu=$2
+    [ "$cpu" = arm64 ] && cpu=aarch64
+    case $1 in
+        macos) printf '%s-apple-darwin\n' "$cpu" ;;
+        linux) printf '%s-unknown-linux-musl\n' "$cpu" ;;
     esac
 }
 
@@ -104,8 +132,10 @@ release_fetch() (
         warn "release: no published sha256 for $asset; not verified"
     fi
     mkdir "$tmp/unpacked" || return 1
-    # ponytail: tar archives only; add zip when a recipe needs it.
-    tar -xf "$tmp/$asset" -C "$tmp/unpacked" || return 1
+    case $asset in
+        *.zip) unzip -q "$tmp/$asset" -d "$tmp/unpacked" || return 1 ;;
+        *) tar -xf "$tmp/$asset" -C "$tmp/unpacked" || return 1 ;;
+    esac
     # Use the archive's single top-level directory as the version directory.
     set -- "$tmp/unpacked"/*
     if [ $# -eq 1 ] && [ -d "$1" ]; then root=$1; else root=$tmp/unpacked; fi
@@ -205,6 +235,7 @@ release_sync() {
 
 release_list() {
     local check="${1:-}" name wanted installed target status recipe tools
+    local fmt='%-12s %-8s %-30s %-30s %s\n'
     local -a names=()
     tools=$(release_tools)
     # Every tool with a recipe, listed or not, plus anything installed.
@@ -214,7 +245,7 @@ release_list() {
     for installed in "$RELEASE_LIB"/*/current; do
         [ -L "$installed" ] && names+=("$(basename -- "$(dirname -- "$installed")")")
     done
-    printf '%-10s %-8s %-30s %-30s %s\n' TOOL WANTED INSTALLED TARGET STATUS
+    printf "$fmt" TOOL WANTED INSTALLED TARGET STATUS
     printf '%s\n' ${names[@]+"${names[@]}"} | sort -u | while read -r name; do
         wanted=$(printf '%s\n' "$tools" | awk -v n="$name" '$1 == n { print ($2 == "" ? "default" : $2); exit }')
         installed=$(release_current "$name")
@@ -227,6 +258,6 @@ release_list() {
             else status='update available'
             fi
         fi
-        printf '%-10s %-8s %-30s %-30s %s\n' "$name" "${wanted:--}" "${installed:--}" "${target:--}" "$status"
+        printf "$fmt" "$name" "${wanted:--}" "${installed:--}" "${target:--}" "$status"
     done
 }

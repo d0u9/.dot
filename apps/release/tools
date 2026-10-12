@@ -7,3 +7,9 @@
 
 nvim    stable
 7zz
+rg
+fd
+fzf
+zoxide
+tree-sitter
+zellij

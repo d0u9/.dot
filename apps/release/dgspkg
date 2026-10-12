@@ -12,6 +12,7 @@ usage() {
     cat <<'HELP'
 Usage: dgspkg COMMAND [ARGS]
 Install official prebuilt releases into ~/.local/lib, linked from ~/.local/bin.
+Short forms: s, i, up, rm, v, ls.
 
   sync                    install or upgrade every tool in apps/release/tools
   install NAME [VERSION]  install one tool, without listing it; VERSION is a
@@ -32,15 +33,15 @@ HELP
 }
 
 case ${1:-} in
-    sync) release_sync ;;
-    install|upgrade) [ $# -ge 2 ] || { usage >&2; exit 2; }; release_install "$2" "${3:-}" ;;
-    uninstall) [ $# -eq 2 ] || { usage >&2; exit 2; }; release_uninstall "$2" ;;
-    versions)
+    sync|s) release_sync ;;
+    install|i|upgrade|up) [ $# -ge 2 ] || { usage >&2; exit 2; }; release_install "$2" "${3:-}" ;;
+    uninstall|rm) [ $# -eq 2 ] || { usage >&2; exit 2; }; release_uninstall "$2" ;;
+    versions|v)
         if [ "${2:-}" = -r ]; then
             [ $# -eq 3 ] || { usage >&2; exit 2; }; release_remote "$3"
         elif [ $# -eq 2 ]; then release_versions "$2"
         else usage >&2; exit 2; fi ;;
-    list)
+    list|ls)
         case ${2:-} in
             '') release_list ;;
             -u) release_list -u ;;
