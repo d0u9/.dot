@@ -1620,7 +1620,7 @@ HELP
     python3 -m http.server "$port"
 }
 
-# Install and upgrade official prebuilt releases; see apps/release/tools.
+# Install and upgrade official prebuilt releases; see apps/release/recipes.
 # Usage: dgspkg COMMAND [ARGS], dgspkg --help for the commands.
 dgspkg() { "$DOT_DIR/apps/release/dgspkg" "$@"; }
 
@@ -1663,7 +1663,7 @@ System	sysinfo	-	sysinfo	OS, CPU, memory, disk, uptime and load
 System	dfh	-	dfh	disk usage of real filesystems only
 System	svc	systemctl	svc [--user] [ACTION] [UNIT]	systemctl and journalctl shortcuts
 System	sudo_nopasswd	sudo	sudo_nopasswd [on|off|status]	toggle passwordless sudo for this user
-System	dgspkg	-	dgspkg sync|install|upgrade|uninstall|versions|list	install official prebuilt releases into ~/.local
+System	dgspkg	-	dgspkg install|upgrade|uninstall|versions|list	install official prebuilt releases into ~/.local
 Docker	dnets	docker	dnets [network...]	networks as trees of their containers
 Docker	dcnets	docker	dcnets [container...]	running containers as trees of their networks
 Docker	dvols	docker	dvols [volume...]	volumes as trees of the containers mounting them

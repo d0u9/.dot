@@ -12,29 +12,30 @@ usage() {
     cat <<'HELP'
 Usage: dgspkg COMMAND [ARGS]
 Install official prebuilt releases into ~/.local/lib, linked from ~/.local/bin.
-Short forms: s, i, up, rm, v, ls.
+Short forms: i, up, rm, v, ls.
 
-  sync                    install or upgrade every tool in apps/release/tools
-  install NAME [VERSION]  install one tool, without listing it; VERSION is a
-                          version or a channel such as stable or nightly
-                          (default: the recipe's default channel)
-  upgrade NAME [VERSION]  same as install; the previous version is kept
+  install NAME [VERSION]  install one tool; VERSION is a version or a channel
+                          such as stable or nightly (default: the one saved
+                          by the last install, else the recipe's default).
+                          The request is saved for later upgrades
+  upgrade [NAME [VERSION]]
+                          same as install; the previous version is kept.
+                          Without NAME, upgrade every installed tool
   uninstall NAME          remove the tool and its link
   versions [-r] NAME      list versions on disk (* = current); switching
                           to one with install NAME VERSION needs no download.
                           -r lists channels and recent upstream releases
                           (* = current, + = on disk)
-  list [-u]               show every tool with a recipe: WANTED is its line in
-                          tools (- when not listed), INSTALLED its version.
+  list [-u]               show every tool with a recipe: CHANNEL is the saved
+                          request (- when none), INSTALLED its version.
                           -u also fills TARGET and STATUS online: up to date,
-                          update available, not installed (listed but
-                          missing) or available (recipe only)
+                          update available or available (not installed)
 HELP
 }
 
 case ${1:-} in
-    sync|s) release_sync ;;
-    install|i|upgrade|up) [ $# -ge 2 ] || { usage >&2; exit 2; }; release_install "$2" "${3:-}" ;;
+    upgrade|up) if [ $# -ge 2 ]; then release_install "$2" "${3:-}"; else release_upgrade_all; fi ;;
+    install|i) [ $# -ge 2 ] || { usage >&2; exit 2; }; release_install "$2" "${3:-}" ;;
     uninstall|rm) [ $# -eq 2 ] || { usage >&2; exit 2; }; release_uninstall "$2" ;;
     versions|v)
         if [ "${2:-}" = -r ]; then

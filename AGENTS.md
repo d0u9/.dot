@@ -72,14 +72,19 @@ commit removes it.
 
 ```text
 .dot/
+├── bootstrap.sh              new-host setup: clone or update, then install.sh -m
 ├── install.sh                public installer dispatcher
 ├── apps/
-│   ├── <app>-install.sh      per-application installation
+│   ├── <app>/app.sh          per-application declarations
 │   ├── shell/                shared Bash/Zsh runtime and installer helpers
+│   │   ├── apps.sh              app engine: install, uninstall, state
+│   │   ├── menu.sh              the install.sh -m checklist
 │   │   ├── fallbacks            command replacement candidates, both shells
 │   │   ├── go.sh                shared Go workspace and binary paths
 │   │   └── release.sh           official prebuilt release installer, Bash only
-│   ├── release/             release tool list, recipes, and the release command
+│   ├── release/             release recipes and the dgspkg command
+│   ├── cli/                 rg, fd, 7zz and tree-sitter, no configuration
+│   ├── mise/                mise and its global runtimes (node, python, go)
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
@@ -94,12 +99,21 @@ commit removes it.
 ├── private/                separate private repository
 ```
 
-`install.sh` resolves its location into `DOT_DIR`, discovers
-`apps/*-install.sh`, and passes `DOT_DIR`, `APP_DIR`, `DOT_ZSH_DIR`, and
-`DOT_LOG_LEVEL` to child installers. `-l` lists apps, repeatable `-i <app>`
-installs selected apps, and `-a` installs all discovered non-test apps.
-`test*` installers are scaffolding, excluded from listing and `-a` but still
-reachable explicitly. Installation asks before each app and records failures.
+`install.sh` resolves its location into `DOT_DIR` and drives
+`apps/shell/apps.sh`. Every directory with an `app.sh` is an app; that file
+only declares what the app owns -- `desc`, `release` (dgspkg tools), `git`
+checkouts, `link` pairs, optional `items` with `item_install` and
+`item_uninstall` -- plus an optional `post` function, run last with `APP_DIR`
+set. The engine performs the declarations, so installing again is updating,
+and uninstalling reverses them: links are removed and their `.bk` backups
+restored, checkouts deleted, and release tools removed unless another
+installed app declares them. Installed apps and their chosen items are
+recorded in `${XDG_STATE_HOME:-~/.local/state}/dot/apps`. Usage:
+`install.sh APP[:ITEM,...]`, `-m` checklist, `-a` all, `-u` update installed,
+`-r APP` uninstall, `-l` list. Each app runs in a subshell with errexit;
+a failure is reported and the run continues. Without a terminal, prompts take
+their default: back up an existing file, never overwrite an existing `.bk`.
+Add an app by adding `apps/NAME/app.sh`, not by extending the engine.
 
 Current installation targets (link location → repository source):
 
@@ -110,7 +124,7 @@ Current installation targets (link location → repository source):
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
-| Releases | `~/.local/bin/<tool>` → `~/.local/lib/<tool>/current` | `apps/release/tools`, `apps/release/recipes/` |
+| Releases | `~/.local/bin/<tool>` → `~/.local/lib/<tool>/current` | `release=` in each `app.sh`, `apps/release/recipes/` |
 
 The current installers use `$HOME/.config` explicitly, not `$XDG_CONFIG_HOME`.
 Do not claim XDG support without tracing these consumers.
@@ -140,11 +154,15 @@ package-manager package, update that document in the same change. Keep each
 entry in the correct required, strongly recommended, optional, or
 repository-managed category, and cover macOS/Linux differences when relevant.
 
-The Zsh installer also installs fzf and zoxide through the first available
-supported package manager: Homebrew, apt, dnf, pacman, or apk. System package
-managers run through `sudo` when the installer is not already root. Both tools
-are optional: a host with no supported package manager gets a warning and a
-working shell, not a failed install.
+The Zsh app installs fzf and zoxide through dgspkg. A release that fails is
+reported and the configuration is still linked. `pkg_install` in
+`apps/shell/install.sh` is the one system package manager path (Homebrew,
+apt, dnf, pacman, apk, through `sudo` when not root); the Bash app uses it
+for bash-completion and only warns when it fails.
+
+mise is used through its shims, not `mise activate`: both shells prepend
+`${MISE_DATA_DIR:-${XDG_DATA_HOME:-~/.local/share}/mise}/shims` to `PATH`
+when it exists, so there is no prompt or directory-change hook.
 
 ## Tracked configuration versus generated state
 
@@ -205,8 +223,8 @@ hand still needs a recorded provenance and update path.
 
 `apps/release/dgspkg` is that path for official prebuilt binaries; it is not
 on `$PATH`, and both shells reach it through the `dgspkg` function in
-`apps/shell/lib.sh` (Bash sets `DOT_DIR` for it). `apps/release/tools` lists `NAME [VERSION]` lines, and
-`apps/release/recipes/NAME.sh` says where each tool's release lives: the
+`apps/shell/lib.sh` (Bash sets `DOT_DIR` for it). Apps name the tools they
+need in `release=`, and `apps/release/recipes/NAME.sh` says where each tool's release lives: the
 GitHub repository, the asset name for `macos`/`linux` and `arm64`/`x86_64`,
 and the executable inside the archive. Each version is unpacked whole into
 `~/.local/lib/NAME/VERSION/`, `~/.local/lib/NAME/current` points at it, and
@@ -215,7 +233,9 @@ version for a download-free switch back and removes older ones. A VERSION may
 be a channel (`latest`, `stable`, or what the recipe adds, such as nvim's
 `nightly`); channels resolve to a concrete version before anything is
 compared or named, so a channel upgrades when it moves and a moving tag never
-names a directory. Downloads are checked against the sha256 GitHub records
+names a directory. The last request is saved in `~/.local/lib/NAME/channel`
+and is the default for later installs; `dgspkg upgrade` without NAME
+upgrades every installed tool along its channel. Downloads are checked against the sha256 GitHub records
 for the asset, with a warning when none is published. The scope is macOS and
 Linux tools with official prebuilt binaries; a tool without one stays with
 the platform package manager. Shared logic lives in `apps/shell/release.sh`;
@@ -517,7 +537,9 @@ interpreter (`.sh` files sourced by Zsh can contain Zsh syntax):
 
 ```zsh
 bash -n install.sh
-for f in apps/*-install.sh; do bash -n "$f" || break; done
+for f in bootstrap.sh apps/*/app.sh apps/shell/{install,release,apps,menu}.sh apps/release/dgspkg; do
+    bash -n "$f" || break
+done
 # Zsh nullglob qualifiers skip absent files; each source is checked separately.
 for f in apps/zsh/zshrc apps/zsh/*.zsh(N) apps/zsh/core/*.zsh(N) \
          apps/zsh/lib/*.zsh(N) apps/zsh/bin/*(N.) \

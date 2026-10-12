@@ -3,7 +3,7 @@
 Run the repo's installer from the root of `.dot`:
 
 ```
-./install.sh -i nvim
+./install.sh nvim
 ```
 
 It symlinks `apps/nvim` to `$HOME/.config/nvim` and then bootstraps

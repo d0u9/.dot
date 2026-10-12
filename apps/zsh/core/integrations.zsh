@@ -6,14 +6,10 @@
 # microseconds and keeps this file independent of that order.
 source "$DOT_ZSH_DIR/lib/toolcache.zsh"
 
-# mise's activation output captures the current PATH and installs hooks that
-# update the environment as the working directory changes, so it must be
-# evaluated for each interactive shell rather than stored in the shared tool
-# init cache. Keep the executable check at the call site: mise is optional,
-# and a stale command hash after an uninstall must not produce startup errors.
-if (( $+commands[mise] )) && [[ -x ${commands[mise]} ]]; then
-    eval "$(mise activate zsh)"
-fi
+# mise runs through its shims instead of `mise activate`: no hook per prompt
+# or directory change, and the shims resolve each project's versions when
+# called. A missing directory adds nothing.
+path=(${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims(N/) $path)
 
 if (( $+commands[fzf] )); then
     # Recent fzf versions generate the complete integration directly.

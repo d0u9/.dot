@@ -5,105 +5,49 @@ set -euo pipefail
 # Resolve the repo root from this script's own location so that the installer
 # works no matter what directory it is invoked from.
 DOT_DIR=$(cd -- "$(dirname -- "$0")" && pwd)
-APP_DIR="$DOT_DIR/apps"
-DOT_LOG_LEVEL="info"
+DOT_LOG_LEVEL=info
+source "$DOT_DIR/apps/shell/apps.sh"
+source "$DOT_DIR/apps/shell/menu.sh"
 
-# import auxiliary functions
-export DOT_ZSH_DIR="$APP_DIR/zsh"
-source "$DOT_DIR/apps/shell/install.sh"
+usage() {
+    cat <<'HELP'
+Usage: install.sh APP[:ITEM,...]...   install or update apps
+       install.sh -m                  choose apps and items from a checklist
+       install.sh -a                  install every app
+       install.sh -u                  update every installed app
+       install.sh -r APP...           uninstall apps
+       install.sh -l                  list apps (* = installed)
 
-# Echo the installable app names. Anything called test* is scaffolding and is
-# hidden here, though `-i test1` still reaches it.
-find_install_scripts() {
-    local file app
-    for file in "$APP_DIR"/*-install.sh; do
-        [ -f "$file" ] || continue
-        app=$(basename "$file")
-        app=${app%-install.sh}
-        case "$app" in
-            test*) continue;;
-        esac
-        echo "$app"
-    done
+An app's ITEMS are its optional parts; without them the last choice is kept,
+or the app's defaults on a first install. `APP:` chooses none. Unticking an
+app in the checklist does not uninstall it; use -r.
+HELP
 }
 
-print_help() {
-    printf -- "-h: %-s\n" "Print this help"
-    printf -- "-i [app]: %-s\n" "Install this app, may be repeated"
-    printf -- "-a: %-s\n" "Install every app"
-    printf -- "-l: %-s\n" "List available apps to install"
-}
-
-list_apps() {
-    local idx=0 name
-    for name in "$@"; do
-        printf "%-2s: %-s\n" "$idx" "$name"
-        idx=$((idx + 1))
-    done
-}
-
-# $1: app name
-install_app() {
-    local name="$1"
-    local install_script="$APP_DIR/$name-install.sh"
-
-    if [ ! -f "$install_script" ]; then
-        error "no [$name] app is found in $APP_DIR"
-        return 1
-    fi
-
-    if ! yes_or_no "Really want to install [$name]"; then
-        info "'N' is pressed, skip [$name]"
-        return 0
-    fi
-
-    # A failing installer should not take the rest of the run down with it.
-    if ! DOT_LOG_LEVEL="$DOT_LOG_LEVEL" \
-        APP_DIR="$APP_DIR" \
-        DOT_DIR="$DOT_DIR" \
-        DOT_ZSH_DIR="$DOT_ZSH_DIR" \
-        "$install_script"; then
-        error "[$name] failed to install"
-        return 1
-    fi
-}
-
-######################### MAIN #########################
-apps=()
-while IFS= read -r line; do
-    apps+=("$line")
-done < <(find_install_scripts)
-
-failed=0
-
-if [ "$#" -eq 0 ]; then
-    print_help
-    exit 0
-fi
-
-while getopts ":hlai:" opt; do
-    case $opt in
-        h)
-            print_help
-            ;;
-        l)
-            printf -- "-------------------------- Apps --------------------------\n"
-            list_apps "${apps[@]}"
-            ;;
-        a)
-            for name in "${apps[@]}"; do
-                install_app "$name" || failed=1
-            done
-            ;;
-        i)
-            install_app "$OPTARG" || failed=1
-            ;;
-        *)
-            error "unknown option: -$OPTARG"
-            print_help
-            exit 1
-            ;;
+# APP[:ITEMS]
+install_spec() {
+    case $1 in
+        *:*) app_run install "${1%%:*}" "${1#*:}" ;;
+        *) app_run install "$1" ;;
     esac
-done
+}
 
-exit "$failed"
+case ${1:-} in
+    ''|-h|--help) usage ;;
+    -l) app_list ;;
+    -m)
+        specs=$(app_menu) || { info "cancelled"; exit 1; }
+        for spec in $specs; do install_spec "$spec"; done ;;
+    -a) for name in $(app_names); do app_run install "$name"; done ;;
+    -u)
+        [ -f "$APP_STATE" ] || { info "no app is installed"; exit 0; }
+        for name in $(awk '{ print $1 }' "$APP_STATE"); do app_run install "$name"; done ;;
+    -r)
+        shift
+        [ $# -gt 0 ] || { usage >&2; exit 2; }
+        for name in "$@"; do app_run uninstall "$name"; done ;;
+    -*) usage >&2; exit 2 ;;
+    *) for spec in "$@"; do install_spec "$spec"; done ;;
+esac
+
+exit "$app_failed"

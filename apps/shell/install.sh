@@ -18,7 +18,9 @@ abs_path() {
     esac
 }
 
+# QUESTION [DEFAULT]: without a terminal, answer DEFAULT (y unless n).
 yes_or_no() {
+    if [ ! -t 0 ]; then [ "${2:-y}" = y ]; return; fi
     while true; do
         read -p "$1 ([y]/n)?" -n 1 -r
         echo ""
@@ -44,7 +46,7 @@ back_or_override() {
         return 0
     fi
     if [ -e "$file.bk" ]; then
-        if ! yes_or_no "$file.bk exists, override it"; then
+        if ! yes_or_no "$file.bk exists, override it" n; then
             error "Can't backup $file, skipped"
             return 1
         fi
@@ -71,4 +73,29 @@ link_config() {
         return 1
     fi
     info "linked -> $src" "$tgt"
+}
+
+# Run a system package manager as root when it requires that. Homebrew is
+# deliberately handled outside this helper and must never run through sudo.
+run_privileged() {
+    if [ "$EUID" -eq 0 ]; then
+        "$@"
+    elif command_exist sudo; then
+        sudo "$@"
+    else
+        error "sudo is required to run $1"
+        return 1
+    fi
+}
+
+# Install PACKAGE with the first supported package manager.
+pkg_install() {
+    info "Installing $1"
+    if command_exist brew; then brew install "$1"
+    elif command_exist apt-get; then run_privileged apt-get install -y "$1"
+    elif command_exist dnf; then run_privileged dnf install -y "$1"
+    elif command_exist pacman; then run_privileged pacman -S --needed --noconfirm "$1"
+    elif command_exist apk; then run_privileged apk add "$1"
+    else error "no supported package manager for $1"; return 1
+    fi
 }

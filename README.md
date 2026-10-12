@@ -10,6 +10,23 @@ that sensitive information is not added here.
 **Setting up a new machine? Start with [DEPENDENCIES.md](DEPENDENCIES.md)** for
 the required, strongly recommended and optional tools on macOS and Linux.
 
+```
+curl -fsSL https://raw.githubusercontent.com/d0u9/.dot/master/bootstrap.sh | bash
+```
+
+`bootstrap.sh` checks for git, curl and tar, clones the repository into
+`~/.dot` (or `$DOT_DIR`), or updates it, then opens a checklist of the apps
+and their optional parts; ticking mise shows node, python and go below it.
+Afterwards `./install.sh` manages the apps:
+
+```
+./install.sh -m              # the checklist again
+./install.sh zsh mise:node   # install or update apps, choosing items
+./install.sh -u              # update every installed app
+./install.sh -r zellij       # uninstall, restoring any .bk backup
+./install.sh -l              # list apps, * = installed
+```
+
 ---
 
 # Content
@@ -73,7 +90,8 @@ macOS and Linux (arm64 and x86_64), with no package manager. Each version is
 unpacked whole under `~/.local/lib/<tool>/`, `~/.local/bin/<tool>` links to
 the current one, and the previous version stays for a switch back without a
 download. Downloads are checked against the sha256 that GitHub records.
-`./install.sh -i release` runs `dgspkg sync` once.
+Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
+`7zz` and `tree-sitter`.
 
 | Tool | Command | Default | Purpose |
 | --- | --- | --- | --- |
@@ -85,16 +103,17 @@ download. Downloads are checked against the sha256 that GitHub records.
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | `zoxide` | latest | `z`/`zi` directory jumping |
 | [tree-sitter CLI](https://github.com/tree-sitter/tree-sitter) | `tree-sitter` | latest | builds Neovim's parsers |
 | [Zellij](https://github.com/zellij-org/zellij) | `zellij` | latest | terminal multiplexer |
+| [mise](https://github.com/jdx/mise) | `mise` | latest | language runtimes, through its shims |
 
-The list lives in `apps/release/tools`, one `NAME [VERSION]` per line; a
-VERSION is a tag (with or without its leading `v`) or a channel. Common
-commands, each with a short form:
+Each tool has a recipe in `apps/release/recipes/`. A VERSION is a tag (with
+or without its leading `v`) or a channel; the last one requested is saved in
+`~/.local/lib/<tool>/channel` and followed by later upgrades. Common commands,
+each with a short form:
 
 ```
-dgspkg sync                # s:  install or upgrade everything listed
 dgspkg list -u             # ls: installed and target versions, update status
 dgspkg install fd v10.5.0  # i:  one tool at a version or channel
-dgspkg upgrade nvim        # up: same as install
+dgspkg upgrade             # up: every installed tool, along its channel
 dgspkg versions nvim       # v:  versions on disk, * = current
 dgspkg versions -r nvim    #     channels and recent upstream releases
 dgspkg uninstall fd        # rm: remove the tool and its link
@@ -158,7 +177,7 @@ listed [here](https://github.com/neovim/neovim/wiki/Installing-Neovim).
 ## Install this configuration
 
 ```
-./install.sh -i nvim
+./install.sh nvim
 ```
 
 That symlinks `apps/nvim` to `$HOME/.config/nvim` (neovim uses the XDG-style
@@ -192,10 +211,8 @@ parser.
 
 # Zsh
 
-Run `./install.sh -i zsh` to install fzf, zoxide and the three Zsh plugins,
-then link `apps/zsh/zshrc` to `~/.zshrc`. The installer supports Homebrew,
-apt, dnf, pacman and apk; existing commands and correct plugin checkouts are
-left in place. Powerlevel10k uses an already-installed, version-compatible
+Run `./install.sh zsh` to install fzf and zoxide through `dgspkg`, update
+the three Zsh plugins, and link `apps/zsh/zshrc` to `~/.zshrc`. Powerlevel10k uses an already-installed, version-compatible
 gitstatusd when available and otherwise falls back to Zsh's built-in
 `vcs_info`; shell startup never downloads the binary. Both modes keep the
 instant prompt: a fallback shell discards a prompt cache left behind by a
@@ -295,10 +312,10 @@ after the new one exists. In both, `-f` replaces an existing destination and
 
 # Bash
 
-Run `./install.sh -i bash` for the lightweight server shell profile. It links
+Run `./install.sh bash` for the lightweight server shell profile. It links
 `apps/bash/bashrc` and `apps/bash/bash_profile` into the home directory, tries
-to install `bash-completion`, adds listing and navigation aliases, activates
-mise, zoxide and fzf when installed, and enables case-insensitive menu
+to install `bash-completion`, adds listing and navigation aliases, puts mise's
+shims on `PATH`, loads zoxide and fzf when installed, and enables case-insensitive menu
 completion and prefix history search. Existing `~/.local/bin` and
 `~/.local/bin/scripts` directories join `PATH`; `~/.local/share/man` joins
 `MANPATH`, and `~/.local/lib` joins `LD_LIBRARY_PATH` on Linux. The single-line

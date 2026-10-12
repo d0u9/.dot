@@ -109,6 +109,11 @@ release_sha256() {
     if command_exist sha256sum; then sha256sum -- "$1"; else shasum -a 256 -- "$1"; fi | cut -d' ' -f1
 }
 
+# Print the request saved by NAME's last install, or nothing.
+release_channel() {
+    cat -- "$RELEASE_LIB/$1/channel" 2> /dev/null || true
+}
+
 release_current() {
     local link="$RELEASE_LIB/$1/current"
     [ -L "$link" ] && readlink "$link" || true
@@ -143,12 +148,14 @@ release_fetch() (
     mkdir -p -- "$RELEASE_LIB/$name" && mv -- "$root" "$dir"
 )
 
-# Install NAME at a version or channel (default: the recipe's default);
-# an installed target is a no-op.
+# Install NAME at a version or channel (default: the one saved by the last
+# install, else the recipe's default); an installed target is a no-op. The
+# request is saved in $RELEASE_LIB/NAME/channel, so an upgrade follows it.
 release_install() {
-    local name="$1" target version tag previous link old
+    local name="$1" request target version tag previous link old
     release_load "$name" || return 1
-    target=$(release_target "${2:-}") || return 1
+    request=${2:-$(release_channel "$name")}
+    target=$(release_target "$request") || return 1
     version=${target%% *} tag=${target#* }
     previous=$(release_current "$name")
     link="$RELEASE_BIN/$name"
@@ -157,6 +164,7 @@ release_install() {
         return 1
     fi
     if [ "$previous" = "$version" ] && [ -L "$link" ]; then
+        [ -z "$request" ] || echo "$request" > "$RELEASE_LIB/$name/channel"
         info "$name $version is up to date"
         return 0
     fi
@@ -165,8 +173,9 @@ release_install() {
         mkdir -p -- "$RELEASE_BIN" &&
         ln -sfn "../lib/$name/current/$release_bin" "$link" || return 1
     for old in "$RELEASE_LIB/$name"/*; do
-        case ${old##*/} in current|"$version"|"$previous") ;; *) rm -rf -- "$old" ;; esac
+        case ${old##*/} in current|channel|"$version"|"$previous") ;; *) rm -rf -- "$old" ;; esac
     done
+    [ -z "$request" ] || echo "$request" > "$RELEASE_LIB/$name/channel"
     info "$name ${previous:+$previous -> }$version"
 }
 
@@ -215,45 +224,39 @@ release_remote() {
         done
 }
 
-# Print NAME VERSION for each tool in the list, skipping comments and blanks.
-release_tools() {
-    local name version rest
-    while read -r name version rest || [ -n "$name" ]; do
-        case $name in ''|'#'*) continue ;; esac
-        case $version in '#'*) version= ;; esac
-        printf '%s %s\n' "$name" "$version"
-    done < "$RELEASE_DIR/tools"
-}
-
-release_sync() {
-    local name version rc=0
-    while read -r name version; do
-        release_install "$name" "$version" || rc=1
-    done < <(release_tools)
+# Upgrade every installed tool along its saved channel.
+release_upgrade_all() {
+    local link name rc=0
+    for link in "$RELEASE_LIB"/*/current; do
+        [ -L "$link" ] || continue
+        name=$(basename -- "$(dirname -- "$link")")
+        [ -f "$RELEASE_DIR/recipes/$name.sh" ] || continue
+        release_install "$name" || rc=1
+    done
     return "$rc"
 }
 
 release_list() {
-    local check="${1:-}" name wanted installed target status recipe tools
+    local check="${1:-}" name wanted installed target status recipe
     local fmt='%-12s %-8s %-30s %-30s %s\n'
     local -a names=()
-    tools=$(release_tools)
-    # Every tool with a recipe, listed or not, plus anything installed.
+    # Every tool with a recipe, plus anything installed.
     for recipe in "$RELEASE_DIR/recipes"/*.sh; do
         [ -f "$recipe" ] && names+=("$(basename -- "$recipe" .sh)")
     done
     for installed in "$RELEASE_LIB"/*/current; do
         [ -L "$installed" ] && names+=("$(basename -- "$(dirname -- "$installed")")")
     done
-    printf "$fmt" TOOL WANTED INSTALLED TARGET STATUS
+    printf "$fmt" TOOL CHANNEL INSTALLED TARGET STATUS
     printf '%s\n' ${names[@]+"${names[@]}"} | sort -u | while read -r name; do
-        wanted=$(printf '%s\n' "$tools" | awk -v n="$name" '$1 == n { print ($2 == "" ? "default" : $2); exit }')
+        wanted=$(release_channel "$name")
+        [ -z "$(release_current "$name")" ] || wanted=${wanted:-default}
         installed=$(release_current "$name")
         target= status=
         if [ -n "$check" ]; then
-            release_load "$name" > /dev/null 2>&1 && target=$(release_target "${wanted#default}") && target=${target%% *}
+            release_load "$name" > /dev/null 2>&1 && target=$(release_target "$wanted") && target=${target%% *}
             if [ -z "$target" ]; then status='cannot resolve'
-            elif [ -z "$installed" ]; then [ -n "$wanted" ] && status='not installed' || status=available
+            elif [ -z "$installed" ]; then status=available
             elif [ "$installed" = "$target" ]; then status='up to date'
             else status='update available'
             fi

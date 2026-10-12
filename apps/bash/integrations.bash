@@ -1,10 +1,7 @@
-# mise activation captures current PATH and installs directory hooks, so
-# generate it for every shell. Check resolved path: Bash can retain a stale
-# hash after an uninstall, matching Zsh's executable-path guard.
-if _dot_mise_path=$(type -P mise 2>/dev/null) && [ -x "$_dot_mise_path" ]; then
-    eval "$("$_dot_mise_path" activate bash)"
-fi
-unset _dot_mise_path
+# mise runs through its shims instead of `mise activate`, as in Zsh.
+_dot_mise_shims=${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims
+[ -d "$_dot_mise_shims" ] && PATH="$_dot_mise_shims:$PATH"
+unset _dot_mise_shims
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash --cmd z)"
 fi
