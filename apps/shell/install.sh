@@ -3,21 +3,6 @@
 # Shared installer helpers. $DOT_DIR is exported by install.sh.
 source "$DOT_DIR/apps/shell/lib.sh"
 
-abs_path() {
-    local target="$1"
-    local dir base
-    case "$target" in
-        /) echo "/"; return 0;;
-    esac
-    dir=$(dirname -- "$target")
-    base=$(basename -- "$target")
-    dir=$(cd -- "$dir" 2> /dev/null && pwd -P) || return 1
-    case "$dir" in
-        /) echo "/$base";;
-        *) echo "$dir/$base";;
-    esac
-}
-
 # QUESTION [DEFAULT]: without a terminal, answer DEFAULT (y unless n).
 yes_or_no() {
     if [ ! -t 0 ]; then [ "${2:-y}" = y ]; return; fi
@@ -67,7 +52,6 @@ link_config() {
         return 0
     fi
     back_or_override "$tgt" || return 1
-    mkdir -p "$(dirname -- "$tgt")" || return 1
     if ! ln -sfn "$src" "$tgt"; then
         error "failed to link $tgt -> $src"
         return 1

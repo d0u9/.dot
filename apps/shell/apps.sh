@@ -68,7 +68,7 @@ app_default_items() {
 
 app_link_src() {
     local src=${1%%:*}
-    [ "$src" = . ] && abs_path "$APP_DIR" || abs_path "$APP_DIR/$src"
+    [ "$src" = . ] && _dot_abspath "$APP_DIR" || _dot_abspath "$APP_DIR/$src"
 }
 
 app_git() {
@@ -107,7 +107,7 @@ app_do_install() {
     for spec in ${link[@]+"${link[@]}"}; do
         dest=${spec#*:}
         mkdir -p -- "$(dirname -- "$dest")"
-        link_config "$(app_link_src "$spec")" "$(abs_path "$dest")"
+        link_config "$(app_link_src "$spec")" "$(_dot_abspath "$dest")"
     done
     # Recorded before the items and post run, so an app whose later step
     # fails can still be uninstalled; installing again retries that step.
@@ -160,7 +160,7 @@ app_do_uninstall() {
     done
     for spec in ${link[@]+"${link[@]}"}; do
         src=$(app_link_src "$spec")
-        dest=$(abs_path "${spec#*:}") || continue
+        dest=$(_dot_abspath "${spec#*:}" 2> /dev/null) || continue
         [ -L "$dest" ] && [ "$(readlink "$dest")" = "$src" ] || continue
         rm -- "$dest"
         if [ -e "$dest.bk" ]; then mv -- "$dest.bk" "$dest"; info "restored" "$dest"; else info "removed" "$dest"; fi

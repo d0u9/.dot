@@ -508,44 +508,32 @@ _dot_ports_usage() {
 # port. -s/--sudo runs the tool through sudo. Short flags combine, as in
 # -su or -so name.
 _dot_ports() {
-    local tool="$1" run=command proto=tcp order=port arg flag i tab
+    local tool="$1" run=command proto=tcp order=port arg flag tab OPTIND=1 OPTARG
+    local -a args=()
     shift
-    while [ $# -gt 0 ]; do
-        arg=$1
-        shift
+    # getopts takes short options only; translate the long ones first.
+    for arg; do
         case $arg in
-            --sudo) run=sudo; continue ;;
-            --help) _dot_ports_help; return 0 ;;
-            --order=*) order=${arg#--order=}; continue ;;
-            -?*) ;;
+            --sudo) args+=(-s) ;;
+            --help) args+=(-h) ;;
+            --order=*) args+=(-o "${arg#--order=}") ;;
+            *) args+=("$arg") ;;
+        esac
+    done
+    set -- ${args[@]+"${args[@]}"}
+    while getopts :shtuao: flag; do
+        case $flag in
+            s) run=sudo ;;
+            h) _dot_ports_help; return 0 ;;
+            t) proto=tcp ;;
+            u) proto=udp ;;
+            a) proto=all ;;
+            o) order=$OPTARG ;;
             *) _dot_ports_usage; return ;;
         esac
-        i=1
-        while [ "$i" -lt "${#arg}" ]; do
-            flag=${arg:$i:1}
-            i=$((i + 1))
-            case $flag in
-                s) run=sudo ;;
-                h) _dot_ports_help; return 0 ;;
-                t) proto=tcp ;;
-                u) proto=udp ;;
-                a) proto=all ;;
-                o)
-                    # The value is the rest of this argument or the next one.
-                    if [ "$i" -lt "${#arg}" ]; then
-                        order=${arg:$i}
-                    elif [ $# -gt 0 ]; then
-                        order=$1
-                        shift
-                    else
-                        _dot_ports_usage; return
-                    fi
-                    break
-                    ;;
-                *) _dot_ports_usage; return ;;
-            esac
-        done
     done
+    shift $((OPTIND - 1))
+    [ $# -eq 0 ] || { _dot_ports_usage; return; }
 
     # Sort keys go in the positional parameters, now that the options are
     # consumed: an unquoted variable would not split into words under Zsh.
@@ -961,38 +949,33 @@ HELP
 # _dot_killport TOOL [ARGS...]: the body of the shells' `killport`, which
 # reuses the ports parsers to find the listeners and their PIDs.
 _dot_killport() {
-    local tool="$1" run=command proto=tcp yes= signal=TERM port= arg flag i
+    local tool="$1" run=command proto=tcp yes= signal=TERM port= arg flag OPTIND=1
     local records pids answer
+    local -a args=()
     shift
-    while [ $# -gt 0 ]; do
-        arg=$1
-        shift
+    for arg; do
         case $arg in
-            --sudo) run=sudo; continue ;;
-            --help) _dot_killport_help; return 0 ;;
-            -?*) ;;
-            *)
-                [ -z "$port" ] || { _dot_killport_usage; return; }
-                port=$arg
-                continue
-                ;;
+            --sudo) args+=(-s) ;;
+            --help) args+=(-h) ;;
+            *) args+=("$arg") ;;
         esac
-        i=1
-        while [ "$i" -lt "${#arg}" ]; do
-            flag=${arg:$i:1}
-            i=$((i + 1))
-            case $flag in
-                s) run=sudo ;;
-                h) _dot_killport_help; return 0 ;;
-                t) proto=tcp ;;
-                u) proto=udp ;;
-                a) proto=all ;;
-                y) yes=1 ;;
-                9) signal=KILL ;;
-                *) _dot_killport_usage; return ;;
-            esac
-        done
     done
+    set -- ${args[@]+"${args[@]}"}
+    while getopts :shtuay9 flag; do
+        case $flag in
+            s) run=sudo ;;
+            h) _dot_killport_help; return 0 ;;
+            t) proto=tcp ;;
+            u) proto=udp ;;
+            a) proto=all ;;
+            y) yes=1 ;;
+            9) signal=KILL ;;
+            *) _dot_killport_usage; return ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+    [ $# -eq 1 ] || { _dot_killport_usage; return; }
+    port=$1
     case $port in
         ''|*[!0-9]*) _dot_killport_usage; return ;;
     esac
