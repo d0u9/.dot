@@ -102,7 +102,7 @@
     fi
 
     for command_name executable in "${(@kv)selected}"; do
-        [[ $command_name == (ls|tree|dircolors|git|ports) ]] && continue
+        [[ $command_name == (ls|tree|dircolors|git|gitdiff|ports) ]] && continue
         [[ $command_name == $executable ]] && continue
         _dot_alias "$command_name" "$executable"
     done
@@ -113,10 +113,12 @@
     fi
 
     if [[ ${selected[git]:-} == git ]]; then
+        local git_diff='git diff'
+        [[ ${selected[gitdiff]:-} == difft ]] && git_diff='GIT_EXTERNAL_DIFF=difft git diff'
         _dot_alias gss 'git status --short'
         _dot_alias glog 'git log --oneline --decorate -12'
-        _dot_alias gd 'git diff'
-        _dot_alias gds 'git diff --staged'
+        _dot_alias gd "$git_diff"
+        _dot_alias gds "$git_diff --staged"
     fi
 
     case ${selected[ports]:-} in

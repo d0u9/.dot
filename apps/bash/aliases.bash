@@ -48,7 +48,8 @@ _dot_bash_aliases() {
     # them function-local; `printf -v` would otherwise create globals.
     local selected_ls= selected_tree= selected_vim= selected_vi=
     local selected_sed= selected_grep= selected_find= selected_xargs=
-    local selected_tar= selected_dircolors= selected_git= selected_ports=
+    local selected_tar= selected_dircolors= selected_git= selected_gitdiff=
+    local selected_ports= git_diff
     local row_command row_macos row_linux candidates
     while IFS='|' read -r row_command row_macos row_linux; do
         row_command=${row_command// }
@@ -117,10 +118,12 @@ _dot_bash_aliases() {
     _dot_bash_alias ... 'cd ../..'
 
     if [ "$selected_git" = git ]; then
+        git_diff='git diff'
+        [ "$selected_gitdiff" = difft ] && git_diff='GIT_EXTERNAL_DIFF=difft git diff'
         _dot_bash_alias gss 'git status --short'
         _dot_bash_alias glog 'git log --oneline --decorate -12'
-        _dot_bash_alias gd 'git diff'
-        _dot_bash_alias gds 'git diff --staged'
+        _dot_bash_alias gd "$git_diff"
+        _dot_bash_alias gds "$git_diff --staged"
     fi
 
     case $selected_ports in

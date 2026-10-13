@@ -33,4 +33,6 @@ xargs     | gxargs xargs         | xargs
 tar       | gtar tar             | tar
 dircolors | gdircolors dircolors | dircolors
 git       | git                  | git
+# The program that renders `gd` and `gds`; git is its own fallback.
+gitdiff   | difft git            | difft git
 ports     | lsof                 | ss netstat
