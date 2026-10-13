@@ -291,13 +291,13 @@ instant prompt hides most of the remainder from the person typing. The `mise`
 row describes the measured configuration, not a public startup integration.
 Measure the relevant current configuration before claiming a performance gain.
 
-Restructuring the shared helpers does not show up in that budget. Sourcing the
-227-line `apps/shell/lib.sh` costs 0.132ms against 0.118ms for a 91-line
-version with `ips` and the two table formatters removed, both byte-compiled --
-a 0.014ms difference, or 0.004% of startup. Splitting those helpers per
-platform, or moving them to `autoload`, buys nothing measurable. Decide their
-structure on readability, and do not describe such a change as a startup
-optimization.
+Restructuring the shared helpers does not show up in that budget. Measured
+on macOS 26.6 (Apple Silicon) with `zsh -f`, sourcing the byte-compiled
+1752-line `apps/shell/lib.sh` costs about 0.075ms -- roughly 0.02% of the
+startup above -- against about 2.2ms when it is not compiled. Compilation is
+what matters; splitting those helpers per platform, or moving them to
+`autoload`, buys nothing measurable. Decide their structure on readability,
+and do not describe such a change as a startup optimization.
 
 ## Shell loading and configuration placement
 
