@@ -114,7 +114,7 @@
 
     if [[ ${selected[git]:-} == git ]]; then
         local git_diff='git diff'
-        [[ ${selected[gitdiff]:-} == difft ]] && git_diff='GIT_EXTERNAL_DIFF=difft git diff'
+        [[ ${selected[gitdiff]:-} == difft ]] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_alias gss 'git status --short'
         _dot_alias glog 'git log --oneline --decorate -12'
         _dot_alias gd "$git_diff"

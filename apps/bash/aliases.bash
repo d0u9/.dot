@@ -119,7 +119,7 @@ _dot_bash_aliases() {
 
     if [ "$selected_git" = git ]; then
         git_diff='git diff'
-        [ "$selected_gitdiff" = difft ] && git_diff='GIT_EXTERNAL_DIFF=difft git diff'
+        [ "$selected_gitdiff" = difft ] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_bash_alias gss 'git status --short'
         _dot_bash_alias glog 'git log --oneline --decorate -12'
         _dot_bash_alias gd "$git_diff"
