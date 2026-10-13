@@ -51,6 +51,7 @@ For the main shell and editor setup, install all of the following:
 | tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
+| difftastic (`difft`) | Optional | Syntax-aware diff of two files or directories (`difft dirA dirB`). `./install.sh cli` installs it through `dgspkg`; the Linux arm64 build links glibc, x86_64 is static. |
 | Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim. |
 
 On macOS, Homebrew is the preferred package source. In particular, install
