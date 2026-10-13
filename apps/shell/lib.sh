@@ -1578,6 +1578,43 @@ bak() {
     return "$rc"
 }
 
+# Give each TARGET the access and modification times of SRC; -r also every
+# file and directory inside a TARGET directory. Usage: cptime [-r] SRC TARGET...
+cptime() {
+    local recurse= flag src OPTIND=1
+    [ "${1:-}" = --help ] && set -- -h
+    while getopts :rh flag; do
+        case $flag in
+            r) recurse=1 ;;
+            h)
+                cat <<'HELP'
+Usage: cptime [-r] SRC TARGET...
+Set the access and modification times of every TARGET, file or directory,
+to those of SRC.
+
+  -r              also everything inside each TARGET directory
+  -h, --help      show this help and exit
+
+Examples:
+  cptime a.txt b.txt c/      b.txt and the directory c get the times of a.txt
+  cptime -r ref dir          dir and everything below it
+HELP
+                return 0 ;;
+            *) printf 'usage: cptime [-r] SRC TARGET...\n' >&2; return 2 ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+    [ $# -ge 2 ] || { printf 'usage: cptime [-r] SRC TARGET...\n' >&2; return 2; }
+    src=$1
+    shift
+    [ -e "$src" ] || { printf 'cptime: no such file or directory: %s\n' "$src" >&2; return 1; }
+    if [ -n "$recurse" ]; then
+        find "$@" -exec touch -r "$src" {} +
+    else
+        touch -r "$src" -- "$@"
+    fi
+}
+
 # Serve the current directory over HTTP on every interface, so other hosts
 # on the network can reach it. Usage: serve [PORT], default 8000. Ctrl-C stops.
 serve() {
@@ -1660,6 +1697,7 @@ Files	lnmv	-	lnmv [-afp] LINK... DEST	move symlinks, keeping them pointed at the
 Files	pack	tar	pack [-f FORMAT] [-o FILE] DIR	pack a directory without overwriting
 Files	unpack	-	unpack [-d DIR] FILE...	unpack archives, preferring 7zz
 Files	bak	-	bak FILE...	copy to FILE.bak.<timestamp>
+Files	cptime	-	cptime [-r] SRC TARGET...	copy the times of SRC to files and directories
 Files	serve	python3	serve [PORT]	share this directory over HTTP (default 8000)
 Shell	dgscmds	-	dgscmds	this list
 TABLE

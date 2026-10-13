@@ -296,6 +296,7 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | Files | `lnmv [-afp] LINK... DEST` | move symlinks without breaking them |
 | Files | `pack`, `unpack` | create and extract archives, see the Zsh section |
 | Files | `bak FILE...` | copy to `FILE.bak.<timestamp>` |
+| Files | `cptime [-r] SRC TARGET...` | copy the times of SRC to files and directories, `-r` recursively |
 | Files | `serve [PORT]` | share this directory over HTTP (default 8000, needs python3) |
 
 `lns [-afp] TARGET LINK` creates a symlink through the shortest relative path
