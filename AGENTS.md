@@ -228,8 +228,12 @@ on `$PATH`, and both shells reach it through the `dgspkg` function in
 `apps/shell/lib.sh` (Bash sets `DOT_DIR` for it). Apps name the tools they
 need in `release=`, and `apps/release/recipes/NAME.sh` says where each tool's release lives: the
 GitHub repository, the asset name for `macos`/`linux` and `arm64`/`x86_64`,
-and the executable inside the archive. Each version is unpacked whole into
-`~/.local/lib/NAME/VERSION/`, `~/.local/lib/NAME/current` points at it, and
+and the executable inside the archive. Recipes with multiple commands declare
+`release_links=(COMMAND:BIN ...)`;
+all commands share the same version, upgrade and uninstall operation.
+`release_format=binary` marks a single uncompressed executable instead of an archive.
+Each version is unpacked whole into `~/.local/lib/NAME/VERSION/`,
+`~/.local/lib/NAME/current` points at it, and
 `~/.local/bin/NAME` links through `current`. Installing keeps the previous
 version for a download-free switch back and removes older ones. A VERSION may
 be a channel (`latest`, `stable`, or what the recipe adds, such as nvim's

@@ -47,29 +47,38 @@ For the main shell and editor setup, install all of the following:
 | C build toolchain | Strongly recommended for Neovim | Compiles Tree-sitter parsers; without it `./install.sh nvim` warns and skips them, leaving regex highlighting. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
-| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. |
+| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs it with the host package manager; checked by default on new hosts. No official macOS prebuilt release is available. |
+| jq | Optional | JSON processor. `./install.sh jq` or `dgspkg install jq` installs official macOS/Linux arm64/x86_64 binaries; checked by default on new hosts. Explicit versions use upstream tags such as `jq-1.8.2`. |
 | tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
 | difftastic (`difft`) | Optional | Syntax-aware diff of two files or directories (`difft dirA dirB`). `./install.sh cli` installs it through `dgspkg`; the Linux arm64 build links glibc, x86_64 is static. |
 | bottom (`btm`) | Optional | Terminal system and process monitor. `./install.sh cli` installs the official build through `dgspkg` (`dgspkg install btm`); macOS and Linux support arm64 and x86_64, with musl builds on Linux. |
 | dgs-toolbox (`dgs`) | Optional | `./install.sh dgs` or `dgspkg install dgs` installs its official binary on macOS and Linux (arm64 and x86_64). The bootstrap checklist leaves this app unchecked until installed. |
+| sing-box | Optional | `./install.sh sing-box` or `dgspkg install sing-box` installs the official proxy executable on macOS and Linux (arm64 and x86_64); unchecked by default. No proxy configuration or service is installed. |
+| shadowsocks-rust | Optional | `./install.sh shadowsocks-rust` or `dgspkg install shadowsocks-rust` installs `sslocal`, `ssserver`, `ssmanager`, `ssservice` and `ssurl` together; macOS and Linux arm64/x86_64, using musl builds on Linux. Unchecked by default; no proxy configuration or service is installed. Its tar.xz archives require xz support in tar (Linux may need the `xz` or `xz-utils` package). |
+| age | Optional | `./install.sh age` or `dgspkg install age` installs `age` and `age-keygen` together on macOS and Linux (arm64 and x86_64); unchecked by default. |
 | Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim. |
 
 On macOS, Homebrew is the preferred package source. In particular, install
 `tree-sitter-cli`, not the similarly named `tree-sitter` library formula.
-`./install.sh zsh` installs `fzf` and `zoxide` through `dgspkg`. The other recommended tools remain
+`./install.sh zsh` installs `fzf` and `zoxide` through `dgspkg`, and
+`./install.sh eza` installs eza through the host package manager. The other recommended tools remain
 the host provisioner's responsibility.
 
 ## macOS GNU command layer
 
-These packages are optional. The shell safely falls back to the macOS system
+These packages are optional. The default-on `macos` installer profile installs
+coreutils, diffutils and Bash completion through Homebrew on macOS only.
+The shell safely falls back to the macOS system
 commands, but installing them makes command behaviour more consistent with
 Linux. Candidate selection is defined in `apps/zsh/core/aliases.zsh`.
 
 | Package | Commands used by the configuration |
 | --- | --- |
-| coreutils | `gls`, `gdircolors` |
+| coreutils | `gls`, `gdircolors`; installed by `./install.sh macos` through Homebrew on macOS only |
+| diffutils | GNU diff tools such as `gdiff`; installed by the macOS-only Homebrew profile |
+| bash-completion / bash-completion@2 | Version-appropriate Bash completions; installed by the macOS-only Homebrew profile without linking Bash configuration |
 | gnu-sed | `gsed` |
 | grep | `ggrep` |
 | findutils | `gfind`, `gxargs` |

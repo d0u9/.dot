@@ -11,6 +11,8 @@
 # release_asset OS ARCH VERSION, which prints the archive name for OS
 # (macos|linux), ARCH (arm64|x86_64) and the concrete VERSION. Installing switches `current` and keeps the
 # previous version beside it; older ones are removed.
+# Optional release_links=(COMMAND:BIN ...) exposes multiple archive executables.
+# release_format=binary installs a single uncompressed executable.
 #
 # A request is a version or a channel. Channels are moving names such as
 # stable or nightly; they are resolved to a concrete version first, and only
@@ -28,6 +30,8 @@ RELEASE_BIN=$HOME/.local/bin
 release_load() {
     local recipe="$RELEASE_DIR/recipes/$1.sh"
     unset release_repo release_bin
+    release_links=()
+    release_format=archive
     unset -f release_asset release_resolve
     release_name=$1
     release_channels="latest stable"
@@ -36,6 +40,7 @@ release_load() {
     source "$recipe"
     [ -n "${release_repo:-}" ] && [ -n "${release_bin:-}" ] && declare -F release_asset > /dev/null ||
         { error "release: recipe $recipe must set release_repo, release_bin and release_asset"; return 1; }
+    [ ${#release_links[@]} -gt 0 ] || release_links=("$1:$release_bin")
     case $(uname -s) in
         Darwin) release_os=macos ;;
         Linux) release_os=linux ;;
@@ -137,10 +142,15 @@ release_fetch() (
         warn "release: no published sha256 for $asset; not verified"
     fi
     mkdir "$tmp/unpacked" || return 1
-    case $asset in
-        *.zip) unzip -q "$tmp/$asset" -d "$tmp/unpacked" || return 1 ;;
-        *) tar -xf "$tmp/$asset" -C "$tmp/unpacked" || return 1 ;;
-    esac
+    if [ "$release_format" = binary ]; then
+        cp -- "$tmp/$asset" "$tmp/unpacked/$release_bin" &&
+            chmod +x "$tmp/unpacked/$release_bin" || return 1
+    else
+        case $asset in
+            *.zip) unzip -q "$tmp/$asset" -d "$tmp/unpacked" || return 1 ;;
+            *) tar -xf "$tmp/$asset" -C "$tmp/unpacked" || return 1 ;;
+        esac
+    fi
     # Use the archive's single top-level directory as the version directory.
     set -- "$tmp/unpacked"/*
     if [ $# -eq 1 ] && [ -d "$1" ]; then root=$1; else root=$tmp/unpacked; fi
@@ -152,38 +162,47 @@ release_fetch() (
 # install, else the recipe's default); an installed target is a no-op. The
 # request is saved in $RELEASE_LIB/NAME/channel, so an upgrade follows it.
 release_install() {
-    local name="$1" request target version tag previous link old
+    local name="$1" request target version tag previous link old spec
     release_load "$name" || return 1
     request=${2:-$(release_channel "$name")}
     target=$(release_target "$request") || return 1
     version=${target%% *} tag=${target#* }
     previous=$(release_current "$name")
-    link="$RELEASE_BIN/$name"
-    if [ -e "$link" ] && [ ! -L "$link" ]; then
-        error "release: $link exists and is not a symlink; remove it first"
-        return 1
-    fi
-    if [ "$previous" = "$version" ] && [ -L "$link" ]; then
-        [ -z "$request" ] || echo "$request" > "$RELEASE_LIB/$name/channel"
-        info "$name $version is up to date"
-        return 0
-    fi
+    for spec in "${release_links[@]}"; do
+        link="$RELEASE_BIN/${spec%%:*}"
+        if [ -e "$link" ] && [ ! -L "$link" ]; then
+            error "release: $link exists and is not a symlink; remove it first"
+            return 1
+        fi
+    done
     [ -d "$RELEASE_LIB/$name/$version" ] || release_fetch "$name" "$version" "$tag" || return 1
+    for spec in "${release_links[@]}"; do
+        [ -x "$RELEASE_LIB/$name/$version/${spec#*:}" ] ||
+            { error "release: ${spec#*:} not found in $name $version"; return 1; }
+    done
     ln -sfn "$version" "$RELEASE_LIB/$name/current" &&
-        mkdir -p -- "$RELEASE_BIN" &&
-        ln -sfn "../lib/$name/current/$release_bin" "$link" || return 1
+        mkdir -p -- "$RELEASE_BIN" || return 1
+    for spec in "${release_links[@]}"; do
+        ln -sfn "../lib/$name/current/${spec#*:}" "$RELEASE_BIN/${spec%%:*}" || return 1
+    done
     for old in "$RELEASE_LIB/$name"/*; do
         case ${old##*/} in current|channel|"$version"|"$previous") ;; *) rm -rf -- "$old" ;; esac
     done
     [ -z "$request" ] || echo "$request" > "$RELEASE_LIB/$name/channel"
-    info "$name ${previous:+$previous -> }$version"
+    if [ "$previous" = "$version" ]; then info "$name $version is up to date"
+    else info "$name ${previous:+$previous -> }$version"
+    fi
 }
 
 release_uninstall() {
-    local name="$1" link="$RELEASE_BIN/$1"
-    if [ -L "$link" ]; then
-        case $(readlink "$link") in "../lib/$name/"*) rm -- "$link" ;; esac
-    fi
+    local name="$1" link spec
+    release_load "$name" || return 1
+    for spec in "${release_links[@]}"; do
+        link="$RELEASE_BIN/${spec%%:*}"
+        if [ -L "$link" ]; then
+            case $(readlink "$link") in "../lib/$name/"*) rm -- "$link" || return 1 ;; esac
+        fi
+    done
     [ -d "$RELEASE_LIB/$name" ] || { warn "release: $name is not installed"; return 0; }
     rm -rf -- "${RELEASE_LIB:?}/$name" && info "$name uninstalled"
 }
@@ -238,7 +257,7 @@ release_upgrade_all() {
 
 release_list() {
     local check="${1:-}" name wanted installed target status recipe
-    local fmt='%-12s %-8s %-30s %-30s %s\n'
+    local width=12 fmt='%-*s %-8s %-30s %-30s %s\n'
     local -a names=()
     # Every tool with a recipe, plus anything installed.
     for recipe in "$RELEASE_DIR/recipes"/*.sh; do
@@ -247,7 +266,10 @@ release_list() {
     for installed in "$RELEASE_LIB"/*/current; do
         [ -L "$installed" ] && names+=("$(basename -- "$(dirname -- "$installed")")")
     done
-    printf "$fmt" TOOL CHANNEL INSTALLED TARGET STATUS
+    for name in ${names[@]+"${names[@]}"}; do
+        [ ${#name} -le "$width" ] || width=${#name}
+    done
+    printf "$fmt" "$width" TOOL CHANNEL INSTALLED TARGET STATUS
     printf '%s\n' ${names[@]+"${names[@]}"} | sort -u | while read -r name; do
         wanted=$(release_channel "$name")
         installed=$(release_current "$name")
@@ -261,6 +283,6 @@ release_list() {
             fi
         fi
         [ -z "$installed" ] || wanted=${wanted:-default}
-        printf "$fmt" "$name" "${wanted:--}" "${installed:--}" "${target:--}" "$status"
+        printf "$fmt" "$width" "$name" "${wanted:--}" "${installed:--}" "${target:--}" "$status"
     done
 }

@@ -107,6 +107,10 @@ Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
 | [difftastic](https://github.com/Wilfred/difftastic) | `difft` | latest | syntax-aware diff of files and directories |
 | [bottom](https://github.com/ClementTsang/bottom) | `btm` | latest | terminal system and process monitor |
 | [dgs-toolbox](https://github.com/d0u9/dgs-toolbox) | `dgs` | latest | dgs command-line tool |
+| [sing-box](https://github.com/SagerNet/sing-box) | `sing-box` | latest | proxy tool |
+| [shadowsocks-rust](https://github.com/shadowsocks/shadowsocks-rust) | `sslocal`, `ssserver`, `ssmanager`, `ssservice`, `ssurl` | latest | Shadowsocks client and server tools |
+| [age](https://github.com/FiloSottile/age) | `age`, `age-keygen` | latest | file encryption and key generation |
+| [jq](https://github.com/jqlang/jq) | `jq` | latest | JSON processor (explicit tags: `jq-1.8.2`) |
 | [mise](https://github.com/jdx/mise) | `mise` | latest | language runtimes, through its shims |
 
 Each tool has a recipe in `apps/release/recipes/`. A VERSION is a tag (with
@@ -123,14 +127,24 @@ dgspkg versions -r nvim    #     channels and recent upstream releases
 dgspkg uninstall fd        # rm: remove the tool and its link
 ```
 
-Install dgs-toolbox with `dgspkg install dgs` or `./install.sh dgs`.
-Its independent app is unchecked by default in the bootstrap checklist;
-once recorded as installed, it starts checked for updates.
+Install optional tools with `dgspkg install NAME` or `./install.sh NAME`:
+`dgs`, `sing-box`, `shadowsocks-rust` and `age` have independent apps that
+start unchecked in the bootstrap checklist. Once recorded as installed,
+they start checked for updates. Multi-command packages share one download,
+version and upgrade/uninstall operation. Proxy apps install executables only;
+configuration and service startup remain the host's responsibility.
 
 To add a tool with an official release, write `apps/release/recipes/<tool>.sh`
 (a GitHub repository, the executable inside the archive, and the asset name
-for each platform) and add a line to the list. Tools without official binaries
+for each platform) and add a line to the list. A recipe can set
+`release_links=(COMMAND:BIN ...)` to expose multiple executables, or
+`release_format=binary` for a single uncompressed executable. Tools without official binaries
 for both platforms, such as eza on macOS, stay with the package manager.
+
+`./install.sh eza` installs eza using the host package manager; eza and jq
+start checked on new hosts. On macOS, the default-on `macos` profile installs
+Homebrew's coreutils, diffutils and version-appropriate Bash completion.
+That profile installs nothing on Linux and starts unchecked there.
 
 ---
 
