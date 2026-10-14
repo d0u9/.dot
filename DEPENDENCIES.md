@@ -49,6 +49,7 @@ For the main shell and editor setup, install all of the following:
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
 | eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs it with the host package manager; checked by default on new hosts. No official macOS prebuilt release is available. `lss`, `lsc` and `lsl` are eza-only views; without eza they print an install hint. |
 | jq | Optional | JSON processor. `./install.sh jq` or `dgspkg install jq` installs official macOS/Linux arm64/x86_64 binaries; checked by default on new hosts. Explicit versions use upstream tags such as `jq-1.8.2`. |
+| fclones | Optional | Finds duplicate files by content across directories (`fclones group DIR...`). `./install.sh fclones` installs it with the host package manager; unchecked by default. No official macOS or arm64 prebuilt release is available. |
 | tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
