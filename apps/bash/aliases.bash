@@ -49,7 +49,7 @@ _dot_bash_aliases() {
     local selected_ls= selected_tree= selected_vim= selected_vi=
     local selected_sed= selected_grep= selected_find= selected_xargs=
     local selected_tar= selected_dircolors= selected_git= selected_gitdiff=
-    local selected_ports= git_diff
+    local selected_ports= git_diff git_difftool
     local row_command row_macos row_linux candidates
     while IFS='|' read -r row_command row_macos row_linux; do
         row_command=${row_command// }
@@ -136,6 +136,12 @@ _dot_bash_aliases() {
         _dot_bash_alias glog 'git log --oneline --decorate -12'
         _dot_bash_alias gd "$git_diff"
         _dot_bash_alias gds "$git_diff --staged"
+        # nvimdiff views; pass a range such as HEAD^! to view one commit.
+        git_difftool='git difftool -y --trust-exit-code -t nvimdiff'
+        [ "$selected_vim" = nvim ] ||
+            git_difftool="echo 'gdv: needs nvim (install.sh nvim)' >&2; false #"
+        _dot_bash_alias gdv "$git_difftool"
+        _dot_bash_alias gdvs "$git_difftool --staged"
     fi
 
     case $selected_ports in

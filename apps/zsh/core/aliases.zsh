@@ -133,6 +133,12 @@
         _dot_alias glog 'git log --oneline --decorate -12'
         _dot_alias gd "$git_diff"
         _dot_alias gds "$git_diff --staged"
+        # nvimdiff views; pass a range such as HEAD^! to view one commit.
+        local git_difftool="git difftool -y --trust-exit-code -t nvimdiff"
+        [[ ${selected[vim]:-} == nvim ]] ||
+            git_difftool="echo 'gdv: needs nvim (install.sh nvim)' >&2; false #"
+        _dot_alias gdv "$git_difftool"
+        _dot_alias gdvs "$git_difftool --staged"
     fi
 
     case ${selected[ports]:-} in
