@@ -47,7 +47,7 @@ For the main shell and editor setup, install all of the following:
 | C build toolchain | Strongly recommended for Neovim | Compiles Tree-sitter parsers; without it `./install.sh nvim` warns and skips them, leaving regex highlighting. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
-| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs it with the host package manager; checked by default on new hosts. No official macOS prebuilt release is available. |
+| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs it with the host package manager; checked by default on new hosts. No official macOS prebuilt release is available. `lss`, `lsc` and `lsl` are eza-only views; without eza they print an install hint. |
 | jq | Optional | JSON processor. `./install.sh jq` or `dgspkg install jq` installs official macOS/Linux arm64/x86_64 binaries; checked by default on new hosts. Explicit versions use upstream tags such as `jq-1.8.2`. |
 | tree | Optional fallback | Remains the native `tree` command when `eza` is unavailable. With `eza`, the shell instead defines `tree` as `eza --tree`; with neither tool, it defines no `tree` alias. |
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |

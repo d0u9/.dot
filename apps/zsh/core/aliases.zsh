@@ -101,6 +101,20 @@
         _dot_alias tree 'eza --tree'
     fi
 
+    # eza-only views. Without eza, each name prints how to get it.
+    local -A eza_views=(
+        lss 'eza -lh --total-size --sort=size -r'
+        lsc 'eza --code'
+        lsl 'eza -lah --hyperlink'
+    )
+    for command_name executable in "${(@kv)eza_views}"; do
+        if [[ ${selected[ls]:-} == eza ]]; then
+            _dot_alias "$command_name" "$executable"
+        else
+            _dot_alias "$command_name" "echo '$command_name: needs eza (install.sh eza)' >&2; false #"
+        fi
+    done
+
     for command_name executable in "${(@kv)selected}"; do
         [[ $command_name == (ls|tree|dircolors|git|gitdiff|ports) ]] && continue
         [[ $command_name == $executable ]] && continue

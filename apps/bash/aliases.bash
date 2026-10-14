@@ -100,6 +100,18 @@ _dot_bash_aliases() {
 
     [ "$selected_tree" = eza ] && _dot_bash_alias tree 'eza --tree'
 
+    # eza-only views. Without eza, each name prints how to get it.
+    for command_name in lss lsc lsl; do
+        case $command_name in
+            lss) executable='eza -lh --total-size --sort=size -r' ;;
+            lsc) executable='eza --code' ;;
+            lsl) executable='eza -lah --hyperlink' ;;
+        esac
+        [ "$selected_ls" = eza ] ||
+            executable="echo '$command_name: needs eza (install.sh eza)' >&2; false #"
+        _dot_bash_alias "$command_name" "$executable"
+    done
+
     for command_name in vim vi sed grep find xargs tar; do
         case $command_name in
             vim) executable=$selected_vim ;;
