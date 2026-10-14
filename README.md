@@ -317,7 +317,8 @@ after the new one exists. In both, `-f` replaces an existing destination and
 
 Run `./install.sh bash` for the lightweight server shell profile. It links
 `apps/bash/bashrc` and `apps/bash/bash_profile` into the home directory, tries
-to install `bash-completion`, adds listing and navigation aliases, puts mise's
+to install `bash-completion` (Homebrew uses `bash-completion@2` when Bash on
+`PATH` is 4.2+), adds listing and navigation aliases, puts mise's
 shims on `PATH`, loads zoxide and fzf when installed, and enables case-insensitive menu
 completion and prefix history search. Existing `~/.local/bin` and
 `~/.local/bin/scripts` directories join `PATH`; `~/.local/share/man` joins
