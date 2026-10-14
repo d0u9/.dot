@@ -92,7 +92,7 @@ unpacked whole under `~/.local/lib/<tool>/`, `~/.local/bin/<tool>` links to
 the current one, and the previous version stays for a switch back without a
 download. Downloads are checked against the sha256 that GitHub records.
 Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
-`7zz`, `tree-sitter` and `difft`.
+`7zz`, `tree-sitter`, `difft` and `btm`.
 
 | Tool | Command | Default | Purpose |
 | --- | --- | --- | --- |
@@ -105,6 +105,7 @@ Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
 | [tree-sitter CLI](https://github.com/tree-sitter/tree-sitter) | `tree-sitter` | latest | builds Neovim's parsers |
 | [Zellij](https://github.com/zellij-org/zellij) | `zellij` | latest | terminal multiplexer |
 | [difftastic](https://github.com/Wilfred/difftastic) | `difft` | latest | syntax-aware diff of files and directories |
+| [bottom](https://github.com/ClementTsang/bottom) | `btm` | latest | terminal system and process monitor |
 | [mise](https://github.com/jdx/mise) | `mise` | latest | language runtimes, through its shims |
 
 Each tool has a recipe in `apps/release/recipes/`. A VERSION is a tag (with

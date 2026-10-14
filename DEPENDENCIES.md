@@ -52,6 +52,7 @@ For the main shell and editor setup, install all of the following:
 | fzf | Strongly recommended | Adds shell history/file fuzzy search and ZLE key bindings. |
 | zoxide | Strongly recommended | Provides ranked directory navigation through `z` and `zi`. |
 | difftastic (`difft`) | Optional | Syntax-aware diff of two files or directories (`difft dirA dirB`). `./install.sh cli` installs it through `dgspkg`; the Linux arm64 build links glibc, x86_64 is static. |
+| bottom (`btm`) | Optional | Terminal system and process monitor. `./install.sh cli` installs the official build through `dgspkg` (`dgspkg install btm`); macOS and Linux support arm64 and x86_64, with musl builds on Linux. |
 | Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim. |
 
 On macOS, Homebrew is the preferred package source. In particular, install
