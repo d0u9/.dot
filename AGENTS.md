@@ -104,7 +104,8 @@ commit removes it.
 only declares what the app owns -- `desc`, `release` (dgspkg tools), `git`
 checkouts, `link` pairs, optional `items` with `item_install` and
 `item_uninstall`, `data` paths it generates -- plus an optional `post` function, run last with `APP_DIR`
-set. The engine performs the declarations, so installing again is updating,
+set. `default_on=0` leaves an app unchecked in a new-host checklist; explicitly
+requested and recorded installed apps still start checked. The engine performs the declarations, so installing again is updating,
 and uninstalling reverses them: links are removed and their `.bk` backups
 restored, checkouts deleted, and release tools removed unless another
 installed app declares them. Installed apps and their chosen items are

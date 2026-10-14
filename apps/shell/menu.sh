@@ -3,7 +3,7 @@
 # app_menu [NAME...]: a checklist of the apps, or only of NAMEs, each app's items indented below it and
 # shown only while the app is ticked. Draws on /dev/tty and prints one
 # APP:ITEM,... spec per ticked app. Ticked to begin with: installed apps and
-# their recorded items; on a host with nothing recorded, every app and the
+# their recorded items; on a host with nothing recorded, default-on apps and the
 # default items. NAMEs asked for by name start ticked.
 app_menu() {
     local -a ids=() parents=() labels=() on=()
@@ -11,7 +11,15 @@ app_menu() {
     [ $# -eq 0 ] && [ -s "$APP_STATE" ] && any=1
     for name in ${@:-$(app_names)}; do
         app_load "$name"
-        if chosen=$(app_recorded "$name"); then on+=(1); else [ -n "$any" ] && on+=(0) || on+=(1); chosen=$(app_default_items); fi
+        if chosen=$(app_recorded "$name"); then
+            on+=(1)
+        else
+            if [ -n "$any" ]; then on+=(0)
+            elif [ $# -gt 0 ]; then on+=(1)
+            else on+=("$default_on")
+            fi
+            chosen=$(app_default_items)
+        fi
         parent=${#ids[@]}
         ids+=("$name") parents+=(-) labels+=("$name - $desc")
         for item in ${items[@]+"${items[@]}"}; do

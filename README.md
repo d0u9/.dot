@@ -106,6 +106,7 @@ Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
 | [Zellij](https://github.com/zellij-org/zellij) | `zellij` | latest | terminal multiplexer |
 | [difftastic](https://github.com/Wilfred/difftastic) | `difft` | latest | syntax-aware diff of files and directories |
 | [bottom](https://github.com/ClementTsang/bottom) | `btm` | latest | terminal system and process monitor |
+| [dgs-toolbox](https://github.com/d0u9/dgs-toolbox) | `dgs` | latest | dgs command-line tool |
 | [mise](https://github.com/jdx/mise) | `mise` | latest | language runtimes, through its shims |
 
 Each tool has a recipe in `apps/release/recipes/`. A VERSION is a tag (with
@@ -121,6 +122,10 @@ dgspkg versions nvim       # v:  versions on disk, * = current
 dgspkg versions -r nvim    #     channels and recent upstream releases
 dgspkg uninstall fd        # rm: remove the tool and its link
 ```
+
+Install dgs-toolbox with `dgspkg install dgs` or `./install.sh dgs`.
+Its independent app is unchecked by default in the bootstrap checklist;
+once recorded as installed, it starts checked for updates.
 
 To add a tool with an official release, write `apps/release/recipes/<tool>.sh`
 (a GitHub repository, the executable inside the archive, and the asset name

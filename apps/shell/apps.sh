@@ -4,6 +4,7 @@
 # declares what the app owns and the engine acts on the declarations:
 #
 #   desc="one line"            shown by `install.sh -l`
+#   default_on=0               leave unchecked on a new host's checklist
 #   release=(NAME[@VER] ...)   dgspkg tools, installed first; VER is a version
 #                              or channel (default: the tool's saved channel)
 #   git=("DEST URL" ...)       checkouts, cloned or fast-forwarded
@@ -34,7 +35,7 @@ app_names() {
 }
 
 app_load() {
-    desc= release=() git=() link=() items=() data=()
+    desc= default_on=1 release=() git=() link=() items=() data=()
     unset -f post item_install item_uninstall
     APP_NAME=$1 APP_DIR=$APPS_DIR/$1
     [ -f "$APP_DIR/app.sh" ] || { error "no app $1 in $APPS_DIR"; return 1; }
