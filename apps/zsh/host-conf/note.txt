@@ -8,3 +8,10 @@ load order. Files without one of the four recognized suffixes are not sourced.
 
 This note is public and also keeps the directory in Git. Never put private
 configuration, credentials, or real host details in it.
+
+To override the host displayed in the SSH prompt, set DOT_PROMPT_HOST in a pre
+hook, as in Bash:
+
+    echo 'DOT_PROMPT_HOST=host-a' > 10-host-pre.sh
+
+Zsh also accepts the older HOSTALIAS variable when DOT_PROMPT_HOST is empty.
