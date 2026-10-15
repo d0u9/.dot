@@ -1750,3 +1750,16 @@ _dot_managed_aliases() {
     fi
     return 0
 }
+
+# Advertise 24-bit colour when the terminal is known to support it but did not
+# say so: COLORTERM is not forwarded over SSH by default, while TERM is.
+# Detection is by name only; querying the terminal would cost a round trip at
+# every startup. An existing COLORTERM is kept, and unknown terminals are left
+# alone rather than guessed.
+if [ -z "${COLORTERM:-}" ]; then
+    case ${TERM:-}:${TERM_PROGRAM:-} in
+        *-direct:*|alacritty*|xterm-kitty:*|xterm-ghostty:*|wezterm:*|foot*|\
+        *:iTerm.app|*:WezTerm|*:ghostty|*:vscode)
+            export COLORTERM=truecolor ;;
+    esac
+fi
