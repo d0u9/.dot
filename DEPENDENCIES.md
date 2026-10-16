@@ -107,6 +107,12 @@ prebuilt binary and the configuration itself is Lua.
 
 ## Optional application profiles
 
+### SSH client
+
+| Tool | Level | Notes |
+| --- | --- | --- |
+| OpenSSH client 7.3+ (`ssh`) | Required for the optional SSH profile | Uses `Include` to load removable client defaults. macOS supplies the client; on Linux install the distribution's OpenSSH client package (for example `openssh-client` on Debian/Ubuntu or `openssh-clients` on Fedora). `./install.sh ssh` installs configuration only, not the client or an SSH server. |
+
 ### Terminal and multiplexers
 
 | Tool | Level | Notes |

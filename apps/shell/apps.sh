@@ -9,6 +9,7 @@
 #                              or channel (default: the tool's saved channel)
 #   git=("DEST URL" ...)       checkouts, cloned or fast-forwarded
 #   link=("SRC:DEST" ...)      SRC relative to the app directory, `.` for it
+#   link_replace=0            refuse foreign destinations; never restore .bk
 #   items=(NAME[:on] ...)      optional parts; :on ones are chosen by default
 #   item_install NAME, item_uninstall NAME
 #   post                       anything else, run last with $APP_DIR set
@@ -35,7 +36,7 @@ app_names() {
 }
 
 app_load() {
-    desc= default_on=1 release=() git=() link=() items=() data=()
+    desc= default_on=1 link_replace=1 release=() git=() link=() items=() data=()
     unset -f post item_install item_uninstall
     APP_NAME=$1 APP_DIR=$APPS_DIR/$1
     [ -f "$APP_DIR/app.sh" ] || { error "no app $1 in $APPS_DIR"; return 1; }
@@ -108,7 +109,7 @@ app_do_install() {
     for spec in ${link[@]+"${link[@]}"}; do
         dest=${spec#*:}
         mkdir -p -- "$(dirname -- "$dest")"
-        link_config "$(app_link_src "$spec")" "$(_dot_abspath "$dest")"
+        link_config "$(app_link_src "$spec")" "$(_dot_abspath "$dest")" "$link_replace"
     done
     # Recorded before the items and post run, so an app whose later step
     # fails can still be uninstalled; installing again retries that step.
@@ -164,7 +165,12 @@ app_do_uninstall() {
         dest=$(_dot_abspath "${spec#*:}" 2> /dev/null) || continue
         [ -L "$dest" ] && [ "$(readlink "$dest")" = "$src" ] || continue
         rm -- "$dest"
-        if [ -e "$dest.bk" ]; then mv -- "$dest.bk" "$dest"; info "restored" "$dest"; else info "removed" "$dest"; fi
+        if [ "$link_replace" = 1 ] && [ -e "$dest.bk" ]; then
+            mv -- "$dest.bk" "$dest"
+            info "restored" "$dest"
+        else
+            info "removed" "$dest"
+        fi
     done
     for spec in ${git[@]+"${git[@]}"}; do
         rm -fr -- "${spec%% *}"

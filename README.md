@@ -35,6 +35,7 @@ Afterwards `./install.sh` manages the apps:
 - [Dependencies](#dependencies)
 - [Prebuilt tools](#prebuilt-tools)
 - [Private config files](#Private config files)
+- [SSH](#ssh)
 - [Package manager history](#package-manager-history)
 - [NeoVim](#neovim)
 - [Zsh](#zsh)
@@ -153,6 +154,40 @@ That profile installs nothing on Linux and starts unchecked there.
 # Private config files
 
 If you have any private files(files containe sensitive contents), you may gather all of them together and put them in the `conf` directory. The `conf` directory has been added in `gitignore` file, which won't be pushed to the server.
+
+---
+
+# SSH
+
+`./install.sh ssh` links the public client defaults to `~/.ssh/config.d/00-dot.conf`.
+This optional app starts unchecked and uses the host's existing OpenSSH client;
+it does not install SSH or change `/etc/ssh/`.
+
+If `~/.ssh/config` does not exist, the installer creates it with this line.
+Otherwise, it leaves the existing file or symlink untouched; add the line
+manually at the beginning if these defaults should take priority:
+
+```sshconfig
+Include ~/.ssh/config.d/00-dot.conf
+```
+
+Only our fragment is included; other files in `config.d` are not enabled by
+this entry. Most SSH options use the first obtained value. Put host-specific
+exceptions before this Include if they should win. The defaults probe an idle
+connection after 60 seconds, disconnect after three unanswered probes, set a 15-second
+connection timeout, and send `COLORTERM` when present. The server must accept
+`COLORTERM` for it to reach remote applications; this alone does not guarantee
+truecolor support.
+
+Delete `~/.ssh/config.d/00-dot.conf`, or run `./install.sh -r ssh`, to disable the layer.
+The Include can stay: a missing file is ignored, and previous configuration
+values apply again to new connections. Existing connections are unaffected.
+Keys, `known_hosts`, private host definitions and the existing main config are
+not managed by this app; it declares no purgeable data.
+
+Installation refuses an existing `00-dot.conf` unless it is already the same
+managed symlink. It never replaces or backs up a foreign file or symlink,
+and uninstallation leaves any unrelated `.bk` file untouched.
 
 ---
 

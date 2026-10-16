@@ -40,9 +40,11 @@ back_or_override() {
     mv "$file" "$file.bk"
 }
 
+# SRC DEST [REPLACE=1]: 0 permits only a new or already identical link.
 link_config() {
     local src="$1"
     local tgt="$2"
+    local flags=-sfn
     if [ ! -e "$src" ]; then
         error "link source does not exist: $src"
         return 1
@@ -51,8 +53,16 @@ link_config() {
         info "already linked" "$tgt"
         return 0
     fi
-    back_or_override "$tgt" || return 1
-    if ! ln -sfn "$src" "$tgt"; then
+    if [ "${3:-1}" = 0 ]; then
+        if [ -e "$tgt" ] || [ -L "$tgt" ]; then
+            error "link destination exists; refusing to replace it" "$tgt"
+            return 1
+        fi
+        flags=-s
+    else
+        back_or_override "$tgt" || return 1
+    fi
+    if ! ln "$flags" "$src" "$tgt"; then
         error "failed to link $tgt -> $src"
         return 1
     fi

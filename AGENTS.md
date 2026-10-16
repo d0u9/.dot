@@ -85,6 +85,7 @@ commit removes it.
 │   ├── release/             release recipes and the dgspkg command
 │   ├── cli/                 rg, fd, 7zz and tree-sitter, no configuration
 │   ├── mise/                mise and its global runtimes (node, python, go)
+│   ├── ssh/                 removable OpenSSH client defaults
 │   ├── zsh/                 core shell, prompt, plugins, and integrations
 │   │   ├── bin/zsh-compile      byte-compilation command, not on $PATH
 │   │   ├── lib/compile.zsh      shared compilation targets and routine
@@ -126,6 +127,7 @@ Current installation targets (link location → repository source):
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
+| SSH client defaults | `~/.ssh/config.d/00-dot.conf` | `apps/ssh/config` |
 | Releases | `~/.local/bin/<tool>` → `~/.local/lib/<tool>/current` | `release=` in each `app.sh`, `apps/release/recipes/` |
 
 The current installers use `$HOME/.config` explicitly, not `$XDG_CONFIG_HOME`.
@@ -146,8 +148,30 @@ in `apps/` does not mean that app is installed on this host.
 App installers use Bash with `set -euo pipefail` and share `apps/shell/install.sh`.
 Use its `link_config` helper for new links. Identical links are a no-op; other
 links are replaced, and existing files/directories enter a backup-or-delete
-prompt flow. Installers can also download themes, clone/update plugins, and
+prompt flow. An app can declare `link_replace=0` to refuse occupied destinations
+unless they are already its own identical links; this also disables restoring
+`.bk` files on uninstall. Use this for removable layers such as SSH so foreign
+files and links are never displaced. Installers can also download themes, clone/update plugins, and
 bootstrap editor tooling. They are not read-only validation commands.
+
+### Removable configuration for externally managed applications
+
+For applications installed and managed outside this repository, such as the
+system SSH client, add configuration as a removable layer. The layer may
+override existing settings while enabled, but deleting only the files or
+links we add must restore the previous configuration behavior on the next
+load, without restoring backups or running a cleanup script.
+
+Prefer the application's native drop-in or `Include` mechanism. Do not replace
+its existing system or user configuration files. If an existing entry file
+needs an include, keep that edit minimal and ensure it remains harmless when
+our files are absent. Scope installation and uninstallation to our additions;
+leave unrelated configuration, keys and application state alone. Verify both
+override behavior while enabled and fallback behavior after removal.
+
+Applications whose installation and configuration this repository manages,
+such as Neovim, may continue to use the existing whole-file or directory
+symlink approach. This rule does not require migrating those apps.
 
 `DEPENDENCIES.md` is the canonical new-host dependency inventory. Whenever a
 change introduces, removes, renames, or materially changes the use of an

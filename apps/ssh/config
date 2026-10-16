@@ -1,0 +1,7 @@
+# Most SSH options use the first matching value; include this before defaults
+# it should override, and after any host-specific settings that should win.
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    ConnectTimeout 15
+    SendEnv COLORTERM
