@@ -115,6 +115,21 @@
         fi
     done
 
+    # aria2 downloads: resumable, 16 connections per file; dll reads a URL
+    # list file, dl1 uses one connection, dlt stops seeding when complete.
+    local aria2='aria2c -c --file-allocation=none'
+    local -A aria2_views=(
+        dl  "$aria2 -x16 -s16 -k1M"
+        dll "$aria2 -x16 -s16 -k1M -i"
+        dl1 "$aria2"
+        dlt "$aria2 --seed-time=0"
+    )
+    for command_name executable in "${(@kv)aria2_views}"; do
+        [[ ${selected[aria2c]:-} == aria2c ]] ||
+            executable="echo '$command_name: needs aria2 (install.sh aria2)' >&2; false #"
+        _dot_alias "$command_name" "$executable"
+    done
+
     for command_name executable in "${(@kv)selected}"; do
         [[ $command_name == (ls|tree|dircolors|git|gitdiff|ports) ]] && continue
         [[ $command_name == $executable ]] && continue

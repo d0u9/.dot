@@ -36,3 +36,5 @@ git       | git                  | git
 # The program that renders `gd` and `gds`; git is its own fallback.
 gitdiff   | difft git            | difft git
 ports     | lsof                 | ss netstat
+# The downloader behind dl, dll, dl1 and dlt.
+aria2c    | aria2c               | aria2c

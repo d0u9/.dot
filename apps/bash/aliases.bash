@@ -49,7 +49,7 @@ _dot_bash_aliases() {
     local selected_ls= selected_tree= selected_vim= selected_vi=
     local selected_sed= selected_grep= selected_find= selected_xargs=
     local selected_tar= selected_dircolors= selected_git= selected_gitdiff=
-    local selected_ports= git_diff git_difftool
+    local selected_ports= selected_aria2c= git_diff git_difftool aria2
     local row_command row_macos row_linux candidates
     while IFS='|' read -r row_command row_macos row_linux; do
         row_command=${row_command// }
@@ -109,6 +109,21 @@ _dot_bash_aliases() {
         esac
         [ "$selected_ls" = eza ] ||
             executable="echo '$command_name: needs eza (install.sh eza)' >&2; false #"
+        _dot_bash_alias "$command_name" "$executable"
+    done
+
+    # aria2 downloads: resumable, 16 connections per file; dll reads a URL
+    # list file, dl1 uses one connection, dlt stops seeding when complete.
+    aria2='aria2c -c --file-allocation=none'
+    for command_name in dl dll dl1 dlt; do
+        case $command_name in
+            dl) executable="$aria2 -x16 -s16 -k1M" ;;
+            dll) executable="$aria2 -x16 -s16 -k1M -i" ;;
+            dl1) executable=$aria2 ;;
+            dlt) executable="$aria2 --seed-time=0" ;;
+        esac
+        [ "$selected_aria2c" = aria2c ] ||
+            executable="echo '$command_name: needs aria2 (install.sh aria2)' >&2; false #"
         _dot_bash_alias "$command_name" "$executable"
     done
 

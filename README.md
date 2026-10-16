@@ -142,8 +142,9 @@ for each platform) and add a line to the list. A recipe can set
 for both platforms, such as eza on macOS, stay with the package manager.
 
 `./install.sh eza` installs eza using the host package manager; eza and jq
-start checked on new hosts; `./install.sh fclones` does the same for
-fclones but starts unchecked. On macOS, the default-on `macos` profile installs
+start checked on new hosts. `./install.sh fclones` and `./install.sh aria2`
+install those tools the same way but start unchecked. On macOS, the
+default-on `macos` profile installs
 Homebrew's coreutils, diffutils and version-appropriate Bash completion.
 That profile installs nothing on Linux and starts unchecked there.
 
