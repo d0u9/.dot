@@ -60,6 +60,7 @@ For the main shell and editor setup, install all of the following:
 | sing-box | Optional | `./install.sh sing-box` or `dgspkg install sing-box` installs the official proxy executable on macOS and Linux (arm64 and x86_64); unchecked by default. No proxy configuration or service is installed. |
 | shadowsocks-rust | Optional | `./install.sh shadowsocks-rust` or `dgspkg install shadowsocks-rust` installs `sslocal`, `ssserver`, `ssmanager`, `ssservice` and `ssurl` together; macOS and Linux arm64/x86_64, using musl builds on Linux. Unchecked by default; no proxy configuration or service is installed. Its tar.xz archives require xz support in tar (Linux may need the `xz` or `xz-utils` package). |
 | age | Optional | `./install.sh age` or `dgspkg install age` installs `age` and `age-keygen` together on macOS and Linux (arm64 and x86_64); unchecked by default. |
+| rclone | Optional | `./install.sh rclone` or `dgspkg install rclone` installs the official single binary on macOS and Linux (arm64 and x86_64); unchecked by default. Its zip archives need `unzip`. `rclone mount` additionally needs FUSE: macFUSE or FUSE-T on macOS, fuse3 on Linux. No remote configuration is installed. |
 | Maple Mono NF CN | Strongly recommended | Matches the configured Alacritty font and supplies Nerd Font glyphs used by Neovim. |
 
 On macOS, Homebrew is the preferred package source. In particular, install
