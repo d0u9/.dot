@@ -1380,29 +1380,34 @@ mkcd() {
 
 # Pack one directory beside itself, keeping the directory name in the archive.
 pack() (
-    local format=tar.gz output= tool sevenzip dir archive temporary=
+    local format=tar.gz output= password=0 tool sevenzip dir archive temporary=
     while [ $# -gt 0 ]; do
         case $1 in
             -h|--help)
                 cat <<'HELP'
-Usage: pack [-f FORMAT] [-o FILE] [--] DIR
+Usage: pack [-f FORMAT] [-o FILE] [-p] [--] DIR
 Pack one directory, including hidden files, its name and modification times.
 
   -f, --format FORMAT  tar.gz (default), tgz, tar, tar.bz2, tar.xz, zip
-                      With 7zz: also 7z
+                      With 7zz or 7z: also 7z
   -o, --output FILE    output path (default: DIR.FORMAT beside DIR)
+  -p, --password       encrypt (zip, 7z); prompts for the password
+                      With 7zz or 7z: zip AES-256 data, 7z AES-256 data
+                      and file names. Without them, zip falls back to
+                      zip -e (weak ZipCrypto) with a warning.
   -h, --help           show this help
   --                   end options, for directory names starting with '-'
 
 Existing output files are never overwritten. Output must be outside DIR.
-Tools: tar and gzip/bzip2/xz; zip uses 7zz when available, else zip.
-7z requires an executable 7zz (macOS: brew install sevenzip).
+Tools: tar and gzip/bzip2/xz; zip uses 7zz, then 7z, else zip.
+7z requires 7zz or 7z (dgspkg install 7zz).
 RAR creation is not supported by 7-Zip.
 
 Examples:
   pack project
   pack -f zip -o release.zip project
   pack -f 7z project
+  pack -p -f 7z project
   pack -- -folder
 HELP
                 return 0 ;;
@@ -1410,23 +1415,34 @@ HELP
                 [ $# -ge 2 ] || { error "pack: $1 requires a value"; return 2; }
                 case $1 in -f|--format) format=$2 ;; *) output=$2 ;; esac
                 shift 2 ;;
+            -p|--password) password=1; shift ;;
             --) shift; break ;;
             -*) error "pack: unknown option: $1"; return 2 ;;
             *) break ;;
         esac
     done
-    [ $# -eq 1 ] || { printf 'usage: pack [-f FORMAT] [-o FILE] [--] DIR\n' >&2; return 2; }
+    [ $# -eq 1 ] || { printf 'usage: pack [-f FORMAT] [-o FILE] [-p] [--] DIR\n' >&2; return 2; }
     case $format in
         tgz) format=tar.gz ;;
         tar|tar.gz|tar.bz2|tar.xz|zip|7z) ;;
         *) error "pack: unsupported format: $format"; return 2 ;;
     esac
-    if [ -n "${ZSH_VERSION:-}" ]; then
-        sevenzip=${commands[7zz]:-}
-    else
-        sevenzip=$(type -P 7zz 2>/dev/null) || sevenzip=
+    # 7zz is the official 7-Zip; 7z (p7zip) takes the same options.
+    for tool in 7zz 7z; do
+        if [ -n "${ZSH_VERSION:-}" ]; then
+            sevenzip=${commands[$tool]:-}
+        else
+            sevenzip=$(type -P "$tool" 2>/dev/null) || sevenzip=
+        fi
+        [ -n "$sevenzip" ] && [ -x "$sevenzip" ] && break
+        sevenzip=
+    done
+    if [ "$password" = 1 ]; then
+        case $format in zip|7z) ;; *) error "pack: $format cannot be encrypted; use zip or 7z"; return 2 ;; esac
+        # zip's own -e is the weak ZipCrypto scheme: usable, but say so.
+        [ -n "$sevenzip" ] || [ "$format" != zip ] ||
+            warn 'pack: no 7zz or 7z; zip -e uses weak ZipCrypto (dgspkg install 7zz for AES-256)'
     fi
-    [ -n "$sevenzip" ] && [ -x "$sevenzip" ] || sevenzip=
     case $format in
         tar) tool=tar ;;
         tar.gz) tool=gzip ;;
@@ -1434,10 +1450,10 @@ HELP
         tar.xz) tool=xz ;;
         zip) tool=${sevenzip:-zip} ;;
         7z)
-            [ -n "$sevenzip" ] || { error 'pack: install 7zz (macOS: brew install sevenzip)'; return 1; }
+            [ -n "$sevenzip" ] || { error 'pack: 7z needs 7zz or 7z (dgspkg install 7zz)'; return 1; }
             tool=$sevenzip ;;
     esac
-    command_exist "$tool" || { error "pack: install $tool (7zz on macOS: brew install sevenzip)"; return 1; }
+    command_exist "$tool" || { error "pack: install $tool"; return 1; }
     case $format in tar*) command_exist tar || { error 'pack: tar not installed'; return 1; } ;; esac
     case $output in ''|/*) ;; *) output="$PWD/$output" ;; esac
     case $1 in /*) cd -P -- "$1" ;; *) cd -P -- "./$1" ;; esac || return 1
@@ -1459,8 +1475,19 @@ HELP
             if [ -n "$sevenzip" ]; then
                 temporary=$(mktemp -d) || return 1
                 trap 'rm -rf -- "$temporary"' EXIT
-                "$sevenzip" a "-t$format" -- "$temporary/archive.$format" "./$dir" &&
+                set -- a "-t$format"
+                if [ "$password" = 1 ]; then
+                    # A bare -p makes 7-Zip prompt, keeping the password out of argv.
+                    case $format in zip) set -- "$@" -p -mem=AES256 ;; 7z) set -- "$@" -p -mhe=on ;; esac
+                fi
+                "$sevenzip" "$@" -- "$temporary/archive.$format" "./$dir" &&
                     command cat "$temporary/archive.$format" > "$archive"
+            elif [ "$password" = 1 ]; then
+                # zip -e prompts itself; it cannot prompt while writing to stdout.
+                temporary=$(mktemp -d) || return 1
+                trap 'rm -rf -- "$temporary"' EXIT
+                command zip -qre "$temporary/archive.zip" "./$dir" &&
+                    command cat "$temporary/archive.zip" > "$archive"
             else
                 command zip -qr - -- "./$dir" > "$archive"
             fi ;;
