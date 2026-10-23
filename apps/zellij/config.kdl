@@ -30,6 +30,7 @@ keybinds {
     }
 
     shared_except "locked" {
+        bind "Alt t" { NewTab; SwitchToMode "Normal"; }
         bind "Alt 1" { GoToTab 1; SwitchToMode "Normal"; }
         bind "Alt 2" { GoToTab 2; SwitchToMode "Normal"; }
         bind "Alt 3" { GoToTab 3; SwitchToMode "Normal"; }
