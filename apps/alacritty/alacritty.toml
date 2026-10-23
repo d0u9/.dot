@@ -19,6 +19,9 @@ option_as_alt = "OnlyLeft"
 [scrolling]
 history = 60000
 
+[terminal]
+osc52 = "OnlyCopy"
+
 [font]
 size = 13
 offset = { x = 1, y = 5}
@@ -32,6 +35,11 @@ blink_interval = 600
 blink_timeout = 0
 unfocused_hollow = false
 thickness = 0.6
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Super"
+action = "Paste"
 
 [[keyboard.bindings]]
 key = "Return"

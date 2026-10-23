@@ -10,6 +10,25 @@ vim.opt.backup = true
 vim.opt.undofile = true
 vim.opt.undolevels = 1000
 vim.opt.undoreload = 10000
+
+if vim.env.SSH_TTY or vim.env.SSH_CONNECTION or vim.env.ZELLIJ then
+  local osc52 = require('vim.ui.clipboard.osc52')
+  local copy, paste = {}, {}
+  for _, register in ipairs({ '+', '*' }) do
+    local cached = { {}, 'v' }
+    local send = osc52.copy(register)
+    copy[register] = function(lines, regtype)
+      cached = { vim.deepcopy(lines), regtype }
+      send(lines, regtype)
+    end
+    -- Terminal paste (Cmd+V) supplies local text; p uses this session's copy.
+    -- Never query OSC 52 here: multiplexers may not support clipboard reads.
+    paste[register] = function()
+      return vim.deepcopy(cached)
+    end
+  end
+  vim.g.clipboard = { name = 'OSC 52', copy = copy, paste = paste }
+end
 vim.opt.clipboard:append('unnamedplus')
 
 -- UI

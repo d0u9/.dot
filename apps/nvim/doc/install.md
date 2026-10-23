@@ -83,6 +83,27 @@ configure and enable them explicitly with `vim.lsp.config` / `vim.lsp.enable`.
 `lua_ls` has no condition: it ships as a prebuilt binary and this config is
 itself lua, so it is always wanted.
 
+## Clipboard over SSH and Zellij
+
+Use this Neovim configuration on the remote host and the Alacritty
+configuration on the local machine. In SSH or Zellij sessions, Neovim uses
+its built-in OSC 52 provider for copies, so `yy` and visual-mode `y` update
+the local system clipboard without a remote clipboard utility.
+
+Zellij uses OSC 52 by default; leave `copy_command` unset so it does not
+redirect copies to a utility on the remote host. This works with Zellij
+on either side of the SSH connection.
+
+In Alacritty, `Cmd+V` sends the local clipboard to the focused pane. In
+Neovim, use Insert mode for a predictable insertion point. OSC 52 clipboard
+reads are not needed: Alacritty allows copies only, and Neovim's `p` uses
+the last value copied to that register in the current editor session,
+not clipboard changes made by other local applications. Outside SSH and
+Zellij, Neovim keeps its normal system clipboard provider.
+
+After syncing these files, restart Neovim on the remote host. No new
+plugins or executables are needed.
+
 ## Adding to the setup
 
 Each list has exactly one home, shared by the running config and the
