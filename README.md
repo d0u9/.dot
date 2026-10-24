@@ -333,6 +333,11 @@ whose required tool is missing, or that is defined only on Linux, is left
 out. `dgscmds -l` or `dgscmds SECTION...` shows full usage and alias expansions;
 section names are case-insensitive.
 
+Check the command parsers without loading private hooks or contacting services:
+`bash apps/shell/test-commands.sh "$PWD/apps/shell/lib.sh"`, or run the same
+script with `zsh -f`. An optional second argument selects an absolute awk
+executable, so the fixtures can be checked with both BSD awk and GNU awk.
+
 | Section | Command | Purpose |
 | --- | --- | --- |
 | Network | `ports [-s] [-t\|-u\|-a] [-o KEY]` | listening sockets as one sortable table |

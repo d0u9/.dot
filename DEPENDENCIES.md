@@ -15,6 +15,7 @@ These are required by the repository itself or by its installers:
 | Tool | Why it is required |
 | --- | --- |
 | Bash | Runs `bootstrap.sh`, `install.sh` and every `apps/*/app.sh`. |
+| awk | Formats and parses shared shell command output. BSD awk and GNU awk are supported; the shortcuts use their common POSIX syntax and do not require installing GNU awk on macOS. |
 | Git | Clones Zsh and Neovim plugin repositories, supplies the Bash prompt's repository status, and runs the shared Git shortcuts. `gpl`/`gpr` require Git 2.27+ (merge autostash control); `gsw`/`gswc` require Git 2.23+ (`git switch`). Upgrade older Linux distribution packages to use these shortcuts. macOS Command Line Tools supplies Git. |
 | curl | Downloads Alacritty themes, resources used by editor tooling, and the official releases installed by `dgspkg`, which also needs `shasum` (macOS) or `sha256sum` (Linux) to verify them and `unzip` for zip archives. |
 | tar | Extracts downloaded tools and archives; `pack` in both shells creates tar archives and uses gzip by default (supplied by macOS and standard Linux installations). |

@@ -1044,7 +1044,7 @@ sysinfo() {
                 /^Pages active/ || /^Pages wired down/ || /^Pages occupied by compressor/ {
                     gsub(/\./, "", $NF); used += $NF }
                 END { printf "%.0f", used * page }')
-            boot=$(sysctl -n kern.boottime | sed 's/.*sec = \([0-9]*\).*/\1/')
+            boot=$(sysctl -n kern.boottime | sed 's/.*[[:space:]]sec = \([0-9]*\).*/\1/')
             now=$(date +%s)
             uptime=$((now - boot))
             load=$(sysctl -n vm.loadavg | awk '{ print $2, $3, $4 }')
@@ -1088,7 +1088,7 @@ dfh() {
         NR == 1 { next }
         {
             mount = $6
-            for (field = 7; field <= NF; field++) mount = mount " " $field
+            for (field_number = 7; field_number <= NF; field_number++) mount = mount " " $field_number
         }
         $1 !~ /^\/dev\// && $1 !~ /:/ && $1 !~ /^\/\// && $1 !~ /^map / { next }
         $1 ~ /^\/dev\/loop/ { next }
@@ -1292,13 +1292,17 @@ _dot_ps_table() {
 # Find processes whose command line contains PATTERN, case-insensitively,
 # leaving out the search itself. Usage: psg PATTERN. Returns 1 on no match.
 psg() {
-    local rows
+    local rows pattern
     case ${1:-} in
         ''|-h|--help)
             printf 'Usage: psg PATTERN\nProcesses whose command line contains PATTERN, ignoring case.\n\nExamples:\n  psg node\n  psg "python manage.py"\n'
             [ $# -gt 0 ]; return ;;
     esac
-    rows=$(ps axww -o pid=,user=,%cpu=,%mem=,etime=,command= | awk -v pat="$*" '
+    # awk -v decodes backslash escapes in assignments on both BSD and GNU.
+    # Double them first so a literal search such as C:\new keeps its text.
+    pattern=$*
+    pattern=${pattern//\\/\\\\}
+    rows=$(ps axww -o pid=,user=,%cpu=,%mem=,etime=,command= | awk -v pat="$pattern" '
         BEGIN { pat=tolower(pat) }
         {
             cmd=$0
@@ -1738,8 +1742,13 @@ HELP
     esac
     command_exist python3 || { error "serve: python3 not installed"; return 1; }
     printf 'Serving %s on port %s (all interfaces):\n  http://localhost:%s/\n' "$PWD" "$port" "$port"
-    ips local 2>/dev/null | awk -v port="$port" 'NR > 1 && $3 != "-" {
-        n=split($3, a, ", "); for (i = 1; i <= n; i++) printf "  http://%s:%s/\n", a[i], port }'
+    ips local 2>/dev/null | awk -v port="$port" 'NR > 1 {
+        for (i = 3; i <= NF; i++) {
+            address=$i; sub(/,$/, "", address)
+            if (address ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/)
+                printf "  http://%s:%s/\n", address, port
+        }
+    }'
     python3 -m http.server "$port"
 }
 
