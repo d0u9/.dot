@@ -157,6 +157,7 @@ _dot_bash_aliases() {
         [ "$selected_gitdiff" = difft ] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_bash_alias gss 'git status --short'
         _dot_bash_alias glog 'git log --oneline --decorate -12'
+        _dot_bash_alias glg 'git log --graph --all --decorate --color=auto --format="%C(auto)%h%d %s %C(dim)(%ar, %an)%C(reset)"'
         _dot_bash_alias gd "$git_diff"
         _dot_bash_alias gds "$git_diff --staged"
         # nvimdiff views; pass a range such as HEAD^! to view one commit.

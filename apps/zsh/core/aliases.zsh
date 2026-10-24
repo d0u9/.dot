@@ -154,6 +154,7 @@
         [[ ${selected[gitdiff]:-} == difft ]] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_alias gss 'git status --short'
         _dot_alias glog 'git log --oneline --decorate -12'
+        _dot_alias glg 'git log --graph --all --decorate --color=auto --format="%C(auto)%h%d %s %C(dim)(%ar, %an)%C(reset)"'
         _dot_alias gd "$git_diff"
         _dot_alias gds "$git_diff --staged"
         # nvimdiff views; pass a range such as HEAD^! to view one commit.

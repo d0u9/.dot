@@ -1843,6 +1843,7 @@ TABLE
                 gswc) section=Git; description='create and switch to a new branch' ;;
                 gb)   section=Git; description='list local branches with upstream and last commit' ;;
                 glog) section=Git; description='show the last 12 commits in compact form' ;;
+                glg)  section=Git; description='show all branches as a colored commit graph with authors and relative dates' ;;
                 gd)   section=Git; description='show unstaged changes' ;;
                 gds)  section=Git; description='show staged changes' ;;
                 gdv)  section=Git; description='view unstaged changes in nvimdiff (needs nvim)' ;;

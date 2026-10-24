@@ -184,15 +184,21 @@ else
     git_test_aliases=${git_test_lib%/shell/lib.sh}/bash/aliases.bash
 fi
 source "$git_test_aliases"
-for shortcut in g gst ga gc gf gsw gswc gb gss glog gd gds gdv gdvs; do
+for shortcut in g gst ga gc gf gsw gswc gb gss glog glg gd gds gdv gdvs; do
     alias "$shortcut" >/dev/null
 done
+# Enable aliases for this fixed invocation in non-interactive Bash too.
+if [ -n "${BASH_VERSION:-}" ]; then shopt -s expand_aliases; fi
+eval 'glg --no-color -5' > "$git_test_dir/graph.log"
+command grep -Fq '*' "$git_test_dir/graph.log"
+command grep -Fq 'topic/worktree' "$git_test_dir/graph.log"
+command grep -Fq 'alice' "$git_test_dir/graph.log"
 before=$(_dot_managed_aliases)
 source "$git_test_aliases"
 assert_eq "$(_dot_managed_aliases)" "$before" 'reload preserves aliases'
 printf '' > "$DOT_DIR/apps/shell/fallbacks"
 source "$git_test_aliases"
-for shortcut in g gst ga gc gf gsw gswc gb; do
+for shortcut in g gst ga gc gf gsw gswc gb glg; do
     expect_fail alias "$shortcut"
 done
 printf 'Git shortcut checks passed (%s)\n' "${ZSH_VERSION:-Bash $BASH_VERSION}"

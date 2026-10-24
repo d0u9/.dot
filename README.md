@@ -395,8 +395,14 @@ arguments directly to Git:
 | `gsw`, `gswc` | `git switch`, `git switch -c` (Git 2.23+) |
 | `gb` | `git branch -vv` |
 | `glog` | `git log --oneline --decorate -12` |
+| `glg` | colored history graph across all local and remote-tracking branches, with refs, commit subjects, authors and relative dates |
 | `gd`, `gds` | working-tree / staged diff, using difftastic when available |
 | `gdv`, `gdvs` | working-tree / staged diff in nvimdiff |
+
+`glg` uses Git's normal pager (`q` to quit) and supports log options such as
+`glg -30` or `glg --since="2 weeks ago"`. Colors are automatic and omitted
+when output is redirected. Remote-tracking branches reflect the last fetch;
+run `gf --all` first when you want to refresh them.
 
 Use `dgscmds git` for the available Git shortcuts. After updating the checkout,
 open a new shell, or source `"$DOT_DIR/apps/shell/lib.sh"` and your shell's
