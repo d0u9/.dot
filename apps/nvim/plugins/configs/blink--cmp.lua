@@ -14,6 +14,8 @@ require('blink.cmp').setup({
     ['<CR>'] = { 'select_and_accept', 'fallback' },
     ['<Tab>'] = { 'select_next', 'fallback' },
     ['<S-Tab>'] = { 'select_prev', 'fallback' },
+    ['<Down>'] = { 'select_next', 'fallback' },
+    ['<Up>'] = { 'select_prev', 'fallback' },
   },
   completion = {
     documentation = { auto_show = false },
