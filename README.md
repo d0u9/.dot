@@ -327,9 +327,11 @@ use temporary caches and stub tools and do not load private configuration.
 # Shell commands
 
 Both shells load these helpers from `apps/shell/lib.sh`. `dgscmds` lists the
-ones available on the current host -- a command whose required tool is
-missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
-`dgscmds SECTION...` shows them in full.
+ones available on the current host in a `Section / Command / Description`
+table, including a purpose description for each managed alias. A function
+whose required tool is missing, or that is defined only on Linux, is left
+out. `dgscmds -l` or `dgscmds SECTION...` shows full usage and alias expansions;
+section names are case-insensitive.
 
 | Section | Command | Purpose |
 | --- | --- | --- |

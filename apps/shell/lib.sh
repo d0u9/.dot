@@ -1754,10 +1754,10 @@ dgspkg() { "$DOT_DIR/apps/release/dgspkg" "$@"; }
 # without lsof/ss/netstat) does not appear. A platform-specific function is
 # defined only on its platform, as sudo_nopasswd and svc are, so the same
 # check leaves it out elsewhere. A section with nothing to show is omitted.
-# Usage: dgscmds [-l | SECTION...]. By default each section is one line of
-# names; -l shows every usage line, and SECTION (case-insensitive, e.g.
-# `dgscmds docker`) shows only those sections in full. Add a row here when
-# adding a user-facing function.
+# Usage: dgscmds [-l | SECTION...]. Print a table with one command and its
+# description per row. -l shows full usage, and SECTION (case-insensitive,
+# e.g. `dgscmds docker`) shows only those sections with full usage. Add a row
+# here when adding a user-facing function, and a case for each new alias.
 dgscmds() {
     local name section requires usage description value full=0 only=
 
@@ -1774,7 +1774,7 @@ dgscmds() {
         while IFS=$'\t' read -r section name requires usage description; do
             type "$name" >/dev/null 2>&1 || continue
             [ "$requires" = - ] || command_exist "$requires" || continue
-            printf '%s\t%s\t%s\n' "$section" "$usage" "$description"
+            printf '%s\t%s\t%s\t%s\n' "$section" "$name" "$usage" "$description"
         done <<'TABLE'
 Network	ports	-	ports [-s] [-t|-u|-a] [-o KEY]	listening sockets as a sortable table
 Network	killport	-	killport [-s] [-y] [-9] PORT	stop the processes listening on PORT
@@ -1806,32 +1806,88 @@ Files	unpack	-	unpack [-d DIR] FILE...	unpack archives, preferring 7zz
 Files	bak	-	bak FILE...	copy to FILE.bak.<timestamp>
 Files	cptime	-	cptime [-r] SRC TARGET...	copy the times of SRC to files and directories
 Files	serve	python3	serve [PORT]	share this directory over HTTP (default 8000)
-Shell	dgscmds	-	dgscmds	this list
+Shell	dgscmds	-	dgscmds [-l | SECTION...]	list available shell commands and their descriptions
 TABLE
         _dot_managed_aliases | while IFS=$'\t' read -r name value; do
             case $name in
-                ls|l|ll|la|tree|..|...) section=Files ;;
-                g*) section=Git ;;
-                d*) section=Docker ;;
-                *) section=Replacements ;;
+                ls)   section=Files; description='list directory contents' ;;
+                l)    section=Files; description='list one entry per line' ;;
+                ll)   section=Files; description='list entries with details' ;;
+                la)   section=Files; description='list all entries with details, including hidden files' ;;
+                lss)  section=Files; description='list entries by size, including directory totals (needs eza)' ;;
+                lsc)  section=Files; description='summarize lines of code by language (needs eza)' ;;
+                lsl)  section=Files; description='list all entries with clickable paths (needs eza)' ;;
+                tree) section=Files; description='show directory contents as a tree' ;;
+                ..)   section=Files; description='go to the parent directory' ;;
+                ...)  section=Files; description='go up two directories' ;;
+                dl)   section=Files; description='download with resume and up to 16 connections (needs aria2)' ;;
+                dll)  section=Files; description='download URLs from a list file (needs aria2)' ;;
+                dl1)  section=Files; description='download with a single connection and resume (needs aria2)' ;;
+                dlt)  section=Files; description='download a torrent and stop seeding when complete (needs aria2)' ;;
+                g)    section=Git; description='run Git' ;;
+                gst)  section=Git; description='show working tree status' ;;
+                gss)  section=Git; description='show working tree status in short form' ;;
+                ga)   section=Git; description='stage changes for a commit' ;;
+                gc)   section=Git; description='commit staged changes' ;;
+                gf)   section=Git; description='fetch refs and objects from a remote' ;;
+                gsw)  section=Git; description='switch branches' ;;
+                gswc) section=Git; description='create and switch to a new branch' ;;
+                gb)   section=Git; description='list local branches with upstream and last commit' ;;
+                glog) section=Git; description='show the last 12 commits in compact form' ;;
+                gd)   section=Git; description='show unstaged changes' ;;
+                gds)  section=Git; description='show staged changes' ;;
+                gdv)  section=Git; description='view unstaged changes in nvimdiff (needs nvim)' ;;
+                gdvs) section=Git; description='view staged changes in nvimdiff (needs nvim)' ;;
+                dps)  section=Docker; description='list running containers with status, image and ports' ;;
+                dpsa) section=Docker; description='list all containers with status, image and ports' ;;
+                vim|vi) section=Replacements; description="open the editor using $value" ;;
+                sed)  section=Replacements; description="edit text streams using $value" ;;
+                grep) section=Replacements; description="search text using $value" ;;
+                find) section=Replacements; description="find files using $value" ;;
+                xargs) section=Replacements; description="build commands from input using $value" ;;
+                tar)  section=Replacements; description="create and extract archives using $value" ;;
+                *)    section=Replacements; description="run $value" ;;
             esac
-            [ "${#value}" -le 60 ] || value="${value:0:57}..."
-            printf '%s\t%s\t= %s\n' "$section" "$name" "$value"
+            printf '%s\t%s\t%s = %s\t%s\n' "$section" "$name" "$name" "$value" "$description"
         done
     } | awk -F '\t' -v full="$full" -v only="$only" '
         BEGIN {
             count = split("Network Process System Files Git Docker Replacements Shell", order, " ")
             n = split(only, w, " "); for (i = 1; i <= n; i++) want[w[i]] = 1
+            heading = full ? "Usage" : "Command"
+            section_width = length("Section")
+            command_width = length(heading)
+            description_width = length("Description")
         }
         n && !(tolower($1) in want) { next }
-        full { rows[$1] = rows[$1] sprintf("  %-32s %s\n", $2, $3); next }
-        { split($2, word, " "); rows[$1] = rows[$1] " " word[1] }
+        {
+            size[$1]++
+            key = $1 SUBSEP size[$1]
+            commands[key] = full ? $3 : $2
+            descriptions[key] = $4
+            if (length($1) > section_width) section_width = length($1)
+            if (length(commands[key]) > command_width) command_width = length(commands[key])
+            if (length($4) > description_width) description_width = length($4)
+        }
+        function border(    line) {
+            line = sprintf("+-%*s-+-%*s-+-%*s-+", section_width, "", command_width, "", description_width, "")
+            gsub(/ /, "-", line)
+            print line
+        }
+        function row(section, command, description) {
+            printf "| %-*s | %-*s | %-*s |\n", section_width, section, command_width, command, description_width, description
+        }
         END {
+            border()
+            row("Section", heading, "Description")
+            border()
             for (section = 1; section <= count; section++) {
-                if (!(order[section] in rows)) continue
-                if (full) printf "%s%s:\n%s", printed++ ? "\n" : "", order[section], rows[order[section]]
-                else printf "%-13s%s\n", order[section] ":", rows[order[section]]
+                for (i = 1; i <= size[order[section]]; i++) {
+                    key = order[section] SUBSEP i
+                    row(order[section], commands[key], descriptions[key])
+                }
             }
+            border()
             if (!full) print "\ndgscmds -l for usage, dgscmds SECTION for one section, CMD --help for examples"
         }
     '
