@@ -179,6 +179,26 @@ connection timeout, and send `COLORTERM` when present. The server must accept
 `COLORTERM` for it to reach remote applications; this alone does not guarantee
 truecolor support.
 
+Connection multiplexing is enabled with `ControlMaster auto` and
+`ControlPersist 10m`: subsequent sessions reuse a master connection, which
+stays available for ten minutes after the last session closes. Control sockets
+use `~/.ssh/cm-%C`; the hash keeps names short and distinguishes connection
+targets. Keep `~/.ssh` private to the account (mode 700). No extra socket
+directory or setup command is needed. This also applies to Git over SSH,
+scp and sftp when they use this client configuration.
+
+To disable sharing for one invocation, use `ssh -S none host-a`. For a
+persistent host exception, put this before the Include, then restore the
+global scope:
+
+```sshconfig
+Host host-a
+    ControlMaster no
+    ControlPath none
+Host *
+    Include ~/.ssh/config.d/00-dot.conf
+```
+
 Delete `~/.ssh/config.d/00-dot.conf`, or run `./install.sh -r ssh`, to disable the layer.
 The Include can stay: a missing file is ignored, and previous configuration
 values apply again to new connections. Existing connections are unaffected.

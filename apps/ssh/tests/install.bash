@@ -13,7 +13,7 @@ uninstall_ssh() { bash install.sh -r ssh > "$test_dir/uninstall.log"; }
 effective_config() {
     # OpenSSH expands ~ using the account home, not the isolated HOME above.
     sed "s|~/.ssh/config.d/|$HOME/.ssh/config.d/|g" "$HOME/.ssh/config" > "$test_dir/effective.conf"
-    ssh -G -F "$test_dir/effective.conf" host-a 2>/dev/null
+    ssh -G -F "$test_dir/effective.conf" "$@" host-a 2>/dev/null
 }
 
 # A new host gets an entry point; repeated installs leave it unchanged.
@@ -21,7 +21,7 @@ install_ssh
 [ -L "$HOME/.ssh/config.d/00-dot.conf" ]
 printf '%s\n' 'Include ~/.ssh/config.d/00-dot.conf' > "$test_dir/entry"
 cmp "$test_dir/entry" "$HOME/.ssh/config"
-[ "$(ls -l "$HOME/.ssh/config" | awk '{ print $1 }')" = '-rw-------' ]
+[ "$(ls -l "$HOME/.ssh/config" | awk '{ print substr($1, 1, 10) }')" = '-rw-------' ]
 install_ssh
 cmp "$test_dir/entry" "$HOME/.ssh/config"
 effective_config > "$test_dir/enabled"
@@ -29,6 +29,25 @@ command grep -qx 'serveraliveinterval 60' "$test_dir/enabled"
 command grep -qx 'serveralivecountmax 3' "$test_dir/enabled"
 command grep -qx 'connecttimeout 15' "$test_dir/enabled"
 command grep -qx 'sendenv COLORTERM' "$test_dir/enabled"
+command grep -qx 'controlmaster auto' "$test_dir/enabled"
+command grep -qx 'controlpersist 600' "$test_dir/enabled"
+control_path=$(awk '$1 == "controlpath" { print $2 }' "$test_dir/enabled")
+[[ "$control_path" == */.ssh/cm-* ]]
+# The same endpoint has a stable socket; different users and ports do not.
+effective_config > "$test_dir/repeated"
+[ "$control_path" = "$(awk '$1 == "controlpath" { print $2 }' "$test_dir/repeated")" ]
+effective_config -l alice -p 2222 > "$test_dir/endpoint-a"
+effective_config -l bob -p 2222 > "$test_dir/endpoint-b"
+effective_config -l alice -p 2223 > "$test_dir/endpoint-c"
+path_a=$(awk '$1 == "controlpath" { print $2 }' "$test_dir/endpoint-a")
+path_b=$(awk '$1 == "controlpath" { print $2 }' "$test_dir/endpoint-b")
+path_c=$(awk '$1 == "controlpath" { print $2 }' "$test_dir/endpoint-c")
+[ "$path_a" != "$path_b" ] && [ "$path_a" != "$path_c" ]
+effective_config -S none > "$test_dir/no-sharing"
+if command grep -q '^controlpath ' "$test_dir/no-sharing"; then
+    printf 'Single-invocation opt-out retained a control socket\n' >&2
+    exit 1
+fi
 uninstall_ssh
 [ ! -e "$HOME/.ssh/config.d/00-dot.conf" ]
 effective_config > "$test_dir/removed"
@@ -85,6 +104,20 @@ effective_config > "$test_dir/uninstalled"
 cmp "$test_dir/baseline" "$test_dir/uninstalled"
 cmp "$test_dir/with-include" "$HOME/.ssh/config"
 cmp "$test_dir/other-fragment" "$HOME/.ssh/config.d/90-existing.conf"
+
+# Host-specific opt-outs placed before the Include keep their precedence.
+{
+    printf 'Host host-a\n    ControlMaster no\n    ControlPath none\nHost *\n'
+    cat "$test_dir/entry"
+} > "$HOME/.ssh/config"
+install_ssh
+effective_config > "$test_dir/host-override"
+command grep -qx 'controlmaster false' "$test_dir/host-override"
+if command grep -q '^controlpath ' "$test_dir/host-override"; then
+    printf 'Host opt-out retained a control socket\n' >&2
+    exit 1
+fi
+uninstall_ssh
 
 # Conflicts must fail before touching the destination, main config or state.
 for conflict in file symlink dangling directory; do
