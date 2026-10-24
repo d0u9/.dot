@@ -98,6 +98,7 @@ Install these only on hosts that develop the corresponding language:
 | --- | --- |
 | Rust (`rustup`, `cargo`, `rustc`, `clippy`) | Makes the configuration request `rust_analyzer` and enables the Rust-specific editor workflow. |
 | Go | Makes the configuration request `gopls` and enables the Go-specific editor workflow. |
+| C/C++ compiler (`cc`) | Makes the configuration request `clangd`. Completion also needs each project's `compile_commands.json`; clangd itself is a Mason prebuilt and needs no clang install. |
 | Python | Supports Python development and the virtual-environment prompt segment. |
 | Ruby | Supports Ruby development; the parser and editor settings themselves do not require a local Ruby runtime. |
 | mise | Optional development-tool version manager. `./install.sh mise` installs the official build and global node, python and go; both shells put its shims directory on `PATH` instead of running `mise activate`, and the shims pick each project's versions when called. On musl hosts such as Alpine, mise has no prebuilt node and builds it from source, which needs python and a C++ toolchain. |

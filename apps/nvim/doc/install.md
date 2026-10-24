@@ -69,6 +69,7 @@ The checks live in `plugins/configs/lsp-servers.lua`:
 | `rust_analyzer` | Rust | `cargo` is in `$PATH` | nothing (prebuilt release) |
 | `gopls` | Go | `go env GOROOT` succeeds | a Go toolchain — it runs `go install` |
 | `lua_ls` | Lua | always | nothing (prebuilt release) |
+| `clangd` | C, C++ | `cc` is in `$PATH` | nothing (prebuilt release) |
 
 Without this gate mason retries the missing server on every start and
 reports the failure each time. Install the toolchain and restart, and the
@@ -128,6 +129,14 @@ A server that needs settings gets them in `plugins/configs/nvim-lspconfig.lua`,
 next to the existing `vim.lsp.config` calls. Rust is the exception: it is not
 started through lspconfig at all, but by rustaceanvim, and is configured in
 `plugins/configs/rustaceanvim.lua`.
+
+clangd reads each project's compiler flags from its `compile_commands.json`,
+found by walking up from the open file; a project without one gets no useful
+completion. Per-project flag fixes belong in that project's `.clangd`, not in
+this configuration. `--query-driver` allows the gcc-style compilers in the
+absolute `$PATH` directories (`*gcc*`, `*g++*`, `cc`, `c++`), so clangd can ask
+them for their builtin include paths; a compiler elsewhere is not run and its
+system headers may be reported missing.
 
 ## Checking the result
 

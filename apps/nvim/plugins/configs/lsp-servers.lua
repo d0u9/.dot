@@ -18,6 +18,9 @@ end
 local servers = {
   { name = 'rust_analyzer', available = function() return vim.fn.executable('cargo') == 1 end },
   { name = 'gopls', available = go_toolchain_works },
+  -- The server is a prebuilt binary, but it is only useful where C code gets
+  -- built, since it reads the compiler flags from compile_commands.json.
+  { name = 'clangd', available = function() return vim.fn.executable('cc') == 1 end },
   -- Lua needs no toolchain: the server ships as a prebuilt binary, and this
   -- config is itself lua, so it is always wanted.
   { name = 'lua_ls' },
