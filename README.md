@@ -344,6 +344,10 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | System | `svc [--user] [ACTION] [UNIT]` | systemctl and journalctl shortcuts (Linux) |
 | System | `sudo_nopasswd [on\|off\|status]` | toggle passwordless sudo for this user (Linux) |
 | System | `dgspkg COMMAND` | install and upgrade official prebuilt releases, see [Prebuilt tools](#prebuilt-tools) |
+| Git | `gpl [REMOTE]` | pull the current branch from `origin` (or REMOTE), fast-forward only |
+| Git | `gpr [REMOTE]` | pull the current branch from `origin` (or REMOTE), rebasing local commits |
+| Git | `gps [--dry-run] [REMOTE]` | push only the current branch to the same name on `origin` (or REMOTE) |
+| Git | `gpsu [--dry-run] [REMOTE]` | push the current branch and set its upstream |
 | Docker | `dnets`, `dcnets` | networks as trees of containers, and the reverse |
 | Docker | `dvols`, `dcvols` | volumes as trees of mounting containers, and the reverse |
 | Docker | `dips [container...]` | containers with network, IPv4 and ports |
@@ -356,6 +360,41 @@ missing, or that is defined only on Linux, is left out -- and `dgscmds -l` or
 | Files | `bak FILE...` | copy to `FILE.bak.<timestamp>` |
 | Files | `cptime [-r] SRC TARGET...` | copy the times of SRC to files and directories, `-r` recursively |
 | Files | `serve [PORT]` | share this directory over HTTP (default 8000, needs python3) |
+
+The Git sync helpers resolve the branch each time they run, including branch
+names containing `/`. They reject detached HEADs, branches without a first
+commit, and calls outside a working tree. They use explicit full branch refs,
+so an upstream pointing elsewhere, `push.default`, configured push refspecs,
+or a tag with the same name cannot redirect the branch operation. A missing
+remote or remote branch reports Git's normal error; no fallback remote is
+chosen. `gpl` stops on divergence; use `gpr` when you want to rebase local
+commits. Both pull helpers require Git 2.27+ and disable automatic stashing.
+`gps` can publish a new branch without changing its upstream; use `gpsu` to
+set or replace the upstream explicitly. Pushes do not force updates or
+automatically follow tags.
+For example, `gps --dry-run` previews a push and `gpl upstream` pulls the
+same-named branch from the `upstream` remote. These helpers accept only the
+documented arguments; use `git` (or `g`) for other options and refspecs.
+
+Both shells also define these aliases when Git is installed. They forward
+arguments directly to Git:
+
+| Alias | Expansion |
+| --- | --- |
+| `g` | `git` |
+| `gst`, `gss` | `git status`, `git status --short` |
+| `ga`, `gc` | `git add`, `git commit` |
+| `gf` | `git fetch` (Git's configured default remote, or pass one explicitly) |
+| `gsw`, `gswc` | `git switch`, `git switch -c` (Git 2.23+) |
+| `gb` | `git branch -vv` |
+| `glog` | `git log --oneline --decorate -12` |
+| `gd`, `gds` | working-tree / staged diff, using difftastic when available |
+| `gdv`, `gdvs` | working-tree / staged diff in nvimdiff |
+
+Use `dgscmds git` for the available Git shortcuts. After updating the checkout,
+open a new shell, or source `"$DOT_DIR/apps/shell/lib.sh"` and your shell's
+alias file (`"$DOT_ZSH_DIR/core/aliases.zsh"` or
+`"$DOT_BASH_DIR/aliases.bash"`) to refresh an existing session.
 
 `lns [-afp] TARGET LINK` creates a symlink through the shortest relative path
 from the link's directory to TARGET, so the pair keeps working when their

@@ -142,6 +142,14 @@
     fi
 
     if [[ ${selected[git]:-} == git ]]; then
+        _dot_alias g 'git'
+        _dot_alias gst 'git status'
+        _dot_alias ga 'git add'
+        _dot_alias gc 'git commit'
+        _dot_alias gf 'git fetch'
+        _dot_alias gsw 'git switch'
+        _dot_alias gswc 'git switch -c'
+        _dot_alias gb 'git branch -vv'
         local git_diff='git diff'
         [[ ${selected[gitdiff]:-} == difft ]] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_alias gss 'git status --short'

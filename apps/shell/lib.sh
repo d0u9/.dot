@@ -1182,6 +1182,82 @@ case $OSTYPE in
     *) unset -f svc;;
 esac
 
+# --- Git -------------------------------------------------------------------
+
+# Explicit same-name branch operations, independent of upstream/push.default.
+# Resolve HEAD at invocation time, never while loading the shell. Full refs
+# avoid ambiguity when a branch and a tag have the same name.
+_dot_git_current() {
+    local action=$1 name=$2 remote=origin remote_set=0 dry_run=0 arg ref inside
+    shift 2
+    for arg in "$@"; do
+        case $arg in
+            -h|--help)
+                case $action in
+                    push|push-upstream) printf 'usage: %s [--dry-run] [REMOTE]\n' "$name" ;;
+                    *) printf 'usage: %s [REMOTE]\n' "$name" ;;
+                esac
+                printf '%s\n' \
+                    'REMOTE defaults to origin; always uses the current branch name.' \
+                    'gpl: pull --ff-only; gpr: pull --rebase.' \
+                    'gps: push; gpsu: push and set upstream. Neither forces a push.'
+                return 0
+                ;;
+            -n|--dry-run)
+                case $action in
+                    push|push-upstream) dry_run=1; continue ;;
+                esac
+                ;;
+            -*|'') ;;
+            *)
+                if [ "$remote_set" -eq 0 ]; then
+                    remote=$arg
+                    remote_set=1
+                    continue
+                fi
+                ;;
+        esac
+        printf '%s: unexpected argument; see %s --help\n' "$name" "$name" >&2
+        return 2
+    done
+
+    inside=$(command git rev-parse --is-inside-work-tree 2>/dev/null) || inside=
+    if [ "$inside" != true ]; then
+        printf '%s: run inside a Git working tree\n' "$name" >&2
+        return 1
+    fi
+    if ! ref=$(command git symbolic-ref --quiet HEAD); then
+        printf '%s: detached HEAD; switch to a branch first\n' "$name" >&2
+        return 1
+    fi
+    if ! command git rev-parse --verify --quiet 'HEAD^{commit}' >/dev/null; then
+        printf '%s: current branch has no commits yet\n' "$name" >&2
+        return 1
+    fi
+
+    case $action in
+        pull)
+            command git pull --ff-only --no-rebase --no-autostash "$remote" "$ref"
+            ;;
+        rebase)
+            command git pull --rebase --no-autostash "$remote" "$ref"
+            ;;
+        push|push-upstream)
+            # Supplying a refspec bypasses configured push refspecs. Disable
+            # automatic tag following so this shortcut pushes only one branch.
+            set -- --no-follow-tags
+            [ "$action" != push-upstream ] || set -- "$@" --set-upstream
+            [ "$dry_run" -eq 0 ] || set -- "$@" --dry-run
+            command git push "$@" "$remote" "$ref:$ref"
+            ;;
+    esac
+}
+
+gpl()  { _dot_git_current pull gpl "$@"; }
+gpr()  { _dot_git_current rebase gpr "$@"; }
+gps()  { _dot_git_current push gps "$@"; }
+gpsu() { _dot_git_current push-upstream gpsu "$@"; }
+
 # --- Network ---------------------------------------------------------------
 
 # Public IPv4 and IPv6 of this host. Shorthand for `ips public`.
@@ -1711,6 +1787,10 @@ System	dfh	-	dfh	disk usage of real filesystems only
 System	svc	systemctl	svc [--user] [ACTION] [UNIT]	systemctl and journalctl shortcuts
 System	sudo_nopasswd	sudo	sudo_nopasswd [on|off|status]	toggle passwordless sudo for this user
 System	dgspkg	-	dgspkg install|upgrade|uninstall|versions|list	install official prebuilt releases into ~/.local
+Git	gpl	git	gpl [REMOTE]	pull current branch from origin (or REMOTE), fast-forward only
+Git	gpr	git	gpr [REMOTE]	pull current branch from origin (or REMOTE), rebasing local commits
+Git	gps	git	gps [--dry-run] [REMOTE]	push only current branch to origin (or REMOTE)
+Git	gpsu	git	gpsu [--dry-run] [REMOTE]	push current branch and set upstream
 Docker	dnets	docker	dnets [network...]	networks as trees of their containers
 Docker	dcnets	docker	dcnets [container...]	running containers as trees of their networks
 Docker	dvols	docker	dvols [volume...]	volumes as trees of the containers mounting them

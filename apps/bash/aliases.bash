@@ -145,6 +145,14 @@ _dot_bash_aliases() {
     _dot_bash_alias ... 'cd ../..'
 
     if [ "$selected_git" = git ]; then
+        _dot_bash_alias g 'git'
+        _dot_bash_alias gst 'git status'
+        _dot_bash_alias ga 'git add'
+        _dot_bash_alias gc 'git commit'
+        _dot_bash_alias gf 'git fetch'
+        _dot_bash_alias gsw 'git switch'
+        _dot_bash_alias gswc 'git switch -c'
+        _dot_bash_alias gb 'git branch -vv'
         git_diff='git diff'
         [ "$selected_gitdiff" = difft ] && git_diff='DFT_DISPLAY=side-by-side-show-both GIT_EXTERNAL_DIFF=difft git diff'
         _dot_bash_alias gss 'git status --short'
