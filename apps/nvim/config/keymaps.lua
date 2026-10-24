@@ -84,6 +84,18 @@ local lsp = function()
   vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, {noremap = true})
   vim.keymap.set('n', '<leader>lh', vim.lsp.buf.hover, {noremap = true})
   vim.keymap.set('n', '<leader>lm', vim.lsp.buf.format, {noremap = true})
+
+  -- nvim-lspconfig creates `:LspClangdSwitchSourceHeader` per buffer once
+  -- clangd attaches, so the mapping can only exist in those buffers.
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('dot_clangd_keymaps', { clear = true }),
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if not client or client.name ~= 'clangd' then return end
+      vim.keymap.set('n', '<leader>lc', '<Cmd>LspClangdSwitchSourceHeader<CR>',
+        {buffer = args.buf, desc = 'Switch C/C++ source and header'})
+    end,
+  })
 end
 lsp()
 
