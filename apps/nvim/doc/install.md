@@ -107,6 +107,10 @@ plugins or executables are needed.
 
 ## Adding to the setup
 
+C buffers use the global indentation defaults (four spaces) unless the
+project's `.editorconfig` overrides them. Kernel-style tabs belong in the
+project configuration rather than the C ftplugin.
+
 Each list has exactly one home, shared by the running config and the
 installer. Add the entry, and restart nvim.
 
