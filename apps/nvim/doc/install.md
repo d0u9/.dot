@@ -120,6 +120,9 @@ closed, it opens all folds; otherwise it closes all folds. This replaces the
 built-in `zA` behavior for the fold under the cursor. `za` still toggles the
 current fold; `zR` opens all folds and `zM` closes all folds explicitly.
 These mappings are configured in `plugins/configs/nvim-ufo.lua` when UFO loads.
+Comments and imports stay open by default. UFO can apply delayed fold results
+when Visual mode ends (including after `y`), so they are not automatically
+closed on provider updates.
 
 ## Adding to the setup
 
