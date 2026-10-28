@@ -41,6 +41,7 @@ local ftMap = {
 }
 
 require('ufo').setup({
+  preview = { mappings = { close = '<Esc>' } },
   fold_virt_text_handler = handler,
   -- Was `close_fold_kinds`, which ufo now maps onto the `default` key here.
   close_fold_kinds_for_ft = { default = {'imports', 'comment'} },

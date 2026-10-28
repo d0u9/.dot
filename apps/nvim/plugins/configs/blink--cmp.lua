@@ -10,6 +10,13 @@ require('blink.cmp').setup({
     -- default.
     ['<C-n>'] = { 'show', 'show_documentation', 'hide_documentation' },
     ['<C-e>'] = { 'cancel', 'fallback' },
+    ['<Esc>'] = {
+      function(cmp)
+        cmp.hide()
+        cmp.hide_signature()
+      end,
+      'fallback', -- Also leave insert mode, even when a popup was visible.
+    },
     -- Match nvim-cmp's previous `confirm({ select = true })` behavior.
     ['<CR>'] = { 'select_and_accept', 'fallback' },
     ['<Tab>'] = { 'select_next', 'snippet_forward', 'fallback' },

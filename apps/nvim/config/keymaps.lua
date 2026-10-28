@@ -22,6 +22,24 @@ local general_keymap = function()
   vim.keymap.set('n', '<leader>/', ':set invhlsearch<CR>', {noremap = true, silent = true})
   vim.keymap.set('n', '<leader>uw', '<Cmd>setlocal list!<CR>', {desc = 'Toggle whitespace markers'})
 
+  -- LSP previews leave focus in the source buffer until explicitly entered.
+  vim.keymap.set('n', '<Esc>', function()
+    local fzf_win = package.loaded['fzf-lua.win']
+    local picker = fzf_win and fzf_win.__SELF()
+    if picker and vim.api.nvim_get_current_win() == picker.preview_winid then
+      require('fzf-lua').hide()
+      return
+    end
+    local source = vim.w.lsp_floating_bufnr or vim.api.nvim_get_current_buf()
+    local preview = vim.b[source].lsp_floating_preview
+    if preview and vim.api.nvim_win_is_valid(preview) then
+      vim.api.nvim_win_close(preview, true)
+    elseif vim.api.nvim_win_get_config(0).relative ~= '' and not vim.bo.modified then
+      -- Plugin-local Esc mappings take precedence over this floating-window fallback.
+      vim.api.nvim_win_close(0, false)
+    end
+  end, {desc = 'Close preview or floating window', silent = true})
+
   -- Visual shifting (does not exit Visual mode)
   vim.keymap.set('v', '<', '<gv', {noremap = true})
   vim.keymap.set('v', '>', '>gv', {noremap = true})

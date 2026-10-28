@@ -105,6 +105,14 @@ Zellij, Neovim keeps its normal system clipboard provider.
 After syncing these files, restart Neovim on the remote host. No new
 plugins or executables are needed.
 
+## Closing previews
+
+`Esc` closes LSP previews from the source window or the preview itself.
+It also closes Lazy, UFO and Go previews, and hides an fzf picker when pressed
+in its preview. In Insert mode, it hides Blink completion and signature popups
+and returns to Normal mode. The generic floating-window fallback leaves
+buffers with unsaved changes open.
+
 ## Adding to the setup
 
 C buffers use the global indentation defaults (four spaces) unless the
