@@ -19,6 +19,7 @@ local general_keymap = function()
   -- Most prefer to toggle search highlighting rather than clear the current
   -- search results.
   vim.keymap.set('n', '<leader>/', ':set invhlsearch<CR>', {noremap = true, silent = true})
+  vim.keymap.set('n', '<leader>uw', '<Cmd>setlocal list!<CR>', {desc = 'Toggle whitespace markers'})
 
   -- Visual shifting (does not exit Visual mode)
   vim.keymap.set('v', '<', '<gv', {noremap = true})
