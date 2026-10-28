@@ -62,6 +62,13 @@ return {
   {
     'saghen/blink.cmp',
     version = '1.*',
+    dependencies = {
+      {
+        'L3MON4D3/LuaSnip',
+        version = 'v2.*',
+        opts = { delete_check_events = 'TextChanged,TextChangedI' },
+      },
+    },
     config = config('blink--cmp'),
   },
 
@@ -95,29 +102,15 @@ return {
     config = config('nvim-ufo'),
   },
   {
-    'sindrets/diffview.nvim',
+    'dlyongemallo/diffview-plus.nvim',
+    version = '*',
     cmd = {
       'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory', 'DiffviewFocusFiles',
       'DiffviewToggleFiles', 'DiffviewLog', 'DiffviewRefresh',
+      'DiffviewToggle', 'DiffviewDiffFiles', 'DiffviewMergeFiles',
+      'DiffviewDiffDirs', 'DiffviewWorktreeOverview',
     },
     config = config('diffview'),
-  },
-  {
-    'akinsho/toggleterm.nvim',
-    cmd = {
-      'ToggleTerm', 'ToggleTermToggleAll', 'ToggleTermSetName',
-      'ToggleTermSendCurrentLine', 'ToggleTermSendVisualLines',
-      'ToggleTermSendVisualSelection', 'TermExec', 'TermNew', 'TermSelect',
-    },
-    keys = {
-      -- `<C-w><C-w>` used to live here, but it shadowed the most-used window
-      -- command there is (cycle to the next window) in both normal and
-      -- terminal mode. `<C-\>` is toggleterm's own default and collides with
-      -- nothing in the `<C-w>` family. Counts still work: `2<C-\>` opens the
-      -- second terminal.
-      { [[<C-\>]], '<Cmd>exe v:count1 . "ToggleTerm"<CR>', mode = { 'n', 't' }, desc = 'Toggle terminal' },
-    },
-    config = config('toggleterm--nvim'),
   },
 
   -- treesitter
@@ -224,7 +217,7 @@ return {
     'NeogitOrg/neogit',
     cmd = 'Neogit',
     dependencies = {
-      'sindrets/diffview.nvim',
+      'dlyongemallo/diffview-plus.nvim',
       'ibhagwan/fzf-lua',
     },
     config = config('neogit'),

@@ -130,6 +130,10 @@ Do not treat the following as host prerequisites:
 - Powerlevel10k, zsh-autosuggestions and zsh-syntax-highlighting are cloned by
   the Zsh installer.
 - lazy.nvim and the configured Neovim plugins are cloned by Neovim.
+- LuaSnip is installed as a blink.cmp dependency to retain function-parameter
+  placeholders across mode changes; no native build is required for this use.
+- diffview-plus.nvim provides Git diff and file-history views, including the
+  Neogit integration, and requires Git 2.31+ on macOS and Linux.
 - Mason installs the selected LSP servers.
 - nvim-treesitter installs the selected parsers; only its CLI and compiler are
   host prerequisites.

@@ -5,8 +5,9 @@ local general_keymap = function()
   -- Set leader key
   vim.g.mapleader = ","
 
-  -- Exit form terminal mode
-  vim.keymap.set('t', '<C-q>', '<C-\\><C-n>', {noremap = true})
+  -- Keep Ctrl-q available to terminal tools such as fzf. In normal mode,
+  -- disable its built-in block selection alias; Ctrl-v still selects blocks.
+  vim.keymap.set('n', '<C-q>', '<Nop>', {desc = 'Disable Ctrl-q block selection'})
 
 
   -- Easier moving in tabs and windows
