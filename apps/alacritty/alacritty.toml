@@ -23,10 +23,10 @@ history = 60000
 osc52 = "OnlyCopy"
 
 [font]
-size = 13
-offset = { x = 1, y = 5}
+size = 12.5
+offset = { x = 1, y = 10 }
 glyph_offset = { x = 0, y = 0 }
-normal = { family = "Maple Mono NF CN", style = "Regular" }
+normal = { family = "Maple Mono NF CN", style = "Medium" }
 bold = { family = "Maple Mono NF CN", style = "Medium" }
 
 [cursor]
