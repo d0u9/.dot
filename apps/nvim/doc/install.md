@@ -113,6 +113,14 @@ in its preview. In Insert mode, it hides Blink completion and signature popups
 and returns to Normal mode. The generic floating-window fallback leaves
 buffers with unsaved changes open.
 
+## Folding shortcuts
+
+In Normal mode, `zA` toggles all folds in the current window: if any fold is
+closed, it opens all folds; otherwise it closes all folds. This replaces the
+built-in `zA` behavior for the fold under the cursor. `za` still toggles the
+current fold; `zR` opens all folds and `zM` closes all folds explicitly.
+These mappings are configured in `plugins/configs/nvim-ufo.lua` when UFO loads.
+
 ## Adding to the setup
 
 C buffers use the global indentation defaults (four spaces) unless the

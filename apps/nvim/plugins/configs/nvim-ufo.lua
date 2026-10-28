@@ -54,6 +54,15 @@ require('ufo').setup({
 
 vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
 vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+vim.keymap.set('n', 'zA', function()
+  for lnum = 1, vim.api.nvim_buf_line_count(0) do
+    if vim.fn.foldclosed(lnum) ~= -1 then
+      require('ufo').openAllFolds()
+      return
+    end
+  end
+  require('ufo').closeAllFolds()
+end, { desc = 'Toggle all folds in current window' })
 vim.keymap.set('n', 'zK', function()
   local winid = require('ufo').peekFoldedLinesUnderCursor()
   if not winid then

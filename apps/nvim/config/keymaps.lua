@@ -126,7 +126,7 @@ end
 M.nvim_tree_keymap = plugin_nvim_tree_attach
 
 -- UFO
--- zR/zM/zK are set in plugins/configs/nvim-ufo.lua, which is loaded for the
+-- zR/zM/zA/zK are set in plugins/configs/nvim-ufo.lua, which is loaded for the
 -- filetypes ufo is enabled on. Requiring `ufo` here would load it everywhere.
 
 -- comment tool
