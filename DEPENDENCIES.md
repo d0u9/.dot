@@ -102,7 +102,7 @@ Install these only on hosts that develop the corresponding language:
 | C/C++ compiler (`cc`) | Makes the configuration request `clangd`. Completion also needs each project's `compile_commands.json`; clangd itself is a Mason prebuilt and needs no clang install. |
 | Python | Supports Python development and the virtual-environment prompt segment. |
 | Ruby | Supports Ruby development; the parser and editor settings themselves do not require a local Ruby runtime. |
-| mise | Optional development-tool version manager. `./install.sh mise` installs the official build and global node, python and go; both shells put its shims directory on `PATH` instead of running `mise activate`, and the shims pick each project's versions when called. On musl hosts such as Alpine, mise has no prebuilt node and builds it from source, which needs python and a C++ toolchain. |
+| mise | Optional development-tool version manager. `./install.sh mise` installs the official build and global node, python and go; both shells put its shims directory on `PATH` instead of running `mise activate` and export `MISE_DISABLE_TOOLS=rust`, which the installed `~/.config/mise/conf.d/00-dot.toml` also sets as `disable_tools` for processes outside those shells, so Rust stays with rustup; and the shims pick each project's versions when called. On musl hosts such as Alpine, mise has no prebuilt node and builds it from source, which needs python and a C++ toolchain. |
 | Node.js/npm | Needed for JavaScript/TypeScript development, but not for the base editor bootstrap. |
 
 Mason installs the configured language servers after the relevant toolchain

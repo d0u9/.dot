@@ -1,0 +1,6 @@
+# Linked to ~/.config/mise/conf.d/00-dot.toml; mise loads it with the global
+# config, so deleting the link restores mise's own defaults.
+[settings]
+# Rust belongs to rustup: mise never installs or shims it, whatever a
+# project's mise.toml asks for.
+disable_tools = ["rust"]

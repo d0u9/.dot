@@ -10,6 +10,9 @@ source "$DOT_ZSH_DIR/lib/toolcache.zsh"
 # or directory change, and the shims resolve each project's versions when
 # called. A missing directory adds nothing.
 path=(${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims(N/) $path)
+# Rust belongs to rustup: mise never installs or shims it, however mise
+# was installed and whatever a project's mise.toml asks for.
+export MISE_DISABLE_TOOLS=${MISE_DISABLE_TOOLS:-rust}
 
 if (( $+commands[fzf] )); then
     # Recent fzf versions generate the complete integration directly.

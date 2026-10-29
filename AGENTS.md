@@ -127,6 +127,7 @@ Current installation targets (link location → repository source):
 | Neovim | `~/.config/nvim` | `apps/nvim/` |
 | Alacritty | `~/.config/alacritty` | `apps/alacritty/` |
 | Zellij | `~/.config/zellij` | `apps/zellij/` |
+| mise settings | `~/.config/mise/conf.d/00-dot.toml` | `apps/mise/conf.toml` |
 | SSH client defaults | `~/.ssh/config.d/00-dot.conf` | `apps/ssh/config` |
 | Releases | `~/.local/bin/<tool>` → `~/.local/lib/<tool>/current` | `release=` in each `app.sh`, `apps/release/recipes/` |
 
