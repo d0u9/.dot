@@ -69,7 +69,8 @@ missing.
 Both `vim` and `vi` use `nvim` when installed, otherwise their default commands.
 `EDITOR` and `VISUAL` are set to the first installed of `nvim`, `vim` and `vi`,
 replacing a lower-ranked value such as a distribution's `/usr/bin/vim` and
-any editor the list does not name, such as `emacs` or `nano`.
+any editor the list does not name, such as `emacs` or `nano`. Existing values
+are kept only while their executable is available.
 Zoxide provides `z` and `zi`; fzf shell integration supports both its current
 `--zsh` interface and the separate scripts shipped by older packages.
 

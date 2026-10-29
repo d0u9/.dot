@@ -148,10 +148,11 @@ _dot_bash_aliases() {
     # gives way to nvim, and an editor the table does not list, such as emacs
     # or nano, is replaced too.
     if [ -n "$selected_editor" ]; then
-        local var current candidate rank rank_current rank_selected
+        local var current current_path candidate rank rank_current rank_selected
         for var in EDITOR VISUAL; do
-            current=${!var%% *}
-            current=${current##*/}
+            current_path=${!var%% *}
+            current=${current_path##*/}
+            case $current_path in */*) ;; *) current_path=$(type -P "$current_path" 2>/dev/null) || current_path= ;; esac
             rank=0 rank_current=0 rank_selected=0
             # An empty or unlisted value keeps rank 0 and always loses.
             for candidate in $editor_candidates; do
@@ -159,7 +160,7 @@ _dot_bash_aliases() {
                 [ "$candidate" = "$current" ] && rank_current=$rank
                 [ "$candidate" = "$selected_editor" ] && rank_selected=$rank
             done
-            if [ "$rank_current" -eq 0 ] || [ "$rank_current" -gt "$rank_selected" ]; then
+            if [ ! -x "$current_path" ] || [ "$rank_current" -eq 0 ] || [ "$rank_current" -gt "$rank_selected" ]; then
                 export "$var=$selected_editor"
             fi
         done

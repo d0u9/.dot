@@ -143,12 +143,13 @@
     # or nano, is replaced too.
     if [[ -n ${selected[editor]:-} ]]; then
         local -a editors=(${=fallbacks[editor]})
-        local var current
+        local var current current_path
         for var in EDITOR VISUAL; do
-            current=${${(P)var}%% *}
-            current=${current:t}
+            current_path=${${(P)var}%% *}
+            current=${current_path:t}
+            [[ $current_path == */* ]] || current_path=${commands[$current_path]:-}
             # (Ie) is 0 for an empty or unlisted value, which always loses.
-            if (( ! editors[(Ie)$current] ||
+            if [[ ! -x $current_path ]] || (( ! editors[(Ie)$current] ||
                 editors[(Ie)$current] > editors[(Ie)${selected[editor]}] )); then
                 export $var=${selected[editor]}
             fi
