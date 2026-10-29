@@ -137,10 +137,22 @@
     done
 
     # Programs such as git, crontab and zellij's scrollback editor read these.
-    # A value set before this point, by the environment or a pre hook, wins.
+    # Keep a value only when it names a candidate from the table that ranks at
+    # least as high as the one selected: a distribution default such as vim
+    # gives way to nvim, and an editor the table does not list, such as emacs
+    # or nano, is replaced too.
     if [[ -n ${selected[editor]:-} ]]; then
-        export EDITOR=${EDITOR:-${selected[editor]}}
-        export VISUAL=${VISUAL:-$EDITOR}
+        local -a editors=(${=fallbacks[editor]})
+        local var current
+        for var in EDITOR VISUAL; do
+            current=${${(P)var}%% *}
+            current=${current:t}
+            # (Ie) is 0 for an empty or unlisted value, which always loses.
+            if (( ! editors[(Ie)$current] ||
+                editors[(Ie)$current] > editors[(Ie)${selected[editor]}] )); then
+                export $var=${selected[editor]}
+            fi
+        done
     fi
 
     if (( $+commands[docker] )) && [[ -x ${commands[docker]} ]]; then

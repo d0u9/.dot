@@ -49,7 +49,7 @@ _dot_bash_aliases() {
     local selected_ls= selected_tree= selected_vim= selected_vi=
     local selected_sed= selected_grep= selected_find= selected_xargs=
     local selected_tar= selected_dircolors= selected_git= selected_gitdiff=
-    local selected_ports= selected_aria2c= selected_editor= git_diff git_difftool aria2
+    local selected_ports= selected_aria2c= selected_editor= editor_candidates= git_diff git_difftool aria2
     local row_command row_macos row_linux candidates
     while IFS='|' read -r row_command row_macos row_linux; do
         row_command=${row_command// }
@@ -62,6 +62,7 @@ _dot_bash_aliases() {
             *)       candidates=$row_command ;;
         esac
         # Unquoted on purpose: the field holds space-separated candidates.
+        [ "$row_command" = editor ] && editor_candidates=$candidates
         if _dot_bash_select $candidates; then
             printf -v "selected_$row_command" %s "$selected"
         fi
@@ -142,10 +143,26 @@ _dot_bash_aliases() {
     done
 
     # Programs such as git, crontab and zellij's scrollback editor read these.
-    # A value set before this point, by the environment or a pre hook, wins.
+    # Keep a value only when it names a candidate from the table that ranks at
+    # least as high as the one selected: a distribution default such as vim
+    # gives way to nvim, and an editor the table does not list, such as emacs
+    # or nano, is replaced too.
     if [ -n "$selected_editor" ]; then
-        export EDITOR=${EDITOR:-$selected_editor}
-        export VISUAL=${VISUAL:-$EDITOR}
+        local var current candidate rank rank_current rank_selected
+        for var in EDITOR VISUAL; do
+            current=${!var%% *}
+            current=${current##*/}
+            rank=0 rank_current=0 rank_selected=0
+            # An empty or unlisted value keeps rank 0 and always loses.
+            for candidate in $editor_candidates; do
+                rank=$((rank + 1))
+                [ "$candidate" = "$current" ] && rank_current=$rank
+                [ "$candidate" = "$selected_editor" ] && rank_selected=$rank
+            done
+            if [ "$rank_current" -eq 0 ] || [ "$rank_current" -gt "$rank_selected" ]; then
+                export "$var=$selected_editor"
+            fi
+        done
     fi
 
     _dot_bash_alias .. 'cd ..'
