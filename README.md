@@ -116,6 +116,7 @@ Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
 | [age](https://github.com/FiloSottile/age) | `age`, `age-keygen` | latest | file encryption and key generation |
 | [jq](https://github.com/jqlang/jq) | `jq` | latest | JSON processor (explicit tags: `jq-1.8.2`) |
 | [mise](https://github.com/jdx/mise) | `mise` | latest | language runtimes, through its shims |
+| [eza](https://github.com/eza-community/eza) | `eza` | latest | `ls` replacement; Linux only, Homebrew on macOS |
 
 Each tool has a recipe in `apps/release/recipes/`. A VERSION is a tag (with
 or without its leading `v`) or a channel; the last one requested is saved in
@@ -145,7 +146,8 @@ for each platform) and add a line to the list. A recipe can set
 `release_format=binary` for a single uncompressed executable. Tools without official binaries
 for both platforms, such as eza on macOS, stay with the package manager.
 
-`./install.sh eza` installs eza using the host package manager; eza and jq
+`./install.sh eza` installs the official eza build on Linux and uses Homebrew
+on macOS, where no official build exists; eza and jq
 start checked on new hosts. `./install.sh fclones` and `./install.sh aria2`
 install those tools the same way but start unchecked. On macOS, the
 default-on `macos` profile installs

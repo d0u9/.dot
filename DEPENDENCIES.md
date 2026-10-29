@@ -48,7 +48,7 @@ For the main shell and editor setup, install all of the following:
 | C build toolchain | Strongly recommended for Neovim | Compiles Tree-sitter parsers; without it `./install.sh nvim` warns and skips them, leaving regex highlighting. Use Xcode Command Line Tools on macOS, `build-essential` on Debian/Ubuntu, or the distribution equivalent. |
 | ripgrep (`rg`) | Strongly recommended | Powers fzf-lua live grep and fast project-wide searches. |
 | fd | Strongly recommended | Gives fzf-lua a fast, convenient filesystem search backend. |
-| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs it with the host package manager; checked by default on new hosts. No official macOS prebuilt release is available. `lss`, `lsc` and `lsl` are eza-only views; without eza they print an install hint. |
+| eza | Strongly recommended | Replaces `ls` with colour and directory-first sorting. `./install.sh eza` installs the official release through `dgspkg` on Linux (static musl on x86_64, glibc on arm64) and uses the host package manager on macOS, where no official prebuilt release exists, or when the release cannot be installed; checked by default on new hosts. `lss`, `lsc` and `lsl` are eza-only views; without eza they print an install hint. |
 | jq | Optional | JSON processor. `./install.sh jq` or `dgspkg install jq` installs official macOS/Linux arm64/x86_64 binaries; checked by default on new hosts. Explicit versions use upstream tags such as `jq-1.8.2`. |
 | fclones | Optional | Finds duplicate files by content across directories (`fclones group DIR...`). `./install.sh fclones` installs it with the host package manager; unchecked by default. No official macOS or arm64 prebuilt release is available. |
 | aria2 (`aria2c`) | Optional | Resumable multi-connection HTTP/FTP and BitTorrent downloads behind `dl`, `dll` (URL list file), `dl1` (one connection) and `dlt` (torrent or magnet, no seeding). `./install.sh aria2` installs it with the host package manager; unchecked by default. No official macOS or Linux prebuilt release is available. Without it the aliases print an install hint. |
@@ -68,7 +68,7 @@ For the main shell and editor setup, install all of the following:
 On macOS, Homebrew is the preferred package source. In particular, install
 `tree-sitter-cli`, not the similarly named `tree-sitter` library formula.
 `./install.sh zsh` installs `fzf` and `zoxide` through `dgspkg`, and
-`./install.sh eza` installs eza through the host package manager. The other recommended tools remain
+`./install.sh eza` installs eza through `dgspkg` on Linux and the host package manager on macOS. The other recommended tools remain
 the host provisioner's responsibility.
 
 ## macOS GNU command layer
