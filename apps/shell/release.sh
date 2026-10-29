@@ -130,7 +130,10 @@ release_fetch() (
     local dir="$RELEASE_LIB/$name/$version"
     asset=$(release_asset "$release_os" "$release_arch" "$version")
     [ -n "$asset" ] || return 1
-    tmp=$(mktemp -d) || return 1
+    # Stage beside the destination, not in $TMPDIR: /tmp is often a small
+    # tmpfs, and the same filesystem makes the final mv a rename. The dot
+    # name keeps the listing and old-version pruning from seeing it.
+    mkdir -p -- "$RELEASE_LIB/$name" && tmp=$(mktemp -d "$RELEASE_LIB/$name/.download.XXXXXX") || return 1
     trap 'rm -rf -- "$tmp"' EXIT
     info "downloading $asset ($version)"
     curl -fL --progress-bar -o "$tmp/$asset" \
@@ -156,7 +159,7 @@ release_fetch() (
     set -- "$tmp/unpacked"/*
     if [ $# -eq 1 ] && [ -d "$1" ]; then root=$1; else root=$tmp/unpacked; fi
     [ -x "$root/$release_bin" ] || { error "release: $release_bin not found in $asset"; return 1; }
-    mkdir -p -- "$RELEASE_LIB/$name" && mv -- "$root" "$dir"
+    mv -- "$root" "$dir"
 )
 
 # Install NAME at a version or channel (default: the one saved by the last
