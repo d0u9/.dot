@@ -1,5 +1,14 @@
 desc="eza modern directory listing (official build on Linux, Homebrew on macOS)"
 case $OSTYPE in linux*) release=(eza) ;; esac
-# The system package covers macOS and a Linux host the release cannot serve
-# (musl arm64), and is skipped once the release is in place.
-post() { [ -x "$HOME/.local/bin/eza" ] || pkg_install eza || warn "continuing without eza"; }
+# An executable bit does not prove the host has the binary's dynamic loader.
+post() {
+    local binary="$HOME/.local/bin/eza"
+    if [ -x "$binary" ]; then
+        "$binary" --version >/dev/null 2>&1 && return 0
+        # Only remove our own incompatible release before trying a system package.
+        if [ -L "$binary" ] && [ "$(readlink "$binary")" = ../lib/eza/current/eza ]; then
+            release_uninstall eza
+        fi
+    fi
+    pkg_install eza || warn "continuing without eza"
+}
