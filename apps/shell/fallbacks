@@ -26,6 +26,8 @@ ls        | eza gls ls           | eza ls
 tree      | eza tree             | eza tree
 vim       | nvim vim             | nvim vim
 vi        | nvim vi              | nvim vi
+# Exported as EDITOR and VISUAL rather than aliased.
+editor    | nvim vim vi          | nvim vim vi
 sed       | gsed sed             | sed
 grep      | ggrep grep           | grep
 find      | gfind find           | find

@@ -49,7 +49,7 @@ _dot_bash_aliases() {
     local selected_ls= selected_tree= selected_vim= selected_vi=
     local selected_sed= selected_grep= selected_find= selected_xargs=
     local selected_tar= selected_dircolors= selected_git= selected_gitdiff=
-    local selected_ports= selected_aria2c= git_diff git_difftool aria2
+    local selected_ports= selected_aria2c= selected_editor= git_diff git_difftool aria2
     local row_command row_macos row_linux candidates
     while IFS='|' read -r row_command row_macos row_linux; do
         row_command=${row_command// }
@@ -140,6 +140,13 @@ _dot_bash_aliases() {
         [ -n "$executable" ] && [ "$command_name" != "$executable" ] &&
             _dot_bash_alias "$command_name" "$executable"
     done
+
+    # Programs such as git, crontab and zellij's scrollback editor read these.
+    # A value set before this point, by the environment or a pre hook, wins.
+    if [ -n "$selected_editor" ]; then
+        export EDITOR=${EDITOR:-$selected_editor}
+        export VISUAL=${VISUAL:-$EDITOR}
+    fi
 
     _dot_bash_alias .. 'cd ..'
     _dot_bash_alias ... 'cd ../..'

@@ -61,12 +61,14 @@ completion functions, including `_git`, retain their native autoload-on-first-us
 behavior. Interactive aliases prefer
 modern replacements such as `eza`; on macOS they next try `g`-prefixed GNU
 tools, while Linux falls directly back to default commands. Edit the ordered
-`macos_fallbacks` and `linux_fallbacks` lists in `apps/zsh/core/aliases.zsh`
-to add candidates or change priorities.
+macOS and Linux columns in `apps/shell/fallbacks`, shared by both shells, to
+add candidates or change priorities.
 When `eza` is available, `tree` maps to `eza --tree`; otherwise an installed
 standalone `tree` remains untouched, and no alias is created when both are
 missing.
 Both `vim` and `vi` use `nvim` when installed, otherwise their default commands.
+`EDITOR` and `VISUAL` are set to the first installed of `nvim`, `vim` and `vi`,
+unless the environment or a pre hook already set them.
 Zoxide provides `z` and `zi`; fzf shell integration supports both its current
 `--zsh` interface and the separate scripts shipped by older packages.
 

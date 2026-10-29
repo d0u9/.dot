@@ -131,10 +131,17 @@
     done
 
     for command_name executable in "${(@kv)selected}"; do
-        [[ $command_name == (ls|tree|dircolors|git|gitdiff|ports) ]] && continue
+        [[ $command_name == (ls|tree|dircolors|git|gitdiff|ports|editor) ]] && continue
         [[ $command_name == $executable ]] && continue
         _dot_alias "$command_name" "$executable"
     done
+
+    # Programs such as git, crontab and zellij's scrollback editor read these.
+    # A value set before this point, by the environment or a pre hook, wins.
+    if [[ -n ${selected[editor]:-} ]]; then
+        export EDITOR=${EDITOR:-${selected[editor]}}
+        export VISUAL=${VISUAL:-$EDITOR}
+    fi
 
     if (( $+commands[docker] )) && [[ -x ${commands[docker]} ]]; then
         _dot_alias dps 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"'
