@@ -129,6 +129,7 @@ release_fetch() (
     local name="$1" version="$2" tag="$3" asset tmp expected actual root
     local dir="$RELEASE_LIB/$name/$version"
     asset=$(release_asset "$release_os" "$release_arch" "$version")
+    [ -n "$asset" ] || return 1
     tmp=$(mktemp -d) || return 1
     trap 'rm -rf -- "$tmp"' EXIT
     info "downloading $asset ($version)"
