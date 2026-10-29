@@ -82,8 +82,10 @@ run_privileged() {
     fi
 }
 
-# Install PACKAGE with the first supported package manager.
+# Install PACKAGE with the first supported package manager, unless COMMAND
+# (default PACKAGE) already exists: updates then need no sudo prompt.
 pkg_install() {
+    command_exist "${2:-$1}" && { info "already installed" "$1"; return 0; }
     info "Installing $1"
     if command_exist brew; then brew install "$1"
     elif command_exist apt-get; then run_privileged apt-get install -y "$1"
