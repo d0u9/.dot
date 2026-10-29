@@ -61,6 +61,11 @@ source "$DOT_ZSH_DIR/core/homebrew.zsh"
 #
 # Shared helper skips absent directories and duplicate entries. `path` remains
 # tied to $PATH; -U also removes duplicates a private hook may have added.
+#
+# rustup's toolchain proxies (rustc, cargo) live in $CARGO_HOME/bin. rustup
+# would add its env script to ~/.zshenv; adding the directory here instead
+# keeps those files untouched. It goes first so ~/.local/bin stays ahead.
+_dot_prepend_path_if_dir "${CARGO_HOME:-$HOME/.cargo}/bin"
 _dot_prepend_path_if_dir "$HOME/.local/bin"
 typeset -gU path PATH
 

@@ -47,9 +47,7 @@ if [[ $OSTYPE == linux* && -d $HOME/.local/lib ]]; then
     esac
     export LD_LIBRARY_PATH
 fi
-if [ -r "$HOME/.cargo/env" ]; then
-    source "$HOME/.cargo/env"
-fi
+_dot_prepend_path_if_dir "${CARGO_HOME:-$HOME/.cargo}/bin"
 
 HISTSIZE=200000
 HISTFILESIZE=200000

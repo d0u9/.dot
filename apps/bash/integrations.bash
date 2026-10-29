@@ -3,7 +3,11 @@ _dot_mise_shims=${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shim
 [ -d "$_dot_mise_shims" ] && PATH="$_dot_mise_shims:$PATH"
 unset _dot_mise_shims
 # Rust belongs to rustup, as in Zsh.
-export MISE_DISABLE_TOOLS=${MISE_DISABLE_TOOLS:-rust}
+case ,${MISE_DISABLE_TOOLS:-}, in
+    *,rust,*) ;;
+    *) MISE_DISABLE_TOOLS=${MISE_DISABLE_TOOLS:+$MISE_DISABLE_TOOLS,}rust ;;
+esac
+export MISE_DISABLE_TOOLS
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash --cmd z)"
 fi
