@@ -259,7 +259,10 @@ all commands share the same version, upgrade and uninstall operation.
 `release_format=binary` marks a single uncompressed executable instead of an archive.
 Each version is unpacked whole into `~/.local/lib/NAME/VERSION/`,
 `~/.local/lib/NAME/current` points at it, and
-`~/.local/bin/NAME` links through `current`. Installing keeps the previous
+`~/.local/bin/NAME` links through `current`. Manual pages the archive keeps
+in any `manN` directory are linked through `current` into
+`~/.local/share/man/manN/`, replaced on each install and removed on
+uninstall. Installing keeps the previous
 version for a download-free switch back and removes older ones. A VERSION may
 be a channel (`latest`, `stable`, or what the recipe adds, such as nvim's
 `nightly`); channels resolve to a concrete version before anything is

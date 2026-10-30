@@ -94,7 +94,8 @@ lines.
 `dgspkg` installs command-line tools from their official prebuilt releases on
 macOS and Linux (arm64 and x86_64), with no package manager. Each version is
 unpacked whole under `~/.local/lib/<tool>/`, `~/.local/bin/<tool>` links to
-the current one, and the previous version stays for a switch back without a
+the current one, manual pages it ships in a `manN` directory are linked into
+`~/.local/share/man`, and the previous version stays for a switch back without a
 download. Downloads are checked against the sha256 that GitHub records.
 Each app installs the tools it needs; `./install.sh cli` installs `rg`, `fd`,
 `7zz`, `tree-sitter`, `difft` and `btm`.

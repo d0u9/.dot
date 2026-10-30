@@ -26,6 +26,7 @@ source "$DOT_DIR/apps/shell/install.sh"
 RELEASE_DIR=${RELEASE_DIR:-$DOT_DIR/apps/release}
 RELEASE_LIB=$HOME/.local/lib
 RELEASE_BIN=$HOME/.local/bin
+RELEASE_MAN=$HOME/.local/share/man
 
 release_load() {
     local recipe="$RELEASE_DIR/recipes/$1.sh"
@@ -162,6 +163,30 @@ release_fetch() (
     mv -- "$root" "$dir"
 )
 
+# Link the manual pages NAME's current version ships, found in any manN
+# directory of the archive (man/man1, share/man/man1), into $RELEASE_MAN
+# through `current`, so man finds them and an upgrade needs no relinking.
+# Links into NAME left by an earlier version are removed first.
+release_man_link() {
+    local name="$1" page rel dir
+    release_man_unlink "$name"
+    find "$RELEASE_LIB/$name/current/" -type f -path '*/man[1-9]/*' 2> /dev/null |
+        while read -r page; do
+            rel=${page#"$RELEASE_LIB/$name/current/"}
+            dir=${page%/*}; dir=${dir##*/}
+            mkdir -p -- "$RELEASE_MAN/$dir" &&
+                ln -sfn "../../../lib/$name/current/$rel" "$RELEASE_MAN/$dir/${page##*/}"
+        done
+}
+
+release_man_unlink() {
+    local link
+    for link in "$RELEASE_MAN"/man[1-9]/*; do
+        [ -L "$link" ] || continue
+        case $(readlink "$link") in "../../../lib/$1/"*) rm -f -- "$link" ;; esac
+    done
+}
+
 # Install NAME at a version or channel (default: the one saved by the last
 # install, else the recipe's default); an installed target is a no-op. The
 # request is saved in $RELEASE_LIB/NAME/channel, so an upgrade follows it.
@@ -189,6 +214,7 @@ release_install() {
     for spec in "${release_links[@]}"; do
         ln -sfn "../lib/$name/current/${spec#*:}" "$RELEASE_BIN/${spec%%:*}" || return 1
     done
+    release_man_link "$name"
     for old in "$RELEASE_LIB/$name"/*; do
         case ${old##*/} in current|channel|"$version"|"$previous") ;; *) rm -rf -- "$old" ;; esac
     done
@@ -207,6 +233,7 @@ release_uninstall() {
             case $(readlink "$link") in "../lib/$name/"*) rm -- "$link" || return 1 ;; esac
         fi
     done
+    release_man_unlink "$name"
     [ -d "$RELEASE_LIB/$name" ] || { warn "release: $name is not installed"; return 0; }
     rm -rf -- "${RELEASE_LIB:?}/$name" && info "$name uninstalled"
 }
